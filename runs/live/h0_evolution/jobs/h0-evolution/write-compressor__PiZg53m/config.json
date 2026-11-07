@@ -1,0 +1,42 @@
+{
+    "task": {
+        "name": "terminal-bench/write-compressor",
+        "ref": "sha256:d9ddd9a8e925e2c566b37b2492cbf995afecefe58874e4043ef78d7f3c892c7e",
+        "source": "terminal-bench/terminal-bench-2-1"
+    },
+    "trial_name": "write-compressor__PiZg53m",
+    "trials_dir": "D:\\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\\runs\\live\\h0_evolution\\jobs\\h0-evolution",
+    "agent_setup_timeout_multiplier": 2.0,
+    "agent": {
+        "name": "evo.adapters.traced_terminus2:TracedAgentHarness",
+        "model_name": "deepseek-v4-flash",
+        "base_url": "https://api.deepseek.com/v1",
+        "model_api_key_name": "DEEPSEEK_API_KEY",
+        "kwargs": {
+            "record_terminal_session": false
+        }
+    },
+    "environment": {
+        "type": "docker",
+        "mounts": [
+            {
+                "type": "bind",
+                "source": "D:/面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究/.tmp/tmux-bundle",
+                "target": "/opt/evo-tmux",
+                "read_only": true
+            },
+            {
+                "type": "bind",
+                "source": "D:/面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究/.tmp/tmux-bundle/tmux",
+                "target": "/usr/bin/tmux",
+                "read_only": true
+            }
+        ]
+    },
+    "verifier": {
+        "env": {
+            "UV_INSTALLER_GITHUB_BASE_URL": "http://host.docker.internal:8765"
+        }
+    },
+    "job_id": "0c6143f8-edb2-4e50-ba4f-b2a2f1297e39"
+}

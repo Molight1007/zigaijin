@@ -1,0 +1,75 @@
+{
+  "boundaries": {
+    "boundaries": [
+      {
+        "name": "all",
+        "patterns": [
+          "**/*.py"
+        ]
+      }
+    ],
+    "exclude": [
+      "**/__pycache__/**",
+      ".venv",
+      ".git",
+      ".pytest_cache"
+    ],
+    "subject": "terminus2"
+  },
+  "components": [
+    {
+      "id": "terminus2:all",
+      "k": {
+        "k_ast": 16299,
+        "k_bytes": 171048,
+        "k_cc": 593,
+        "k_chars": 171022,
+        "k_gzip": 38017,
+        "k_lines_nb": 2893
+      },
+      "paths": [
+        "__init__.py",
+        "asciinema_handler.py",
+        "mechanisms.py",
+        "terminus_2.py",
+        "terminus_json_plain_parser.py",
+        "terminus_xml_plain_parser.py",
+        "tmux_session.py"
+      ]
+    }
+  ],
+  "decision": "pending_l2_l3",
+  "l1": {
+    "applicable_count": 0,
+    "blocked_count": 0,
+    "candidate_count": 0,
+    "candidates": [],
+    "delta": {
+      "k_ast": 0,
+      "k_bytes": 0,
+      "k_cc": 0,
+      "k_chars": 0,
+      "k_gzip": 0,
+      "k_lines_nb": 0
+    },
+    "eligible_count": 0,
+    "reduction_pct": {
+      "k_ast": 0.0,
+      "k_cc": 0.0,
+      "k_chars": 0.0,
+      "k_lines_nb": 0.0
+    },
+    "selected_count": 0
+  },
+  "root": "D:\\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\\vendor\\terminus2",
+  "static_only": true,
+  "subject": "terminus2",
+  "totals": {
+    "k_ast": 16299,
+    "k_bytes": 171048,
+    "k_cc": 593,
+    "k_chars": 171022,
+    "k_gzip": 38017,
+    "k_lines_nb": 2893
+  }
+}

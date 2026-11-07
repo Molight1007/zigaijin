@@ -1,0 +1,13 @@
+{
+  "subject": "terminus2",
+  "levers": [
+    {
+      "id": "terminal_recording",
+      "flag": "record_terminal_session",
+      "default": true,
+      "off": false,
+      "components": ["recording"],
+      "description": "关闭 asciinema 终端录制。recording 组件由 asciinema_handler.py 独占；tmux_session.py 内的录制分支不属于该组件，未计入上界。markers 从未被写入，merge_path 在现有代码中不可达。"
+    }
+  ]
+}

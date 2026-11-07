@@ -1,0 +1,278 @@
+[?2004hroot@f7036c0fad59:/app# ls -la /app
+[?2004ltotal 12
+drwxr-xr-x 1 root root 4096 Aug 22  2025 .
+drwxr-xr-x 1 root root 4096 Nov  5 09:42 ..
+-rw-r--r-- 1 root root 4096 Aug 11  2025 trunc.db
+[?2004hroot@f7036c0fad59:/app# file /app/trunc.db && stat -c '%s bytes' /app/trunc.db
+[?2004lbash: file: command not found
+[?2004hroot@f7036c0fad59:/app# sqlite3 /app/trunc.db '.schema'
+[?2004lbash: sqlite3: command not found
+[?2004hroot@f7036c0fad59:/app# python3 --version
+[?2004lPython 3.13.7
+[?2004hroot@f7036c0fad59:/app# xxd -l 128 /app/trunc.db || od -Ax -tx1z -N 128 /app/trunc.db
+[?2004lbash: xxd: command not found
+000000 0d 00 00 00 0a 0f 49 00 0f f0 0f df 0f ce 0f bd  >......I.........<
+000010 0f ac 0f 9b 0f 8a 0f 79 0f 61 0f 49 00 00 00 00  >.......y.a.I....<
+000020 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  >................<
+*
+000080
+[?2004hroot@f7036c0fad59:/app# xxd /app/trunc.db | head -80
+[?2004lbash: xxd: command not found
+[?2004hroot@f7036c0fad59:/app# python3 - <<'PY'
+[?2004l[?2004h> from pathlib import Path
+[?2004l[?2004h> p=Path('/app/trunc.db')
+[?2004l[?2004h> data=p.read_bytes()
+[?2004l[?2004h> print('len',len(data))
+[?2004l[?2004h> for sig in [b'SQLite format 3\x00', b'testword', b'CREATE TABLE', b'CREATE INDEX', b'word', b'value']:
+[?2004l[?2004h>     idx=0
+[?2004l[?2004h>     print('SIG',sig)
+[?2004l[?2004h>     while True:
+[?2004l[?2004h>         i=data.find(sig,idx)
+[?2004l[?2004h>         if i<0: break
+[?2004l[?2004h>         print(' ',i)
+[?2004l[?2004h>         idx=i+1
+[?2004l[?2004h> # printable strings
+[?2004l[?2004h> import re
+[?2004l[?2004h> for m in re.finditer(rb'[ -~]{4,}', data):
+[?2004l[?2004h>     print(m.start(), repr(m.group()[:200]))
+[?2004l[?2004h> PY
+[?2004llen 4096
+SIG b'SQLite format 3\x00'
+SIG b'testword'
+  3919
+  3943
+  3967
+  3984
+  4001
+  4018
+  4035
+  4052
+  4069
+  4086
+SIG b'CREATE TABLE'
+SIG b'CREATE INDEX'
+SIG b'word'
+  3923
+  3947
+  3971
+  3988
+  4005
+  4022
+  4039
+  4056
+  4073
+  4090
+SIG b'value'
+3919 b'testword09?'
+3943 b'testword08@X'
+3967 b'testword07c'
+3984 b'testword06K'
+4001 b'testword052'
+4018 b'testword04*'
+4035 b'testword03'
+4052 b'testword02'
+4069 b'testword01'
+4086 b'testword00'
+[?2004hroot@f7036c0fad59:/app# od -Ax -tx1z /app/trunc.db | head -120
+[?2004l000000 0d 00 00 00 0a 0f 49 00 0f f0 0f df 0f ce 0f bd  >......I.........<
+000010 0f ac 0f 9b 0f 8a 0f 79 0f 61 0f 49 00 00 00 00  >.......y.a.I....<
+000020 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  >................<
+*
+000f40 00 00 00 00 00 00 00 00 00 16 0a 04 00 21 07 74  >.............!.t<
+000f50 65 73 74 77 6f 72 64 30 39 3f e0 00 00 00 00 00  >estword09?......<
+000f60 00 16 09 04 00 21 07 74 65 73 74 77 6f 72 64 30  >.....!.testword0<
+000f70 38 40 58 ff 5c 28 f5 c2 8f 0f 08 04 00 21 01 74  >8@X.\(.......!.t<
+000f80 65 73 74 77 6f 72 64 30 37 63 0f 07 04 00 21 01  >estword07c....!.<
+000f90 74 65 73 74 77 6f 72 64 30 36 4b 0f 06 04 00 21  >testword06K....!<
+000fa0 01 74 65 73 74 77 6f 72 64 30 35 32 0f 05 04 00  >.testword052....<
+000fb0 21 01 74 65 73 74 77 6f 72 64 30 34 2a 0f 04 04  >!.testword04*...<
+000fc0 00 21 01 74 65 73 74 77 6f 72 64 30 33 19 0f 03  >.!.testword03...<
+000fd0 04 00 21 01 74 65 73 74 77 6f 72 64 30 32 0a 0f  >..!.testword02..<
+000fe0 02 04 00 21 01 74 65 73 74 77 6f 72 64 30 31 02  >...!.testword01.<
+000ff0 0e 01 04 00 21 09 74 65 73 74 77 6f 72 64 30 30  >....!.testword00<
+001000
+[?2004hroot@f7036c0fad59:/app# python3 - <<'PY'
+[?2004l[?2004h> from pathlib import Path
+[?2004l[?2004h> import struct
+[?2004l[?2004h> 
+[?2004l[?2004h> data = Path('/app/trunc.db').read_bytes()
+[?2004l[?2004h> print('file length', len(data))
+[?2004l[?2004h> flags = data[0]
+[?2004l[?2004h> first_free = int.from_bytes(data[1:3],'big')
+[?2004l[?2004h> ncell = int.from_bytes(data[3:5],'big')
+[?2004l[?2004h> cell_start = int.from_bytes(data[5:7],'big')
+[?2004l[?2004h> frag = data[7]
+[?2004l[?2004h> print(f'page type=0x{flags:02x} first_free={first_free} ncell={ncell} cell_start={cell_start} frag={frag}')
+[?2004l[?2004h> 
+[?2004l[?2004h> def get_varint(buf, pos):
+[?2004l[?2004h>     val=0
+[?2004l[?2004h>     for i in range(9):
+[?2004l[?2004h>         b=buf[pos+i]
+[?2004l[?2004h>         if i==8:
+[?2004l[?2004h>             val=(val<<8)|b
+[?2004l[?2004h>             return val,pos+9
+[?2004l[?2004h>         val=(val<<7)|(b&0x7f)
+[?2004l[?2004h>         if not (b&0x80):
+[?2004l[?2004h>             return val,pos+i+1
+[?2004l[?2004h>     raise ValueError
+[?2004l[?2004h> 
+[?2004l[?2004h> def serial_len(t):
+[?2004l[?2004h>     if t==0: return 0
+[?2004l[?2004h>     if t in (1,2,3,4): return t
+[?2004l[?2004h>     if t==5: return 6
+[?2004l[?2004h>     if t==6 or t==7: return 8
+[?2004l[?2004h>     if t in (8,9): return 0
+[?2004l[?2004h>     if t>=12: return (t-12)//2 if t%2==0 else (t-13)//2
+[?2004l[?2004h>     return None
+[?2004l[?2004h> 
+[?2004l[?2004h> def parse_record(payload):
+[?2004l[?2004h>     hlen, p = get_varint(payload,0)
+[?2004l[?2004h>     if hlen>len(payload):
+[?2004l[?2004h>         return {'external':True,'intkey':None,'header_len':hlen,'raw_ptypes':[],'nulls':[],'ints':[],'texts':[],'blobs':[],'error':'header extends beyond paylooad','payload_len':len(payload)}
+[?2004l[?2004h>     hdr=payload[:hlen]
+[?2004l[?2004h>     types=[]
+[?2004l[?2004h>     q=1
+[?2004l[?2004h>     while q < hlen:
+[?2004l[?2004h>         t,q=get_varint(hdr,q)
+[?2004l[?2004h>         types.append(t)
+[?2004l[?2004h>     q=hlen
+[?2004l[?2004h>     vals=[]
+[?2004l[?2004h>     errs=[]
+[?2004l[?2004h>     for t in types:
+[?2004l[?2004h>         L=serial_len(t)
+[?2004l[?2004h>         if L is None:
+[?2004l[?2004h>             vals.append(('reserved',t,None)); continue
+[?2004l[?2004h>         if q+L>len(payload):
+[?2004l[?2004h>             errs.append(f'need {L} bytes for serial {t}, only {len(payload)-q}')
+[?2004l[?2004h>             vals.append(('TRUNC',t,payload[q:]))
+[?2004l[?2004h>             q=len(payload)
+[?2004l[?2004h>             break
+[?2004l[?2004h>         raw=payload[q:q+L]; q+=L
+[?2004l[?2004h>         if t==0: vals.append(('null',None,None))
+[?2004l[?2004h>         elif t in (1,2,3,4):
+[?2004l[?2004h>             v=int.from_bytes(raw,'big',signed=True)
+[?2004l[?2004h>             vals.append(('int',t,v))
+[?2004l[?2004h>         elif t==5:
+[?2004l[?2004h>             v=int.from_bytes(raw,'big',signed=True); vals.append(('int',t,v))
+[?2004l[?2004h>         elif t==6:
+[?2004l[?2004h>             v=int.from_bytes(raw,'big',signed=True); vals.append(('int',t,v))
+[?2004l[?2004h>         elif t==7:
+[?2004l[?2004h>             v=struct.unpack('>d',raw)[0]; vals.append(('float',t,v))
+[?2004l[?2004h>         elif t==8: vals.append(('int',t,0))
+[?2004l[?2004h>         elif t==9: vals.append(('int',t,1))
+[?2004l[?2004h>         elif t>=12 and t%2==0:
+[?2004l[?2004h>             vals.append(('blob',t,raw))
+[?2004l[?2004h>         elif t>=13 and t%2==1:
+[?2004l[?2004h>             vals.append(('text',t,raw.decode('utf-8','replace')))
+[?2004l[?2004h>         else: vals.append(('unknown',t,raw))
+[?2004l[?2004h>     return {'external':False,'header_len':hlen,'types':types,'values':vals,'errs':errs,'remaining':payload[q:]}
+[?2004l[?2004h> 
+[?2004l[?2004h> ptrs=[]
+[?2004l[?2004h> for i in range(ncell):
+[?2004l[?2004h>     ptr = int.from_bytes(data[8+2*i:10+2*i],'big')
+[?2004l[?2004h>     ptrs.append(ptr)
+[?2004l[?2004h> print('pointers:', [hex(x) for x in ptrs])
+[?2004l[?2004h> for idx,ptr in enumerate(ptrs):
+[?2004l[?2004h>     print('\nCELL',idx,'pointer',hex(ptr))
+[?2004l[?2004h>     hexs=' '.join(f'{b:02x}' for b in data[ptr:min(ptr+40,len(data))])
+[?2004l[?2004h>     print(' raw(40):', hexs)
+[?2004l[?2004h>     if ptr>=len(data):
+[?2004l[?2004h>         print('pointer outside file'); continue
+[?2004l[?2004h>     try:
+[?2004l[?2004h>         plen,p=get_varint(data,ptr)
+[?2004l[?2004h>         rowid,p2=get_varint(data,p)
+[?2004l[?2004h>         payload=data[p2:p2+plen]
+[?2004l[?2004h>         actual=len(payload)
+[?2004l[?2004h>         print(f' payload_len_varint={plen}, rowid={rowid}, payload_offset={p2}, available_payload={actual}')
+[?2004l[?2004h>         print(' payload hex:', ' '.join(f'{b:02x}' for b in payload))
+[?2004l[?2004h>         rec=parse_record(payload)
+[?2004l[?2004h>         print(' record:', rec)
+[?2004l[?2004h>     except Exception as e:
+[?2004l[?2004h>         print(' parse error:', type(e).__name__, e)
+[?2004l[?2004h> PY
+[?2004lfile length 4096
+page type=0x0d first_free=0 ncell=10 cell_start=3913 frag=0
+pointers: ['0xff0', '0xfdf', '0xfce', '0xfbd', '0xfac', '0xf9b', '0xf8a', '0xf79', '0xf61', '0xf49']
+
+CELL 0 pointer 0xff0
+ raw(40): 0e 01 04 00 21 09 74 65 73 74 77 6f 72 64 30 30
+ payload_len_varint=14, rowid=1, payload_offset=4082, available_payload=14
+ payload hex: 04 00 21 09 74 65 73 74 77 6f 72 64 30 30
+ record: {'external': False, 'header_len': 4, 'types': [0, 33, 9], 'values': [('null', None, None), ('text', 33, 'testword00'), ('int', 9, 1)], 'errs': [], 'remaining': b''}
+
+CELL 1 pointer 0xfdf
+ raw(40): 0f 02 04 00 21 01 74 65 73 74 77 6f 72 64 30 31 02 0e 01 04 00 21 09 74 65 73 74 77 6f 72 64 30 30
+ payload_len_varint=15, rowid=2, payload_offset=4065, available_payload=15
+ payload hex: 04 00 21 01 74 65 73 74 77 6f 72 64 30 31 02
+ record: {'external': False, 'header_len': 4, 'types': [0, 33, 1], 'values': [('null', None, None), ('text', 33, 'testword01'), ('int', 1, 2)], 'errs': [], 'remaining': b''}
+
+CELL 2 pointer 0xfce
+ raw(40): 0f 03 04 00 21 01 74 65 73 74 77 6f 72 64 30 32 0a 0f 02 04 00 21 01 74 65 73 74 77 6f 72 64 30 31 02 0e 01 04 00 21 09
+ payload_len_varint=15, rowid=3, payload_offset=4048, available_payload=15
+ payload hex: 04 00 21 01 74 65 73 74 77 6f 72 64 30 32 0a
+ record: {'external': False, 'header_len': 4, 'types': [0, 33, 1], 'values': [('null', None, None), ('text', 33, 'testword02'), ('int', 1, 10)], 'errs': [], 'remaining': b''}
+
+CELL 3 pointer 0xfbd
+ raw(40): 0f 04 04 00 21 01 74 65 73 74 77 6f 72 64 30 33 19 0f 03 04 00 21 01 74 65 73 74 77 6f 72 64 30 32 0a 0f 02 04 00 21 01
+ payload_len_varint=15, rowid=4, payload_offset=4031, available_payload=15
+ payload hex: 04 00 21 01 74 65 73 74 77 6f 72 64 30 33 19
+ record: {'external': False, 'header_len': 4, 'types': [0, 33, 1], 'values': [('null', None, None), ('text', 33, 'testword03'), ('int', 1, 25)], 'errs': [], 'remaining': b''}
+
+CELL 4 pointer 0xfac
+ raw(40): 0f 05 04 00 21 01 74 65 73 74 77 6f 72 64 30 34 2a 0f 04 04 00 21 01 74 65 73 74 77 6f 72 64 30 33 19 0f 03 04 00 21 01
+ payload_len_varint=15, rowid=5, payload_offset=4014, available_payload=15
+ payload hex: 04 00 21 01 74 65 73 74 77 6f 72 64 30 34 2a
+ record: {'external': False, 'header_len': 4, 'types': [0, 33, 1], 'values': [('null', None, None), ('text', 33, 'testword04'), ('int', 1, 42)], 'errs': [], 'remaining': b''}
+
+CELL 5 pointer 0xf9b
+ raw(40): 0f 06 04 00 21 01 74 65 73 74 77 6f 72 64 30 35 32 0f 05 04 00 21 01 74 65 73 74 77 6f 72 64 30 34 2a 0f 04 04 00 21 01
+ payload_len_varint=15, rowid=6, payload_offset=3997, available_payload=15
+ payload hex: 04 00 21 01 74 65 73 74 77 6f 72 64 30 35 32
+ record: {'external': False, 'header_len': 4, 'types': [0, 33, 1], 'values': [('null', None, None), ('text', 33, 'testword05'), ('int', 1, 50)], 'errs': [], 'remaining': b''}
+
+CELL 6 pointer 0xf8a
+ raw(40): 0f 07 04 00 21 01 74 65 73 74 77 6f 72 64 30 36 4b 0f 06 04 00 21 01 74 65 73 74 77 6f 72 64 30 35 32 0f 05 04 00 21 01
+ payload_len_varint=15, rowid=7, payload_offset=3980, available_payload=15
+ payload hex: 04 00 21 01 74 65 73 74 77 6f 72 64 30 36 4b
+ record: {'external': False, 'header_len': 4, 'types': [0, 33, 1], 'values': [('null', None, None), ('text', 33, 'testword06'), ('int', 1, 75)], 'errs': [], 'remaining': b''}
+
+CELL 7 pointer 0xf79
+ raw(40): 0f 08 04 00 21 01 74 65 73 74 77 6f 72 64 30 37 63 0f 07 04 00 21 01 74 65 73 74 77 6f 72 64 30 36 4b 0f 06 04 00 21 01
+ payload_len_varint=15, rowid=8, payload_offset=3963, available_payload=15
+ payload hex: 04 00 21 01 74 65 73 74 77 6f 72 64 30 37 63
+ record: {'external': False, 'header_len': 4, 'types': [0, 33, 1], 'values': [('null', None, None), ('text', 33, 'testword07'), ('int', 1, 99)], 'errs': [], 'remaining': b''}
+
+CELL 8 pointer 0xf61
+ raw(40): 16 09 04 00 21 07 74 65 73 74 77 6f 72 64 30 38 40 58 ff 5c 28 f5 c2 8f 0f 08 04 00 21 01 74 65 73 74 77 6f 72 64 30 37
+ payload_len_varint=22, rowid=9, payload_offset=3939, available_payload=22
+ payload hex: 04 00 21 07 74 65 73 74 77 6f 72 64 30 38 40 58 ff 5c 28 f5 c2 8f
+ record: {'external': False, 'header_len': 4, 'types': [0, 33, 7], 'values': [('null', None, None), ('text', 33, 'testword08'), ('float', 7, 99.99)], 'errs': [], 'remaining': b''}
+
+CELL 9 pointer 0xf49
+ raw(40): 16 0a 04 00 21 07 74 65 73 74 77 6f 72 64 30 39 3f e0 00 00 00 00 00 00 16 09 04 00 21 07 74 65 73 74 77 6f 72 64 30 38
+ payload_len_varint=22, rowid=10, payload_offset=3915, available_payload=22
+ payload hex: 04 00 21 07 74 65 73 74 77 6f 72 64 30 39 3f e0 00 00 00 00 00 00
+ record: {'external': False, 'header_len': 4, 'types': [0, 33, 7], 'values': [('null', None, None), ('text', 33, 'testword09'), ('float', 7, 0.5)], 'errs': [], 'remaining': b''}
+[?2004hroot@f7036c0fad59:/app# python3 - <<'PY'
+[?2004l[?2004h> import json
+[?2004l[?2004h> rows = [
+[?2004l[?2004h>     {"word": "testword00", "value": 1},
+[?2004l[?2004h>     {"word": "testword01", "value": 2},
+[?2004l[?2004h>     {"word": "testword02", "value": 10},
+[?2004l[?2004h>     {"word": "testword03", "value": 25},
+[?2004l[?2004h>     {"word": "testword04", "value": 42},
+[?2004l[?2004h>     {"word": "testword05", "value": 50},
+[?2004l[?2004h>     {"word": "testword06", "value": 75},
+[?2004l[?2004h>     {"word": "testword07", "value": 99},
+[?2004l[?2004h>     {"word": "testword08", "value": 99.99},
+[?2004l[?2004h>     {"word": "testword09", "value": 0.5},
+[?2004l[?2004h> ]
+[?2004l[?2004h> with open('/app/recover.json', 'w') as f:
+[?2004l[?2004h>     json.dump(rows, f)
+[?2004l[?2004h> print('wrote', len(rows), 'rows')
+[?2004l[?2004h> PY
+[?2004lwrote 10 rows
+[?2004hroot@f7036c0fad59:/app# cat /app/recover.json
+[?2004l[{"word": "testword00", "value": 1}, {"word": "testword01", "value": 2}, {"word": "testword02", "value": 10}, {"word": "testword03", "value": 25}, {"word": "testword04", "value": 42}, {"word": "testword05", "value": 50}, {"word": "testword06", "value": 75}, {"word": "testword07", "value": 99}, {"word": "testword08", "value": 99.99}, {"word": "testword09", "value": 0.5}][?2004hroot@f7036c0fad59:/app# python3 -m json.tool /app/recover.json >/dev/null && echo 'valid JSON'
+[?2004lvalid JSON
+[?2004hroot@f7036c0fad59:/app# 

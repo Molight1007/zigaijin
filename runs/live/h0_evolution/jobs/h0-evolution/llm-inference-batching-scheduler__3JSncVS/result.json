@@ -1,0 +1,183 @@
+{
+    "id": "11f8649e-4a9f-4d35-977f-9c10b2d6a5b8",
+    "task_name": "terminal-bench/llm-inference-batching-scheduler",
+    "trial_name": "llm-inference-batching-scheduler__3JSncVS",
+    "trial_uri": "file:///D:/%E9%9D%A2%E5%90%91%E7%94%A8%E6%88%B7%E5%8F%8D%E9%A6%88%E9%97%AD%E7%8E%AF%E7%9A%84%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%A0%94%E5%8F%91%E5%AE%9E%E9%AA%8C%E8%87%AA%E5%8A%A8%E5%8C%96%E4%B8%8E%E8%87%AA%E8%BF%AD%E4%BB%A3%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF%E7%A0%94%E7%A9%B6/runs/live/h0_evolution/jobs/h0-evolution/llm-inference-batching-scheduler__3JSncVS",
+    "task_id": {
+        "org": "terminal-bench",
+        "name": "llm-inference-batching-scheduler",
+        "ref": "sha256:a3bf47589118daec5124fe3689b4439802c805b2f4ed9d402a48ae73ca2fea67"
+    },
+    "source": "terminal-bench/terminal-bench-2-1",
+    "task_checksum": "c19d5af0dc6e54b45f66e3d8f25bfa783c51df3e1844253aa60c20ca0a827046",
+    "config": {
+        "task": {
+            "path": null,
+            "git_url": null,
+            "git_commit_id": null,
+            "name": "terminal-bench/llm-inference-batching-scheduler",
+            "ref": "sha256:a3bf47589118daec5124fe3689b4439802c805b2f4ed9d402a48ae73ca2fea67",
+            "overwrite": false,
+            "download_dir": null,
+            "source": "terminal-bench/terminal-bench-2-1"
+        },
+        "trial_name": "llm-inference-batching-scheduler__3JSncVS",
+        "trials_dir": "D:\\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\\runs\\live\\h0_evolution\\jobs\\h0-evolution",
+        "install_only": false,
+        "timeout_multiplier": 1.0,
+        "agent_timeout_multiplier": null,
+        "verifier_timeout_multiplier": null,
+        "agent_setup_timeout_multiplier": 2.0,
+        "environment_build_timeout_multiplier": null,
+        "agent": {
+            "name": "evo.adapters.traced_terminus2:TracedAgentHarness",
+            "import_path": null,
+            "model_name": "deepseek-v4-flash",
+            "base_url": "https://api.deepseek.com/v1",
+            "model_api_key_name": "DEEPSEEK_API_KEY",
+            "model_api_format": null,
+            "skip_model_parsing": false,
+            "n_concurrent": null,
+            "concurrency_group": null,
+            "skills": [],
+            "override_timeout_sec": null,
+            "override_setup_timeout_sec": null,
+            "max_timeout_sec": null,
+            "resume_trajectory": false,
+            "load_trajectory": null,
+            "extra_allowed_hosts": [],
+            "kwargs": {
+                "record_terminal_session": false
+            },
+            "mcp_servers": []
+        },
+        "user_agent": null,
+        "environment": {
+            "type": "docker",
+            "import_path": null,
+            "force_build": false,
+            "delete": true,
+            "stream": false,
+            "cpu_enforcement_policy": "auto",
+            "memory_enforcement_policy": "auto",
+            "override_cpus": null,
+            "override_memory_mb": null,
+            "override_storage_mb": null,
+            "override_gpus": null,
+            "override_tpu": null,
+            "mounts": [
+                {
+                    "type": "bind",
+                    "source": "D:/面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究/.tmp/tmux-bundle",
+                    "target": "/opt/evo-tmux",
+                    "read_only": true
+                },
+                {
+                    "type": "bind",
+                    "source": "D:/面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究/.tmp/tmux-bundle/tmux",
+                    "target": "/usr/bin/tmux",
+                    "read_only": true
+                }
+            ],
+            "extra_docker_compose": [],
+            "kwargs": {},
+            "extra_allowed_hosts": []
+        },
+        "verifier": {
+            "override_timeout_sec": null,
+            "max_timeout_sec": null,
+            "env": {
+                "UV_INSTALLER_GITHUB_BASE_URL": "http://host.docker.internal:8765"
+            },
+            "disable": false
+        },
+        "artifacts": [],
+        "extra_instruction_paths": [],
+        "extra_instructions": [],
+        "job_id": "0c6143f8-edb2-4e50-ba4f-b2a2f1297e39",
+        "source_trial": null
+    },
+    "agent_info": {
+        "name": "rrsi-terminus2",
+        "version": "2.0.0",
+        "model_info": {
+            "name": "deepseek-v4-flash",
+            "provider": null
+        }
+    },
+    "agent_result": {
+        "n_input_tokens": 959148,
+        "n_cache_tokens": 893952,
+        "n_output_tokens": 97844,
+        "cost_usd": 0.14233531200000002,
+        "model_usage": {
+            "deepseek-flash": {
+                "n_input_tokens": 959148,
+                "n_cache_tokens": 893952,
+                "n_output_tokens": 97844,
+                "cost_usd": 0.14233531200000002
+            }
+        },
+        "rollout_details": [],
+        "metadata": {
+            "n_episodes": 28,
+            "api_request_times_msec": [
+                1723.0465412139893,
+                2705.3825855255127,
+                10592.715501785278,
+                33022.20821380615,
+                38271.03233337402,
+                14366.26648902893,
+                26053.57551574707,
+                26915.904998779297,
+                21849.616765975952,
+                36279.80947494507,
+                48980.46278953552,
+                37201.695680618286,
+                32556.658267974854,
+                10165.10820388794,
+                12315.906286239624,
+                9772.02033996582,
+                24194.20886039734,
+                12924.345254898071,
+                26594.62070465088,
+                66644.30403709412,
+                13706.68625831604,
+                62959.41734313965,
+                1176.2688159942627,
+                12868.41368675232,
+                9562.907695770264,
+                11201.704740524292,
+                3982.07688331604,
+                2841.1834239959717
+            ],
+            "summarization_count": 0
+        }
+    },
+    "verifier_result": {
+        "rewards": {
+            "reward": 0.0
+        }
+    },
+    "verifier_environment_mode": "shared",
+    "exception_info": null,
+    "started_at": "2026-11-05T08:29:23.583163Z",
+    "finished_at": "2026-11-05T08:44:15.468792Z",
+    "environment_setup": {
+        "started_at": "2026-11-05T08:29:23.602707Z",
+        "finished_at": "2026-11-05T08:29:37.001084Z"
+    },
+    "agent_setup": {
+        "started_at": "2026-11-05T08:29:37.001118Z",
+        "finished_at": "2026-11-05T08:29:37.866888Z"
+    },
+    "agent_execution": {
+        "started_at": "2026-11-05T08:29:37.867220Z",
+        "finished_at": "2026-11-05T08:40:48.083384Z"
+    },
+    "verifier": {
+        "started_at": "2026-11-05T08:40:49.167784Z",
+        "finished_at": "2026-11-05T08:44:04.612736Z"
+    },
+    "step_results": null
+}

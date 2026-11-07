@@ -1,0 +1,15 @@
+{
+    "task": {
+        "name": "terminal-bench/fix-git",
+        "ref": "sha256:16948b980df9d96de616a205f5acca1c5d395de83ff4f8ffabcafacb93226f2e",
+        "source": "terminal-bench/terminal-bench-2-1"
+    },
+    "trial_name": "fix-git__f5jA6oL",
+    "trials_dir": "runs\\infra_check\\oracle_fix_git3",
+    "verifier": {
+        "env": {
+            "UV_INSTALLER_GITHUB_BASE_URL": "http://host.docker.internal:8765"
+        }
+    },
+    "job_id": "34e589ce-f2c2-4905-8c0b-18de50b899ed"
+}

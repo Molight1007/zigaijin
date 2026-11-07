@@ -1,0 +1,108 @@
+{
+    "job_name": "h0-evolution",
+    "jobs_dir": "D:\\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\\runs\\live\\h0_evolution\\jobs",
+    "n_attempts": 3,
+    "agent_setup_timeout_multiplier": 2.0,
+    "n_concurrent_trials": 2,
+    "environment": {
+        "type": "docker",
+        "mounts": [
+            {
+                "type": "bind",
+                "source": "D:/面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究/.tmp/tmux-bundle",
+                "target": "/opt/evo-tmux",
+                "read_only": true
+            },
+            {
+                "type": "bind",
+                "source": "D:/面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究/.tmp/tmux-bundle/tmux",
+                "target": "/usr/bin/tmux",
+                "read_only": true
+            }
+        ]
+    },
+    "verifier": {
+        "env": {
+            "UV_INSTALLER_GITHUB_BASE_URL": "http://host.docker.internal:8765"
+        }
+    },
+    "agents": [
+        {
+            "name": "evo.adapters.traced_terminus2:TracedAgentHarness",
+            "model_name": "deepseek-v4-flash",
+            "base_url": "https://api.deepseek.com/v1",
+            "model_api_key_name": "DEEPSEEK_API_KEY",
+            "kwargs": {
+                "record_terminal_session": false
+            }
+        }
+    ],
+    "datasets": [
+        {
+            "name": "terminal-bench/terminal-bench-2-1",
+            "ref": "sha256:7d7bdc1cbedad549fc1140404bd4dc45e5fd0ea7c4186773687d177ad3a0699a",
+            "task_names": [
+                "terminal-bench/fix-git",
+                "terminal-bench/make-doom-for-mips",
+                "terminal-bench/distribution-search",
+                "terminal-bench/code-from-image",
+                "terminal-bench/filter-js-from-html",
+                "terminal-bench/sparql-university",
+                "terminal-bench/llm-inference-batching-scheduler",
+                "terminal-bench/path-tracing",
+                "terminal-bench/model-extraction-relu-logits",
+                "terminal-bench/query-optimize",
+                "terminal-bench/mteb-leaderboard",
+                "terminal-bench/sqlite-with-gcov",
+                "terminal-bench/bn-fit-modify",
+                "terminal-bench/gpt2-codegolf",
+                "terminal-bench/train-fasttext",
+                "terminal-bench/caffe-cifar-10",
+                "terminal-bench/install-windows-3.11",
+                "terminal-bench/mailman",
+                "terminal-bench/extract-moves-from-video",
+                "terminal-bench/merge-diff-arc-agi-task",
+                "terminal-bench/feal-differential-cryptanalysis",
+                "terminal-bench/reshard-c4-data",
+                "terminal-bench/regex-chess",
+                "terminal-bench/torch-tensor-parallelism",
+                "terminal-bench/winning-avg-corewars",
+                "terminal-bench/multi-source-data-merger",
+                "terminal-bench/cobol-modernization",
+                "terminal-bench/overfull-hbox",
+                "terminal-bench/break-filter-js-from-html",
+                "terminal-bench/openssl-selfsigned-cert",
+                "terminal-bench/pytorch-model-recovery",
+                "terminal-bench/torch-pipeline-parallelism",
+                "terminal-bench/constraints-scheduling",
+                "terminal-bench/prove-plus-comm",
+                "terminal-bench/build-pmars",
+                "terminal-bench/sanitize-git-repo",
+                "terminal-bench/count-dataset-tokens",
+                "terminal-bench/dna-insert",
+                "terminal-bench/gcode-to-text",
+                "terminal-bench/polyglot-c-py",
+                "terminal-bench/write-compressor",
+                "terminal-bench/path-tracing-reverse",
+                "terminal-bench/tune-mjcf",
+                "terminal-bench/sqlite-db-truncate",
+                "terminal-bench/feal-linear-cryptanalysis",
+                "terminal-bench/mcmc-sampling-stan",
+                "terminal-bench/vulnerable-secret",
+                "terminal-bench/adaptive-rejection-sampler",
+                "terminal-bench/password-recovery",
+                "terminal-bench/build-cython-ext",
+                "terminal-bench/crack-7z-hash",
+                "terminal-bench/video-processing",
+                "terminal-bench/fix-code-vulnerability",
+                "terminal-bench/fix-ocaml-gc",
+                "terminal-bench/headless-terminal",
+                "terminal-bench/configure-git-webserver",
+                "terminal-bench/largest-eigenval",
+                "terminal-bench/raman-fitting",
+                "terminal-bench/dna-assembly",
+                "terminal-bench/schemelike-metacircular-eval"
+            ]
+        }
+    ]
+}

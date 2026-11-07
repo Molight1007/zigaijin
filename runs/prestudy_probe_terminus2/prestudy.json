@@ -1,0 +1,37 @@
+{
+  "census": {
+    "reduction_pct": {
+      "k_ast": 41.7817,
+      "k_cc": 44.8567,
+      "k_chars": 37.6484,
+      "k_lines_nb": 38.7833
+    },
+    "tasks": [
+      "probe-import",
+      "probe-construct"
+    ],
+    "zero_touch": 113
+  },
+  "combined_pct": 41.7817,
+  "decision": "pending_l2",
+  "k_metric": "k_ast",
+  "l3": null,
+  "reasons": [
+    "census covers 2 < 10 tasks; zero-touch mass is provisional",
+    "static+census K_ast reach 41.782% >= 1.0%"
+  ],
+  "static": {
+    "candidate_count": 0,
+    "reduction_pct": {
+      "k_ast": 0.0,
+      "k_cc": 0.0,
+      "k_chars": 0.0,
+      "k_lines_nb": 0.0
+    }
+  },
+  "subject": "terminus2",
+  "thresholds": {
+    "k_ast_pct": 1.0,
+    "l3_yield": 0.2
+  }
+}

@@ -1,0 +1,117 @@
+{
+    "id": "c36617f9-49bf-4a72-81dd-4dce0ce87252",
+    "task_name": "terminal-bench/cancel-async-tasks",
+    "trial_name": "cancel-async-tasks__vymgTxp",
+    "trial_uri": "file:///D:/%E9%9D%A2%E5%90%91%E7%94%A8%E6%88%B7%E5%8F%8D%E9%A6%88%E9%97%AD%E7%8E%AF%E7%9A%84%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%A0%94%E5%8F%91%E5%AE%9E%E9%AA%8C%E8%87%AA%E5%8A%A8%E5%8C%96%E4%B8%8E%E8%87%AA%E8%BF%AD%E4%BB%A3%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF%E7%A0%94%E7%A9%B6/runs/live/cov_check_141315/jobs/cov-check/cancel-async-tasks__vymgTxp",
+    "task_id": {
+        "org": "terminal-bench",
+        "name": "cancel-async-tasks",
+        "ref": "sha256:a3d048d351136e48070696cda8bb79660dfd74db1fea3b6da88559f0332699c1"
+    },
+    "source": "terminal-bench/terminal-bench-2-1",
+    "task_checksum": "44b08781bbffcbff0555fafbad034389009edeb85c2f83cd10620f91aa24974f",
+    "config": {
+        "task": {
+            "path": null,
+            "git_url": null,
+            "git_commit_id": null,
+            "name": "terminal-bench/cancel-async-tasks",
+            "ref": "sha256:a3d048d351136e48070696cda8bb79660dfd74db1fea3b6da88559f0332699c1",
+            "overwrite": false,
+            "download_dir": null,
+            "source": "terminal-bench/terminal-bench-2-1"
+        },
+        "trial_name": "cancel-async-tasks__vymgTxp",
+        "trials_dir": "D:\\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\\runs\\live\\cov_check_141315\\jobs\\cov-check",
+        "install_only": false,
+        "timeout_multiplier": 1.0,
+        "agent_timeout_multiplier": null,
+        "verifier_timeout_multiplier": null,
+        "agent_setup_timeout_multiplier": 2.0,
+        "environment_build_timeout_multiplier": null,
+        "agent": {
+            "name": "evo.adapters.traced_terminus2:TracedAgentHarness",
+            "import_path": null,
+            "model_name": "deepseek-v4-flash",
+            "base_url": "https://api.deepseek.com/v1",
+            "model_api_key_name": "DEEPSEEK_API_KEY",
+            "model_api_format": null,
+            "skip_model_parsing": false,
+            "n_concurrent": null,
+            "concurrency_group": null,
+            "skills": [],
+            "override_timeout_sec": null,
+            "override_setup_timeout_sec": null,
+            "max_timeout_sec": null,
+            "resume_trajectory": false,
+            "load_trajectory": null,
+            "extra_allowed_hosts": [],
+            "kwargs": {
+                "record_terminal_session": false
+            },
+            "mcp_servers": []
+        },
+        "user_agent": null,
+        "environment": {
+            "type": "docker",
+            "import_path": null,
+            "force_build": false,
+            "delete": true,
+            "stream": false,
+            "cpu_enforcement_policy": "auto",
+            "memory_enforcement_policy": "auto",
+            "override_cpus": null,
+            "override_memory_mb": null,
+            "override_storage_mb": null,
+            "override_gpus": null,
+            "override_tpu": null,
+            "mounts": null,
+            "extra_docker_compose": [],
+            "kwargs": {},
+            "extra_allowed_hosts": []
+        },
+        "verifier": {
+            "override_timeout_sec": null,
+            "max_timeout_sec": null,
+            "env": {
+                "UV_INSTALLER_GITHUB_BASE_URL": "http://host.docker.internal:8765"
+            },
+            "disable": false
+        },
+        "artifacts": [],
+        "extra_instruction_paths": [],
+        "extra_instructions": [],
+        "job_id": "63b36f0e-9952-4472-984b-539171c57309",
+        "source_trial": null
+    },
+    "agent_info": {
+        "name": "rrsi-terminus2",
+        "version": "2.0.0",
+        "model_info": {
+            "name": "deepseek-v4-flash",
+            "provider": null
+        }
+    },
+    "agent_result": null,
+    "verifier_result": null,
+    "verifier_environment_mode": "shared",
+    "exception_info": {
+        "exception_type": "RuntimeError",
+        "exception_message": "Failed to start tmux session. Error: None",
+        "exception_traceback": "Traceback (most recent call last):\n  File \"D:\\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\\external\\repos\\harbor\\src\\harbor\\trial\\trial.py\", line 606, in run\n    await self._prepare()\n  File \"D:\\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\\external\\repos\\harbor\\src\\harbor\\trial\\trial.py\", line 652, in _prepare\n    await self._setup_agent()\n  File \"D:\\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\\external\\repos\\harbor\\src\\harbor\\trial\\trial.py\", line 1885, in _setup_agent\n    await asyncio.wait_for(\n    ...<2 lines>...\n    )\n  File \"D:\\python\\Lib\\asyncio\\tasks.py\", line 488, in wait_for\n    return await fut\n           ^^^^^^^^^\n  File \"D:\\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\\vendor\\terminus2\\terminus_2.py\", line 485, in setup\n    await self._session.start()\n  File \"D:\\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\\vendor\\terminus2\\tmux_session.py\", line 517, in start\n    raise RuntimeError(\n        f\"Failed to start tmux session. Error: {start_session_result.stderr}\"\n    )\nRuntimeError: Failed to start tmux session. Error: None\n",
+        "occurred_at": "2026-11-05T06:16:47.255899Z"
+    },
+    "started_at": "2026-11-05T06:13:23.934105Z",
+    "finished_at": "2026-11-05T06:16:48.351581Z",
+    "environment_setup": {
+        "started_at": "2026-11-05T06:13:24.306153Z",
+        "finished_at": "2026-11-05T06:13:26.299818Z"
+    },
+    "agent_setup": {
+        "started_at": "2026-11-05T06:13:26.299869Z",
+        "finished_at": "2026-11-05T06:16:47.211022Z"
+    },
+    "agent_execution": null,
+    "verifier": null,
+    "step_results": null
+}

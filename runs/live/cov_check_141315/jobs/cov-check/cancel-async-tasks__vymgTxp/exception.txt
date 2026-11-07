@@ -1,0 +1,19 @@
+Traceback (most recent call last):
+  File "D:\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\external\repos\harbor\src\harbor\trial\trial.py", line 606, in run
+    await self._prepare()
+  File "D:\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\external\repos\harbor\src\harbor\trial\trial.py", line 652, in _prepare
+    await self._setup_agent()
+  File "D:\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\external\repos\harbor\src\harbor\trial\trial.py", line 1885, in _setup_agent
+    await asyncio.wait_for(
+    ...<2 lines>...
+    )
+  File "D:\python\Lib\asyncio\tasks.py", line 488, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "D:\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\vendor\terminus2\terminus_2.py", line 485, in setup
+    await self._session.start()
+  File "D:\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\vendor\terminus2\tmux_session.py", line 517, in start
+    raise RuntimeError(
+        f"Failed to start tmux session. Error: {start_session_result.stderr}"
+    )
+RuntimeError: Failed to start tmux session. Error: None

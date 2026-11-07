@@ -1,0 +1,646 @@
+[?2004hroot@93820f97b8b3:/app# pwd; ls -la /app
+[?2004l/app
+total 12
+drwxr-xr-x 1 root root 4096 Oct 22  2025 [0m[01;34m.[0m
+drwxr-xr-x 1 root root 4096 Nov  5 09:39 [01;34m..[0m
+drwxr-xr-x 8 root root 4096 Oct 22  2025 [01;34mvarsea[0m
+[?2004hroot@93820f97b8b3:/app# df -T /app; mount | grep -E 'app|overlay| / ' || true
+[?2004lFilesystem     Type     1K-blocks     Used Available Use% Mounted on
+overlay        overlay 1055762868 15472684 986586712   2% /
+[01;31m[Koverlay[m[K on[01;31m[K / [m[Ktype [01;31m[Koverlay[m[K (rw,relatime,lowerdir=/var/lib/desktop-containerd/daemon/io.containerd.snapshotter.v1.[01;31m[Koverlay[m[Kfs/snapshots/243/fs:/var/lib/desktop-containerd/daemon/io.containerd.snapshotter.v1.[01;31m[Koverlay[m[Kfs/snapshots/242/fs:/var/lib/desktop-containerd/daemon/io.containerd.snapshotter.v1.[01;31m[Koverlay[m[Kfs/snapshots/241/fs:/var/lib/desktop-containerd/daemon/io.containerd.snapshotter.v1.[01;31m[Koverlay[m[Kfs/snapshots/240/fs:/var/lib/desktop-containerd/daemon/io.containerd.snapshotter.v1.[01;31m[Koverlay[m[Kfs/snapshots/239/fs:/var/lib/desktop-containerd/daemon/io.containerd.snapshotter.v1.[01;31m[Koverlay[m[Kfs/snapshots/89/fs,upperdir=/var/lib/desktop-containerd/daemon/io.containerd.snapshotter.v1.[01;31m[Koverlay[m[Kfs/snapshots/244/fs,workdir=/var/lib/desktop-containerd/daemon/io.containerd.snapshotter.v1.[01;31m[Koverlay[m[Kfs/snapshots/244/work)
+[?2004hroot@93820f97b8b3:/app# lsblk -f 2>/dev/null || true
+[?2004lNAME  FSTYPE FSVER LABEL UUID FSAVAIL FSUSE% MOUNTPOINTS
+loop0                                        
+loop1                                        
+sda                                          
+sdb                                          
+sdc                                          [SWAP]
+sdd                            940.9G     1% /etc/hosts
+                                             /etc/hostname
+                                             /etc/resolv.conf
+sde                                          
+[?2004hroot@93820f97b8b3:/app# command -v debugfs extundelete ext4magic testdisk foremost grep strings xxd dd 2>/dev/null || true
+[?2004l/usr/sbin/debugfs
+/usr/bin/extundelete
+/usr/bin/foremost
+alias grep='grep --color=auto'
+/usr/bin/strings
+/usr/bin/dd
+[?2004hroot@93820f97b8b3:/app# find /app -maxdepth 5 -printf '%y %p %s\n' 2>/dev/null | head -200
+[?2004ld /app 4096
+d /app/varsea 4096
+d /app/varsea/disks 4096
+d /app/varsea/disks/sub1 4096
+d /app/varsea/disks/sub1/subA 4096
+d /app/varsea/disks/sub1/subA/subAlpha 4096
+d /app/varsea/logs-6d85a702 4096
+f /app/varsea/logs-6d85a702/1761108157287341389.bin 5120
+f /app/varsea/logs-6d85a702/20251022-044237.log 35
+d /app/varsea/tmp-96a1686e 4096
+f /app/varsea/tmp-96a1686e/1761108157187440736.bin 5120
+f /app/varsea/tmp-96a1686e/20251022-044237.log 35
+d /app/varsea/cfg-9c5059a5 4096
+f /app/varsea/cfg-9c5059a5/20251022-044237.log 35
+f /app/varsea/cfg-9c5059a5/1761108157343064955.bin 5120
+d /app/varsea/backup-5bbc53a0 4096
+f /app/varsea/backup-5bbc53a0/1761108157319017506.bin 5120
+f /app/varsea/backup-5bbc53a0/20251022-044237.log 35
+d /app/varsea/data-815023d4 4096
+f /app/varsea/data-815023d4/1761108157243430303.bin 5120
+f /app/varsea/data-815023d4/20251022-044237.log 35
+[?2004hroot@93820f97b8b3:/app# find /app -iname '*launch*' -o -iname '*password*' 2>/dev/null
+[?2004l[?2004hroot@93820f97b8b3:/app# grep -R --binary-files=without-match -n 'PASSWORD=' /app 2>/dev/null | head -100
+[?2004l[?2004hroot@93820f97b8b3:/app# ls -l /dev/sd* /dev/loop* 2>/dev/null; cat /proc/mounts | head -50
+[?2004loverlay / overlay rw,relatime,lowerdir=/var/lib/desktop-containerd/daemon/io.containerd.snapshotter.v1.overlayfs/snapshots/243/fs:/var/lib/desktop-containerd/daemon/io.containerd.snapshotter.v1.overlayfs/snapshots/242/fs:/var/lib/desktop-containerd/daemon/io.containerd.snapshotter.v1.overlayfs/snapshots/241/fs:/var/lib/desktop-containerd/daemon/io.containerd.snapshotter.v1.overlayfs/snapshots/240/fs:/var/lib/desktop-containerd/daemon/io.containerd.snapshotter.v1.overlayfs/snapshots/239/fs:/var/lib/desktop-containerd/daemon/io.containerd.snapshotter.v1.overlayfs/snapshots/89/fs,upperdir=/var/lib/desktop-containerd/daemon/io.containerd.snapshotter.v1.overlayfs/snapshots/244/fs,workdir=/var/lib/desktop-containerd/daemon/io.containerd.snapshotter.v1.overlayfs/snapshots/244/work 0 0
+proc /proc proc rw,nosuid,nodev,noexec,relatime 0 0
+tmpfs /dev tmpfs rw,nosuid,size=65536k,mode=755 0 0
+devpts /dev/pts devpts rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=666 0 0
+sysfs /sys sysfs ro,nosuid,nodev,noexec,relatime 0 0
+cgroup /sys/fs/cgroup cgroup2 ro,nosuid,nodev,noexec,relatime 0 0
+mqueue /dev/mqueue mqueue rw,nosuid,nodev,noexec,relatime 0 0
+shm /dev/shm tmpfs rw,nosuid,nodev,noexec,relatime,size=65536k 0 0
+D:\134 /opt/evo-tmux 9p ro,noatime,aname=drvfs;path=D:\;uid=0;gid=0;metadata;symlinkroot=/mnt/host/,cache=0x5,access=client,msize=65536,trans=fd,rfd=5,wfd=5 0 0
+/dev/sdd /etc/resolv.conf ext4 rw,relatime 0 0
+/dev/sdd /etc/hostname ext4 rw,relatime 0 0
+/dev/sdd /etc/hosts ext4 rw,relatime 0 0
+D:\134 /usr/bin/tmux 9p ro,noatime,aname=drvfs;path=D:\;uid=0;gid=0;metadata;symlinkroot=/mnt/host/,cache=0x5,access=client,msize=65536,trans=fd,rfd=5,wfd=5 0 0
+proc /proc/bus proc ro,nosuid,nodev,noexec,relatime 0 0
+proc /proc/fs proc ro,nosuid,nodev,noexec,relatime 0 0
+proc /proc/irq proc ro,nosuid,nodev,noexec,relatime 0 0
+proc /proc/sys proc ro,nosuid,nodev,noexec,relatime 0 0
+proc /proc/sysrq-trigger proc ro,nosuid,nodev,noexec,relatime 0 0
+tmpfs /proc/acpi tmpfs ro,relatime,size=4k,nr_inodes=1 0 0
+tmpfs /proc/interrupts tmpfs rw,nosuid,size=65536k,mode=755 0 0
+tmpfs /proc/kcore tmpfs rw,nosuid,size=65536k,mode=755 0 0
+tmpfs /proc/keys tmpfs rw,nosuid,size=65536k,mode=755 0 0
+tmpfs /proc/latency_stats tmpfs rw,nosuid,size=65536k,mode=755 0 0
+tmpfs /proc/scsi tmpfs ro,relatime,size=4k,nr_inodes=1 0 0
+tmpfs /proc/timer_list tmpfs rw,nosuid,size=65536k,mode=755 0 0
+tmpfs /sys/firmware tmpfs ro,relatime,size=4k,nr_inodes=1 0 0
+[?2004hroot@93820f97b8b3:/app# find /app/varsea -type f -exec stat -c '%n|%s|%F' {} \;
+[?2004l/app/varsea/disks/sub1/subA/subAlpha/ae3f4c.dat|4194304|regular file
+/app/varsea/logs-6d85a702/1761108157287341389.bin|5120|regular file
+/app/varsea/logs-6d85a702/20251022-044237.log|35|regular file
+/app/varsea/tmp-96a1686e/1761108157187440736.bin|5120|regular file
+/app/varsea/tmp-96a1686e/20251022-044237.log|35|regular file
+/app/varsea/cfg-9c5059a5/20251022-044237.log|35|regular file
+/app/varsea/cfg-9c5059a5/1761108157343064955.bin|5120|regular file
+/app/varsea/backup-5bbc53a0/1761108157319017506.bin|5120|regular file
+/app/varsea/backup-5bbc53a0/20251022-044237.log|35|regular file
+/app/varsea/data-815023d4/1761108157243430303.bin|5120|regular file
+/app/varsea/data-815023d4/20251022-044237.log|35|regular file
+[?2004hroot@93820f97b8b3:/app# for f in /app/varsea/*/*.bin; do echo "===== $f"; file "$f"; sha256sum "$f"; done
+[?2004l===== /app/varsea/backup-5bbc53a0/1761108157319017506.bin
+/app/varsea/backup-5bbc53a0/1761108157319017506.bin: data
+c1b1e6a91b26c0baef40385118f8b0a0155aade6acb2d718e58f74fabeddfcd1  /app/varsea/backup-5bbc53a0/1761108157319017506.bin
+===== /app/varsea/cfg-9c5059a5/1761108157343064955.bin
+/app/varsea/cfg-9c5059a5/1761108157343064955.bin: data
+52a2750b7bec9e43091e323739a9680bfd31c2957ee0e0f3813966af1fa8bfdb  /app/varsea/cfg-9c5059a5/1761108157343064955.bin
+===== /app/varsea/data-815023d4/1761108157243430303.bin
+/app/varsea/data-815023d4/1761108157243430303.bin: data
+8db24b526cc5335e362a2b4c33c68bad9fa993abca1ce83039e9806c7962f6f0  /app/varsea/data-815023d4/1761108157243430303.bin
+===== /app/varsea/logs-6d85a702/1761108157287341389.bin
+/app/varsea/logs-6d85a702/1761108157287341389.bin: data
+325f4a1fa4c094542cecb7eb92cd8f6335a90b14042024923eefa81ee2df02e6  /app/varsea/logs-6d85a702/1761108157287341389.bin
+===== /app/varsea/tmp-96a1686e/1761108157187440736.bin
+/app/varsea/tmp-96a1686e/1761108157187440736.bin: data
+54adfcb61c1bf4c5dc0c8aac5a1758b4ad495e25e196a5589ff871f1eb46f6f3  /app/varsea/tmp-96a1686e/1761108157187440736.bin
+[?2004hroot@93820f97b8b3:/app# for f in /app/varsea/*/*.log; do echo "===== $f"; cat "$f"; echo; done
+[?2004l===== /app/varsea/backup-5bbc53a0/20251022-044237.log
+Dummy entry at 2025-10-22 04:42:37
+
+===== /app/varsea/cfg-9c5059a5/20251022-044237.log
+Dummy entry at 2025-10-22 04:42:37
+
+===== /app/varsea/data-815023d4/20251022-044237.log
+Dummy entry at 2025-10-22 04:42:37
+
+===== /app/varsea/logs-6d85a702/20251022-044237.log
+Dummy entry at 2025-10-22 04:42:37
+
+===== /app/varsea/tmp-96a1686e/20251022-044237.log
+Dummy entry at 2025-10-22 04:42:37
+
+[?2004hroot@93820f97b8b3:/app# for f in /app/varsea/*/*.bin; do echo "===== $f"; strings -a -n 4 "$f" | head -80; done
+[?2004l===== /app/varsea/backup-5bbc53a0/1761108157319017506.bin
+%%QU
+kLY}U
+7|g4
+[&?LsD
+V^4h
+4V	9~
+f,|d9)
+mq R/
+cbn'
+1T;:
+V^%9
+go,0
+b0)7q
+sSu~
+7/jQ
+x9z/
+|G<o
+^G(n
+uAsh
+rY!9
+"TF'
+LEb>
+P77V
+)`JU
+'?b?
+#/Xn#
+fcCcS
+zGVPg
+iDiV
+gI0Xh
+eN6X
+Fg	x_3
+|9P1
+o##I=m7_
+'zIx
+%4*b`z
+1u'#]*
+5q/c(#
+Az P
+]+ke
+czb]X1
+cqU|4
+tf/}
+"~]0~
+@=Gx
+6OR(*
+>82mz
+)*.B
+XF){'
+RX#D
+p\C_c
+B')q
+]og	U
+===== /app/varsea/cfg-9c5059a5/1761108157343064955.bin
+TSS5
+4H}J
+]N{x
+P'V.
+m0;I
+'I7P
+npYc
+|0\jRG
+H/B>
+wGtbe
+qd\Q
+sZX|
+pyvQ
+,,WD
+N'R]
+=T@I
+C]yL6
+tX%b
+Fs	17 <
+A9?S
+H"vybF
+hFaTw
+g$[=
+lJ'O
+(:&'
+dM^;
+*)o/
+-S5A
+P%oK
+\)a;
+#'<@
+__w%
+B@?k
+!8g@K
+{rE&I|
+zX'zqU
+kI	F
+YO8:
+2?-`
+.~?*(k
+QJ%4
+<fjk
+LLB>
+JB3K
+{3)>
+7#w[
+t3%Y
+p6`	
+Z qu
+Q.Nz8
+k/~d
+*uf)*
+IZN<3
+.}@i
+g]{!759^
+fX@b
+Xet[
+2O1c
+2"eS94t 
+>7	^5
+a1t!
+Qd?x
+Wo-M{|
+===== /app/varsea/data-815023d4/1761108157243430303.bin
+Q5xv
+mtNV
+y_WD.
+	*	q
+_Bz#U
+bA I
+6_0D{
+7;#Q
+qrb,
+WQn[
+d-GNu
+]	j:1L
+y!Igb`
+~o=4HuX
+$<\4
+P`3,
+^w^d
+^@3B
+/rYK
+E6Jj
+oQ7;G
+YP<5
+d"FJ
+u4.5
+``pl
+U-m+
+3*d"
+Tom)
+F<WYv
+8V&>
+DmIX
+OOJb[}
+#,7p
+*a_Ue
+NpYf
+<->j
+b{rF
+E>Vi
+$&If
+)aFO.
+a7sS
+pnt"
+R27@:
+Ls0(
+J`]+g-
+9u#T,i
+[kU{
+]'4.
+]yM3
+A|3s
+:E*V
+p#<9
+Y.j_
+mnD(/
+e|,zLVC
+Fk?uqZ
+===== /app/varsea/logs-6d85a702/1761108157287341389.bin
+!w?/2
+8V`7tTO
+&@}s
++7XJ'
+x~&@
+:VXb
+9w@G
+hHKE
+-IFY
+h(LTs
+KwVy
+FJ>Q
+xu'+7
+idEi,
+\{ng
+g\j5
+U%,P
+GA@['
+|WY0 
+n8@;
+N~7!
+OG?~
+NrR-
+	g:s
+	pJ<G
+2Ifr
+/eaH
+|/*u2
+7A,sO
+3Q$;
+Y>KP
+e<9a=J
+^GcH
+my:o,5_F
+]2-=
+-9u(
+}opt
+0]oS
+"NN]
+g?tA;z
+	$4VL
+t;@E0u
+ FJT	
+VI_S<
+AaK.L
+)?;'
+Q6@!
+"?Zc
+~[R`
+2Q//
+ej;t}
+1|=/+	
+~GtM
+Zm]\
+rbznO&
+}b3'
+Gmf)
+z>/;.
+|3X,
+P7O 
+{,_WZ"
+nV1k
+Of+*
+zx^J
+hMOZ
+q]RP
+===== /app/varsea/tmp-96a1686e/1761108157187440736.bin
+k^a}
+o!st
+<JEs
+siwi
+jV3Uc
+@Ae#
+za>X
+,^F 
+D}7}
+3yKY
+%s[n
+'|c~
+Y<0+
+\s@`'-
+7#,:;
+$mL]
+exk^
+KDfS
+l}7O
+y^GY
+SC6}^^?
+r"~@
+E~/?
+{cg]
+_:7xb
+.^r>]
+8S$G
+7?tX;T[
+vT<goB
+$hPA
+h2\k
+|/@#Z'
+J9u/
+'WQXS
+0jRy
+$|xy
+	{vK
+M"56
+5&{x =
+`NKP+
+`{ /J_
+Brdj
+cLdT
+Nsw-
+,O0n
+4/u|
+bq}l
+@P'i
+]wv=5>/
+rx1b
+0dA T
+tI]=
+A\^`7
+)I*bF=I
+LI2N
+ I]E
+/M%:9
+P+Wx
+fcwn
+G;{n
+P6?K
+Q,}M9
+BKN"
+[?2004hroot@93820f97b8b3:/app# file /app/varsea/disks/sub1/subA/subAlpha/ae3f4c.dat; xxd -l 256 /app/varsea/disks/sub1/subA/subAlpha/ae3f4c.dat
+[?2004l/app/varsea/disks/sub1/subA/subAlpha/ae3f4c.dat: data
+bash: xxd: command not found
+[?2004hroot@93820f97b8b3:/app# debugfs -R 'ls -l /' /app/varsea/disks/sub1/subA/subAlpha/ae3f4c.dat 2>&1 | head -100
+[?2004ldebugfs 1.47.0 (5-Feb-2023)
+debugfs: Bad magic number in super-block while trying to open /app/varsea/disks/sub1/subA/subAlpha/ae3f4c.dat
+ls: Filesystem not open
+[?2004hroot@93820f97b8b3:/app# dumpe2fs -h /app/varsea/disks/sub1/subA/subAlpha/ae3f4c.dat 2>/dev/null | head -80
+[?2004lCouldn't find valid filesystem superblock.
+[?2004hroot@93820f97b8b3:/app# strings -a -n 4 /app/varsea/disks/sub1/subA/subAlpha/ae3f4c.dat | grep -E 'PASSWORD|launchcode|8XD|W54' | head -50
+[?2004lEW54~
+app/launchcode.txtUT	
+PASSWORD=8XDP5Q2RT9Z
+\K7VB3BV4WW54
+app/launchcode.txtUT
+8XD]
+[?2004hroot@93820f97b8b3:/app# grep -abo 'PASSWORD=' /app/varsea/disks/sub1/subA/subAlpha/ae3f4c.dat; grep -abo '8XD' /app/varsea/disks/sub1/subA/subAlpha/ae3f4c.dat; ggrep -abo 'W54' /app/varsea/disks/sub1/subA/subAlpha/ae3f4c.dat
+[?2004l[32m[K1048652[m[K[36m[K:[m[K[01;31m[KPASSWORD=[m[K
+[32m[K1048661[m[K[36m[K:[m[K[01;31m[K8XD[m[K
+[32m[K4150390[m[K[36m[K:[m[K[01;31m[K8XD[m[K
+[32m[K259938[m[K[36m[K:[m[K[01;31m[KW54[m[K
+[32m[K3145737[m[K[36m[K:[m[K[01;31m[KW54[m[K
+[?2004hroot@93820f97b8b3:/app# python3 - <<'PY'
+[?2004l[?2004h> p='/app/varsea/disks/sub1/subA/subAlpha/ae3f4c.dat'
+[?2004l[?2004h> d=open(p,'rb').read()
+[?2004l[?2004h> for needle in [b'PASSWORD=', b'8XD', b'W54']:
+[?2004l[?2004h>     start=0
+[?2004l[?2004h>     while True:
+[?2004l[?2004h>         i=d.find(needle,start)
+[?2004l[?2004h>         if i<0: break
+[?2004l[?2004h>         print('OFFSET',i,repr(d[max(0,i-40):i+80]))
+[?2004l[?2004h>         start=i+1
+[?2004l[?2004h> PY
+[?2004lbash: python3: command not found
+[?2004hroot@93820f97b8b3:/app# printf '%s\n' '8XDP5Q2RT9ZK7VB3BV4WW54' > /app/recovered_passwords.txt; cat -A /app/recovered_passwords.txt; awk '{print length($0)}' /appp/recovered_passwords.txt
+[?2004l8XDP5Q2RT9ZK7VB3BV4WW54$
+23
+[?2004hroot@93820f97b8b3:/app# dd if=/app/varsea/disks/sub1/subA/subAlpha/ae3f4c.dat bs=1 skip=1048620 count=100 2>/dev/null | od -An -tx1c
+[?2004l  2e  74  78  74  55  54  09  00  03  bd  60  f8  68  bd  60  f8
+   .   t   x   t   U   T  \t  \0 003 275   ` 370   h 275   ` 370
+  68  75  78  0b  00  01  04  00  00  00  00  04  00  00  00  00
+   h   u   x  \v  \0 001 004  \0  \0  \0  \0 004  \0  \0  \0  \0
+  50  41  53  53  57  4f  52  44  3d  38  58  44  50  35  51  32
+   P   A   S   S   W   O   R   D   =   8   X   D   P   5   Q   2
+  52  54  39  5a  17  2a  ab  9e  2f  ae  ed  eb  29  a1  2e  0f
+   R   T   9   Z 027   * 253 236   / 256 355 353   ) 241   . 017
+  9d  80  8d  41  29  99  0f  89  8e  46  5e  47  a4  c2  f8  71
+ 235 200 215   A   ) 231 017 211 216   F   ^   G 244 302 370   q
+  be  17  40  aa  5a  24  cc  10  62  8c  e5  ac  ec  e8  bf  c0
+ 276 027   @ 252   Z   $ 314 020   b 214 345 254 354 350 277 300
+  21  5e  73  11
+   !   ^   s 021
+[?2004hroot@93820f97b8b3:/app# grep -aboE 'PASSWORD=[A-Z0-9]{23}' /app/varsea/disks/sub1/subA/subAlpha/ae3f4c.dat || true
+[?2004l[?2004hroot@93820f97b8b3:/app# grep -abo '8XDP5Q2RT9ZK7VB3BV4WW54' /app/varsea/disks/sub1/subA/subAlpha/ae3f4c.dat || true
+[?2004l[?2004hroot@93820f97b8b3:/app# od -A x -t x1z -N 512 /app/varsea/disks/sub1/subA/subAlpha/ae3f4c.dat
+[?2004l000000 d0 d3 b9 70 85 dc d5 de 61 d8 b4 2f f6 15 05 e8  >...p....a../....<
+000010 74 d5 3c 4b 3e eb f3 31 0e 49 2b aa 85 2b ef 3b  >t.<K>..1.I+..+.;<
+000020 94 29 87 5b a4 c0 92 13 ad 18 55 eb d7 6a be d7  >.).[......U..j..<
+000030 1e 11 3e 78 51 87 d3 73 c8 82 fb bd 28 7d 14 5a  >..>xQ..s....(}.Z<
+000040 a7 38 07 40 39 1d 82 04 8e 18 40 57 07 6e b4 ce  >.8.@9.....@W.n..<
+000050 bf 47 c7 a9 9d 92 93 80 44 77 67 ab c2 d6 a5 b3  >.G......Dwg.....<
+000060 93 6b 23 5d b4 85 ae db c2 44 af de a2 d7 f1 04  >.k#].....D......<
+000070 aa 93 36 ef a7 df 12 e3 ac 18 ec e4 50 db 43 96  >..6.........P.C.<
+000080 30 6a 75 c1 86 35 31 94 86 6c 78 05 54 09 a7 db  >0ju..51..lx.T...<
+000090 15 e3 f9 bc 64 65 6d a0 36 0e 6f 70 f0 75 9b b1  >....dem.6.op.u..<
+0000a0 c8 84 f0 50 c2 8a 8d b2 be 32 ab 78 6a cc 9b b7  >...P.....2.xj...<
+0000b0 3e 8a 60 42 30 98 9d 90 85 1e 54 e4 fb a7 4c 1f  >>.`B0.....T...L.<
+0000c0 96 d0 39 ab 5a 9c cf 6f 20 c1 ba 0a 7a 54 c2 c3  >..9.Z..o ...zT..<
+0000d0 72 55 67 a2 3b 0f 8e 59 66 ee 25 fb 0c b2 c0 b9  >rUg.;..Yf.%.....<
+0000e0 f4 23 0d cd 5a 45 0e 0e 04 08 f0 ed 5b a1 8f 60  >.#..ZE......[..`<
+0000f0 23 44 23 1c 55 64 bc e7 b0 8c af b6 3d ce d7 43  >#D#.Ud......=..C<
+000100 26 69 62 c3 e2 83 49 bd 2e d4 ef 88 ed 90 f2 96  >&ib...I.........<
+000110 c9 35 ec 86 6e f7 6b 8a 23 5e 16 cf 26 bc cf b6  >.5..n.k.#^..&...<
+000120 19 f0 22 6b 9f c1 d8 68 29 c5 97 19 5c 40 a7 3d  >.."k...h)...\@.=<
+000130 e1 65 12 38 1e 75 b5 ac 01 b5 e4 e7 02 41 2b ab  >.e.8.u.......A+.<
+000140 0f db dd eb 6f da 9a 50 40 d9 1a e8 67 5b 41 63  >....o..P@...g[Ac<
+000150 3a c3 cb 09 4d 42 14 17 dc 03 68 38 34 14 8b be  >:...MB....h84...<
+000160 bd ac 7a 47 da 0b ef ca 87 89 51 a3 e2 43 c5 c1  >..zG......Q..C..<
+000170 71 6a cc 88 15 e8 eb 5f 43 6a e4 1c 58 23 51 ae  >qj....._Cj..X#Q.<
+000180 ca 28 f5 ca 06 d8 47 30 69 29 28 58 07 b3 ad 16  >.(....G0i)(X....<
+000190 f2 43 a8 51 24 02 77 02 4e e1 e5 69 28 66 b9 34  >.C.Q$.w.N..i(f.4<
+0001a0 ef 1a c1 07 9d 2d 5e 06 72 67 80 05 9b c0 9d eb  >.....-^.rg......<
+0001b0 e2 33 e5 f6 0c 18 b5 1d c5 28 a7 6b 07 7e e7 41  >.3.......(.k.~.A<
+0001c0 0b 0e 38 4f 03 06 1f 62 fe 86 10 81 c8 6f 2e ae  >..8O...b.....o..<
+0001d0 65 01 9e 90 d6 b6 94 47 be 6c 18 e9 bb 41 a1 c7  >e......G.l...A..<
+0001e0 5c 20 bf 82 6b 81 b5 58 0d a2 d0 29 df 05 ca 61  >\ ..k..X...)...a<
+0001f0 54 60 54 8f ea ab 3d b6 f5 13 db 07 fc 61 19 28  >T`T...=......a.(<
+000200
+[?2004hroot@93820f97b8b3:/app# for m in 'PK\003\004' 'PK\001\002' 'PK\005\006' '\123\357' 'NTFS' 'FAT' '\105\130\124'; do echo "== $m"; grep -abo "$m" /app/varsea/diskss/sub1/subA/subAlpha/ae3f4c.dat | head; done 2>/dev/null || true
+[?2004l== PK\003\004
+== PK\001\002
+== PK\005\006
+== \123\357
+== NTFS
+== FAT
+== \105\130\124
+[?2004hroot@93820f97b8b3:/app# command -v unzip zipinfo binwalk foremost fsstat mmls ntfsinfo 7z 2>/dev/null || true
+[?2004l/usr/bin/unzip
+/usr/bin/zipinfo
+/usr/bin/foremost
+/usr/bin/fsstat
+/usr/bin/mmls
+[?2004hroot@93820f97b8b3:/app# tail -c 256 /app/varsea/disks/sub1/subA/subAlpha/ae3f4c.dat | od -A x -t x1z
+[?2004l000000 cd eb a0 1f ed bb c5 55 b0 f4 0b 7f 67 b2 83 54  >.......U....g..T<
+000010 9c 70 bc c3 b3 9a fd f0 b4 d8 e5 3e 84 6d 8e 2b  >.p.........>.m.+<
+000020 78 d3 88 b0 ae 5c 66 13 98 65 0b d5 05 c6 79 52  >x....\f..e....yR<
+000030 0f fe f1 ca 5c 26 b0 b5 6e fc 65 50 3c 04 67 3c  >....\&..n.eP<.g<<
+000040 12 f5 c6 d9 be cb 1b df 1d 6d 56 60 d6 44 65 80  >.........mV`.De.<
+000050 cd 89 79 92 05 96 6b bc a6 15 f5 60 db 34 43 06  >..y...k....`.4C.<
+000060 16 5d 0a 46 d6 bd 1d d3 4d a9 10 26 ff bb 7a fa  >.].F....M..&..z.<
+000070 27 07 99 78 bc 85 42 d0 c1 7a d3 3a b7 02 48 55  >'..x..B..z.:..HU<
+000080 ec ef fd e1 68 45 50 49 4e ab 7c c3 bb 8f 74 2e  >....hEPIN.|...t.<
+000090 58 9c 74 46 c9 86 9e 85 12 f1 d7 0a 56 94 61 09  >X.tF........V.a.<
+0000a0 8e 2a 27 49 c1 18 09 45 92 15 0b f0 52 ed f1 6b  >.*'I...E....R..k<
+0000b0 26 77 76 4a 66 32 7e e4 28 be 1a 61 42 2d b2 49  >&wvJf2~.(..aB-.I<
+0000c0 f1 9a e6 51 a4 bf 9d 27 ed 99 e8 63 a1 37 41 ca  >...Q...'...c.7A.<
+0000d0 8e 04 38 26 1f a4 4b a7 f7 8d 13 82 64 fb 0b e5  >..8&..K.....d...<
+0000e0 d8 e5 56 5e d5 e8 09 a1 35 2d 82 8b 9b df b4 ed  >..V^....5-......<
+0000f0 0c 5e 05 2a d8 52 3b b1 61 a9 49 b8 a9 83 31 7d  >.^.*.R;.a.I...1}<
+000100
+[?2004hroot@93820f97b8b3:/app# for s in 'app/launchcode.txt' 'PASSWORD=' 'K7VB3BV4WW54' '8XD' 'W54'; do printf '== %s\n' "$s"; grep -abo "$s" /app/varsea/disks/sub1/subbA/subAlpha/ae3f4c.dat | head -20; done
+[?2004l== app/launchcode.txt
+1048606:app/launchcode.txt
+3145787:app/launchcode.txt
+== PASSWORD=
+1048652:PASSWORD=
+== K7VB3BV4WW54
+3145728:K7VB3BV4WW54
+== 8XD
+1048661:8XD
+4150390:8XD
+== W54
+259938:W54
+3145737:W54
+[?2004hroot@93820f97b8b3:/app# for off in 1048400 1048620 259900 3145700 4150350; do echo "===== offset $off"; dd if=/app/varsea/disks/sub1/subA/subAlpha/ae3f4c.dat bs==1 skip=$off count=220 2>/dev/null | od -A d -t x1z; done
+[?2004l===== offset 1048400
+0000000 f2 40 75 77 48 d6 bc f6 f2 fa da b3 15 2c 97 e8  >.@uwH........,..<
+0000016 26 7d aa 9a 2e 83 9e e6 d9 93 dc bc c4 f4 70 0c  >&}............p.<
+0000032 32 a0 7d ed 9e 4f e4 e1 3a 4b c7 d6 d5 fd 39 cc  >2.}..O..:K....9.<
+0000048 fb ee 63 f5 3e f9 b4 82 bc 1a 3c bc c6 39 e6 75  >..c.>.....<..9.u<
+0000064 73 8b c3 09 e1 2a 40 b6 df 99 e1 c1 60 50 17 71  >s....*@.....`P.q<
+0000080 97 12 b1 75 3a 27 d9 dc 4e 7c 5c ca d0 8f 83 07  >...u:'..N|\.....<
+0000096 64 3a 66 5a 29 37 e7 64 c9 f7 1d 8d 5e e0 52 42  >d:fZ)7.d....^.RB<
+0000112 78 45 1f de 23 d6 b7 f4 c9 1a fd 08 07 a5 d2 fb  >xE..#...........<
+0000128 32 94 5a e0 11 84 bd 98 6f b8 0e ee e0 ee 55 5b  >2.Z.....o.....U[<
+0000144 b6 9c b3 6b 75 33 b0 79 32 1c ae 0a 44 0a 76 d8  >...ku3.y2...D.v.<
+0000160 c5 5d d8 6c 2c 03 fb 55 f0 2a 9c a7 71 e4 8a 01  >.].l,..U.*..q...<
+0000176 50 4b 03 04 0a 00 00 00 00 00 53 25 56 5b c4 5d  >PK........S%V[.]<
+0000192 72 b0 21 00 00 00 21 00 00 00 12 00 1c 00 61 70  >r.!...!.......ap<
+0000208 70 2f 6c 61 75 6e 63 68 63 6f 64 65              >p/launchcode<
+0000220
+===== offset 1048620
+0000000 2e 74 78 74 55 54 09 00 03 bd 60 f8 68 bd 60 f8  >.txtUT....`.h.`.<
+0000016 68 75 78 0b 00 01 04 00 00 00 00 04 00 00 00 00  >hux.............<
+0000032 50 41 53 53 57 4f 52 44 3d 38 58 44 50 35 51 32  >PASSWORD=8XDP5Q2<
+0000048 52 54 39 5a 17 2a ab 9e 2f ae ed eb 29 a1 2e 0f  >RT9Z.*../...)...<
+0000064 9d 80 8d 41 29 99 0f 89 8e 46 5e 47 a4 c2 f8 71  >...A)....F^G...q<
+0000080 be 17 40 aa 5a 24 cc 10 62 8c e5 ac ec e8 bf c0  >..@.Z$..b.......<
+0000096 21 5e 73 11 e0 6a 41 41 37 76 d1 b1 49 b9 07 62  >!^s..jAA7v..I..b<
+0000112 48 02 8d b2 15 02 7d fe 7a 8c 4a ce 05 cc c0 c9  >H.....}.z.J.....<
+0000128 da a7 4c 84 7f 3e 28 b0 80 5c 21 0d d2 86 17 2b  >..L..>(..\!....+<
+0000144 55 ca bd 35 08 19 41 de c4 59 cc 9a c5 c2 a4 ba  >U..5..A..Y......<
+0000160 5f f6 86 cf e1 f9 03 4d b3 f9 a5 2f 35 79 f5 b3  >_......M.../5y..<
+0000176 6a 39 cb 0b 90 31 49 79 a0 0a 1c 20 06 f1 ee c5  >j9...1Iy... ....<
+0000192 da a5 ef b1 23 53 53 bf 76 77 50 38 6b 01 de 2b  >....#SS.vwP8k..+<
+0000208 b8 cb 92 97 29 fa 29 7f e8 bf 75 99              >....).)...u.<
+0000220
+===== offset 259900
+0000000 80 72 90 ad 80 a8 dd 6a 8f 67 68 29 88 40 5e f6  >.r.....j.gh).@^.<
+0000016 c6 87 b1 e0 a1 6e c8 de 31 21 9c 7f d0 48 82 f4  >.....n..1!...H..<
+0000032 0a b2 87 e6 aa 45 57 35 34 7e 05 4d bb a8 4e 16  >.....EW54~.M..N.<
+0000048 b6 39 3e 38 59 81 f4 b7 62 9b 72 c9 35 97 08 db  >.9>8Y...b.r.5...<
+0000064 74 32 f1 24 40 83 ab 3a 77 4f da d3 51 16 9d 19  >t2.$@..:wO..Q...<
+0000080 d2 d1 b1 ac 10 36 00 16 ef 1b 80 39 29 d3 e6 88  >.....6.....9)...<
+0000096 3d 22 a8 a9 96 42 fe 04 3d 97 5e a7 55 e8 b6 73  >="...B..=.^.U..s<
+0000112 b5 1c f6 33 e8 dc 94 17 01 ee 94 af 41 98 a7 6f  >...3........A..o<
+0000128 63 de 7c 4c c3 2b 6a dc 09 67 78 3d 5b 33 0c 7b  >c.|L.+j..gx=[3.{<
+0000144 30 28 e0 18 6b f7 f7 71 3a 14 60 4f b6 fa 05 a0  >0(..k..q:.`O....<
+0000160 a1 52 4d ae 40 15 19 00 b6 24 63 d5 7c da bb 9b  >.RM.@....$c.|...<
+0000176 fe 8c 76 88 3a bc 35 7c 53 f0 66 0f ea ec 16 c8  >..v.:.5|S.f.....<
+0000192 4c a9 b7 6d 49 36 54 5c 52 9c 49 85 9f 9c 72 3f  >L..mI6T\R.I...r?<
+0000208 0b 77 34 76 32 db 26 79 59 2a df 3d              >.w4v2.&yY*.=<
+0000220
+===== offset 3145700
+0000000 b9 a8 cf fd c8 a9 85 21 65 3b 53 fd 62 ff e3 94  >.......!e;S.b...<
+0000016 d8 d0 dd f7 2d 9e 69 0a 69 b0 a4 5c 4b 37 56 42  >....-.i.i..\K7VB<
+0000032 33 42 56 34 57 57 35 34 0a 50 4b 01 02 1e 03 0a  >3BV4WW54.PK.....<
+0000048 00 00 00 00 00 53 25 56 5b c4 5d 72 b0 21 00 00  >.....S%V[.]r.!..<
+0000064 00 21 00 00 00 12 00 18 00 00 00 00 00 01 00 00  >.!..............<
+0000080 00 a4 81 00 00 00 00 61 70 70 2f 6c 61 75 6e 63  >.......app/launc<
+0000096 68 63 6f 64 65 2e 74 78 74 55 54 05 00 03 bd 60  >hcode.txtUT....`<
+0000112 f8 68 75 78 0b 00 01 04 00 00 00 00 04 00 00 00  >.hux............<
+0000128 00 50 4b 05 06 00 00 00 00 01 00 01 00 58 00 00  >.PK..........X..<
+0000144 00 6d 00 00 00 00 00 37 74 b3 3e 32 c5 e2 05 89  >.m.....7t.>2....<
+0000160 f8 b8 7b c6 0a cb 1a f4 05 3a 62 c4 04 22 9d e4  >..{......:b.."..<
+0000176 b1 b6 66 6f 4a f5 a0 21 db b5 25 9f 7f b1 80 5e  >..foJ..!..%....^<
+0000192 29 4f e3 cc 2d c9 a0 13 f4 d7 db 23 1a 02 21 a1  >)O..-......#..!.<
+0000208 1b 3e cc 1d cc 88 68 2f 48 67 54 6f              >.>....h/HgTo<
+0000220
+===== offset 4150350
+0000000 86 70 0d 3f 8c da 96 1a 7c e8 ca bd 44 b7 04 03  >.p.?....|...D...<
+0000016 dc dd 1f db 9f bc ab 15 02 91 e6 8a 95 37 c2 d6  >.............7..<
+0000032 03 81 11 db a1 d1 9a d6 38 58 44 5d ff b5 ef 26  >........8XD]...&<
+0000048 07 7a d7 a8 ba 0f 46 c7 6b b5 56 0b 8b 09 0d 31  >.z....F.k.V....1<
+0000064 35 73 c6 03 9d cf 15 2a dd 83 15 e0 14 74 e1 e7  >5s.....*.....t..<
+0000080 d6 16 43 7e 40 ec 39 1f fd 66 af 86 50 d5 b1 40  >..C~@.9..f..P..@<
+0000096 f9 b3 87 7c cf aa 70 8f e9 3e d4 86 06 8f 3c 30  >...|..p..>....<0<
+0000112 be ec d1 db f2 75 c9 46 67 ef 1e fe f5 97 2a 6a  >.....u.Fg.....*j<
+0000128 06 6f b8 48 d4 29 57 6c 05 75 72 15 e6 dd 9e 63  >.o.H.)Wl.ur....c<
+0000144 d6 4c a5 5e fb e8 dd f6 c0 99 d4 c2 b8 0d a1 1f  >.L.^............<
+0000160 0e da 8e 21 f7 d7 c5 25 69 12 b0 a5 1c cd 41 bb  >...!...%i.....A.<
+0000176 9c 51 68 3c bd fc 71 86 f6 fe 8b 35 8d da ac a2  >.Qh<..q....5....<
+0000192 7f 7a 3b e7 0a f1 0d ce 36 b2 0d 2d f9 ea 7b 39  >.z;.....6..-..{9<
+0000208 63 49 3a 37 4c f2 9c 0a 59 a6 7d d5              >cI:7L...Y.}.<
+0000220
+[?2004hroot@93820f97b8b3:/app# 

@@ -1,0 +1,1611 @@
+[?2004hroot@45027c0924e3:/app# pwd
+[?2004l/app
+[?2004hroot@45027c0924e3:/app# ls -la /app
+[?2004ltotal 24
+drwxr-xr-x 1 root root 4096 Oct 24  2025 [0m[01;34m.[0m
+drwxr-xr-x 1 root root 4096 Nov  5 08:44 [01;34m..[0m
+-rw-r--r-- 1 root root 1009 Oct 24  2025 bundle1.bundle
+-rw-r--r-- 1 root root 1244 Oct 24  2025 bundle2.bundle
+-rw-r--r-- 1 root root 6977 Oct 24  2025 examples.json
+[?2004hroot@45027c0924e3:/app# git --version
+[?2004lbash: git: command not found
+[?2004hroot@45027c0924e3:/app# mkdir -p /app/repo && cd /app/repo && git init
+[?2004lbash: git: command not found
+[?2004hroot@45027c0924e3:/app/repo# git bundle list-heads /app/bundle1.bundle
+[?2004lbash: git: command not found
+[?2004hroot@45027c0924e3:/app/repo# git bundle list-heads /app/bundle2.bundle
+[?2004lbash: git: command not found
+[?2004hroot@45027c0924e3:/app/repo# apt-get update && apt-get install -y git
+[?2004l0% [Working]            Get:1 http://security.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+0% [Waiting for headers] [1 InRelease 14.0 kB/126 kB 11%]                                                         Get:2 http://archive.ubuntu.com/ubuntu noble InRelease [256 kB]
+0% [2 InRelease 15.7 kB/256 kB 6%] [1 InRelease 17.2 kB/126 kB 14%]0% [2 InRelease 15.7 kB/256 kB 6%] [1 InRelease 17.2 kB/126 kB 14%]0% [2 InRelease 85.6 kB/256 kB 33%] [1 InRelease 116 kB/126 kB 92%]                                                                   0% [2 InRelease 137 kB/256 kB 53%]0% [2 InRelease 150 kB/256 kB 58%]                                  0% [Waiting for headers]0% [Waiting for headers] [Waiting for headers]                                              Get:3 http://archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+0% [3 InRelease 2604 B/126 kB 2%] [Waiting for headers]                                                       Get:4 http://security.ubuntu.com/ubuntu noble-security/multiverse amd64 Packages [55.6 kB]
+0% [3 InRelease 14.3 kB/126 kB 11%] [4 Packages 14.0 kB/55.6 kB 25%]                                                                    0% [3 InRelease 68.1 kB/126 kB 54%]0% [4 Packages store 0 B] [3 InRelease 68.1 kB/126 kB 54%] [Waiting for headers]                                                                                0% [3 InRelease 68.1 kB/126 kB 54%] [Waiting for headers]                                                         0% [Waiting for headers]0% [Waiting for headers] [Waiting for headers]                                              Get:5 http://archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+0% [5 InRelease 2604 B/126 kB 2%] [Waiting for headers]                                                       Get:6 http://security.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1552 kB]
+0% [5 InRelease 33.2 kB/126 kB 26%] [6 Packages 14.0 kB/1552 kB 1%]                                                                   0% [6 Packages 55.1 kB/1552 kB 4%]14% [Waiting for headers] [6 Packages 55.1 kB/1552 kB 4%]                                                         Get:7 http://archive.ubuntu.com/ubuntu noble/restricted amd64 Packages [117 kB]
+14% [7 Packages 2673 B/117 kB 2%] [6 Packages 91.5 kB/1552 kB 6%]14% [7 Packages 97.3 kB/117 kB 83%] [6 Packages 91.5 kB/1552 kB 6%]15% [7 Packages 97.3 kB/117 kB 83%] [6 Packages 212 kB/1552 kB 14%]                                                                   15% [Waiting for headers] [6 Packages 269 kB/1552 kB 17%]                                                         Get:8 http://archive.ubuntu.com/ubuntu noble/universe amd64 Packages [19.3 MB]
+15% [8 Packages 18.1 kB/19.3 MB 0%] [6 Packages 269 kB/1552 kB 17%]15% [7 Packages store 0 B] [8 Packages 18.1 kB/19.3 MB 0%] [6 Packages 269 kB/1552 kB 17%]                                                                                          16% [8 Packages 97.8 kB/19.3 MB 1%] [6 Packages 269 kB/1552 kB 17%]16% [8 Packages 244 kB/19.3 MB 1%] [6 Packages 304 kB/1552 kB 20%]                                                                            224 kB/s 2min 24s16% [8 Packages 390 kB/19.3 MB 2%] [6 Packages 362 kB/1552 kB 23%]                                                                            224 kB/s 2min 23s17% [8 Packages 615 kB/19.3 MB 3%] [6 Packages 486 kB/1552 kB 31%]                                                                            224 kB/s 2min 21s18% [8 Packages 728 kB/19.3 MB 4%] [6 Packages 544 kB/1552 kB 35%]                                                                            224 kB/s 2min 20s18% [8 Packages 932 kB/19.3 MB 5%] [6 Packages 633 kB/1552 kB 41%]                                                                            224 kB/s 2min 19s19% [8 Packages 1069 kB/19.3 MB 6%] [6 Packages 700 kB/1552 kB 45%]                                                                           224 kB/s 2min 18s19% [8 Packages 1249 kB/19.3 MB 6%] [6 Packages 763 kB/1552 kB 49%]                                                                           224 kB/s 2min 17s20% [8 Packages 1402 kB/19.3 MB 7%] [6 Packages 854 kB/1552 kB 55%]                                                                           224 kB/s 2min 16s21% [8 Packages 1539 kB/19.3 MB 8%] [6 Packages 969 kB/1552 kB 62%]                                                                           224 kB/s 2min 15s21% [8 Packages 1718 kB/19.3 MB 9%] [6 Packages 991 kB/1552 kB 64%]                                                                           224 kB/s 2min 14s22% [8 Packages 1854 kB/19.3 MB 10%] [6 Packages 1154 kB/1552 kB 74%]                                                                         224 kB/s 2min 13s22% [8 Packages 2015 kB/19.3 MB 10%] [6 Packages 1207 kB/1552 kB 78%]                                                                         224 kB/s 2min 12s23% [8 Packages 2167 kB/19.3 MB 11%] [6 Packages 1332 kB/1552 kB 86%]                                                                              491 kB/s 59s24% [8 Packages 2408 kB/19.3 MB 12%] [6 Packages 1339 kB/1552 kB 86%]                                                                              491 kB/s 59s25% [8 Packages 2660 kB/19.3 MB 14%] [6 Packages 1478 kB/1552 kB 95%]                                                                              491 kB/s 58s25% [8 Packages 2702 kB/19.3 MB 14%] [6 Packages 1509 kB/1552 kB 97%]                                                                              491 kB/s 58s26% [8 Packages 3037 kB/19.3 MB 16%] [Waiting for headers]                                                                                         491 kB/s 57s                                                                                                                                                               Get:9 http://security.ubuntu.com/ubuntu noble-security/main amd64 Packages [1424 kB]
+26% [8 Packages 3037 kB/19.3 MB 16%] [9 Packages 7929 B/1424 kB 1%]                                                                                491 kB/s 57s26% [6 Packages store 0 B] [8 Packages 3037 kB/19.3 MB 16%] [9 Packages 7929 B/1424 kB 1%]                                                         491 kB/s 57s26% [8 Packages 3037 kB/19.3 MB 16%] [9 Packages 71.8 kB/1424 kB 5%]                                                                               491 kB/s 57s26% [8 Packages 3037 kB/19.3 MB 16%] [9 Packages 96.8 kB/1424 kB 7%]                                                                               491 kB/s 57s28% [8 Packages 3395 kB/19.3 MB 18%] [9 Packages 248 kB/1424 kB 17%]                                                                               491 kB/s 56s28% [8 Packages 3573 kB/19.3 MB 18%] [9 Packages 311 kB/1424 kB 22%]                                                                               491 kB/s 55s29% [8 Packages 3960 kB/19.3 MB 21%] [9 Packages 467 kB/1424 kB 33%]                                                                               491 kB/s 54s30% [8 Packages 4049 kB/19.3 MB 21%] [9 Packages 724 kB/1424 kB 51%]                                                                               491 kB/s 54s31% [8 Packages 4347 kB/19.3 MB 23%] [9 Packages 788 kB/1424 kB 55%]                                                                               491 kB/s 53s32% [8 Packages 4621 kB/19.3 MB 24%] [9 Packages 880 kB/1424 kB 62%]                                                                               491 kB/s 52s33% [8 Packages 4854 kB/19.3 MB 25%] [9 Packages 1097 kB/1424 kB 77%]                                                                              491 kB/s 51s34% [8 Packages 5269 kB/19.3 MB 27%] [9 Packages 1266 kB/1424 kB 89%]                                                                              727 kB/s 34s35% [8 Packages 5288 kB/19.3 MB 27%] [9 Packages 1423 kB/1424 kB 100%]                                                                             727 kB/s 33s36% [8 Packages 5651 kB/19.3 MB 29%] [Waiting for headers]                                                                                         727 kB/s 33s                                                                                                                                                               Get:10 http://security.ubuntu.com/ubuntu noble-security/restricted amd64 Packages [2132 kB]
+36% [8 Packages 5651 kB/19.3 MB 29%] [10 Packages 27.0 kB/2132 kB 1%]                                                                              727 kB/s 33s36% [9 Packages store 0 B] [8 Packages 5651 kB/19.3 MB 29%] [10 Packages 32.8 kB/2132 kB 2%]                                                       727 kB/s 33s37% [8 Packages 5651 kB/19.3 MB 29%] [10 Packages 124 kB/2132 kB 6%]                                                                               727 kB/s 33s38% [8 Packages 5929 kB/19.3 MB 31%] [10 Packages 316 kB/2132 kB 15%]                                                                              727 kB/s 32s38% [8 Packages 6035 kB/19.3 MB 31%] [10 Packages 403 kB/2132 kB 19%]                                                                              727 kB/s 32s39% [8 Packages 6379 kB/19.3 MB 33%] [10 Packages 597 kB/2132 kB 28%]                                                                              727 kB/s 31s41% [8 Packages 6604 kB/19.3 MB 34%] [10 Packages 871 kB/2132 kB 41%]                                                                              727 kB/s 30s42% [8 Packages 6795 kB/19.3 MB 35%] [10 Packages 1057 kB/2132 kB 50%]                                                                             727 kB/s 30s43% [8 Packages 7134 kB/19.3 MB 37%] [10 Packages 1133 kB/2132 kB 53%]                                                                             727 kB/s 29s44% [8 Packages 7350 kB/19.3 MB 38%] [10 Packages 1344 kB/2132 kB 63%]                                                                             727 kB/s 29s45% [8 Packages 7593 kB/19.3 MB 39%] [10 Packages 1692 kB/2132 kB 79%]                                                                             727 kB/s 28s46% [8 Packages 7928 kB/19.3 MB 41%] [10 Packages 1781 kB/2132 kB 84%]                                                                             727 kB/s 27s47% [8 Packages 8126 kB/19.3 MB 42%]                                                                                                               727 kB/s 26s47% [10 Packages store 0 B] [8 Packages 8126 kB/19.3 MB 42%]                                                                                       727 kB/s 26s48% [8 Packages 8273 kB/19.3 MB 43%]                                                                                                               727 kB/s 26s49% [8 Packages 8668 kB/19.3 MB 45%]                                                                                                               894 kB/s 21s50% [8 Packages 8969 kB/19.3 MB 46%]                                                                                                               894 kB/s 21s51% [8 Packages 9336 kB/19.3 MB 48%]                                                                                                               894 kB/s 20s51% [8 Packages 9586 kB/19.3 MB 50%]                                                                                                               894 kB/s 20s52% [8 Packages 9770 kB/19.3 MB 51%]                                                                                                               894 kB/s 20s53% [8 Packages 10.1 MB/19.3 MB 53%]                                                                                                               894 kB/s 19s53% [8 Packages 10.4 MB/19.3 MB 54%]                                                                                                               894 kB/s 19s54% [8 Packages 10.7 MB/19.3 MB 55%]                                                                                                               894 kB/s 19s54% [8 Packages 10.8 MB/19.3 MB 56%]                                                                                                               894 kB/s 18s56% [8 Packages 11.6 MB/19.3 MB 60%]                                                                                                               894 kB/s 18s56% [8 Packages 11.8 MB/19.3 MB 61%]                                                                                                               894 kB/s 17s58% [8 Packages 12.4 MB/19.3 MB 64%]                                                                                                               894 kB/s 17s59% [8 Packages 12.7 MB/19.3 MB 66%]                                                                                                               671 kB/s 22s59% [8 Packages 12.9 MB/19.3 MB 67%]                                                                                                               671 kB/s 22s61% [8 Packages 13.5 MB/19.3 MB 70%]                                                                                                               671 kB/s 21s62% [8 Packages 14.0 MB/19.3 MB 72%]                                                                                                               671 kB/s 20s62% [8 Packages 14.3 MB/19.3 MB 74%]                                                                                                               671 kB/s 20s63% [8 Packages 14.6 MB/19.3 MB 76%]                                                                                                               671 kB/s 19s65% [8 Packages 15.4 MB/19.3 MB 80%]                                                                                                               671 kB/s 18s65% [8 Packages 15.6 MB/19.3 MB 81%]                                                                                                               671 kB/s 18s67% [8 Packages 16.2 MB/19.3 MB 84%]                                                                                                               671 kB/s 17s68% [8 Packages 16.7 MB/19.3 MB 86%]                                                                                                               671 kB/s 16s68% [8 Packages 16.7 MB/19.3 MB 86%]                                                                                                               671 kB/s 16s70% [8 Packages 17.3 MB/19.3 MB 89%]                                                                                                               671 kB/s 15s71% [8 Packages 17.7 MB/19.3 MB 92%]                                                                                                               835 kB/s 12s71% [8 Packages 17.8 MB/19.3 MB 92%]                                                                                                               835 kB/s 11s73% [8 Packages 18.6 MB/19.3 MB 97%]                                                                                                               835 kB/s 10s73% [8 Packages 18.9 MB/19.3 MB 98%]                                                                                                               835 kB/s 10s74% [Waiting for headers]                                                                                                                          835 kB/s 10s                                                                                                                                                               Get:11 http://archive.ubuntu.com/ubuntu noble/multiverse amd64 Packages [331 kB]
+74% [11 Packages 18.3 kB/331 kB 6%]                                                                                                                835 kB/s 10s74% [8 Packages store 0 B] [11 Packages 18.3 kB/331 kB 6%]                                                                                         835 kB/s 10s75% [11 Packages 18.3 kB/331 kB 6%]                                                                                                                835 kB/s 10s76% [Waiting for headers]                                                                                                                           835 kB/s 9s                                                                                                                                                               Get:12 http://archive.ubuntu.com/ubuntu noble/main amd64 Packages [1808 kB]
+76% [12 Packages 16.1 kB/1808 kB 1%]                                                                                                                835 kB/s 9s76% [11 Packages store 0 B] [12 Packages 16.1 kB/1808 kB 1%]                                                                                        835 kB/s 9s77% [12 Packages 107 kB/1808 kB 6%]                                                                                                                 835 kB/s 9s78% [12 Packages 739 kB/1808 kB 41%]                                                                                                                835 kB/s 8s78% [12 Packages 888 kB/1808 kB 49%]                                                                                                                835 kB/s 8s80% [12 Packages 1413 kB/1808 kB 78%]                                                                                                               835 kB/s 8s81% [Waiting for headers]                                                                                                                           835 kB/s 7s                                                                                                                                                               Get:13 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1742 kB]
+81% [13 Packages 31.9 kB/1742 kB 2%]                                                                                                                835 kB/s 7s81% [12 Packages store 0 B] [13 Packages 31.9 kB/1742 kB 2%]                                                                                        835 kB/s 7s81% [13 Packages 139 kB/1742 kB 8%]                                                                                                                 835 kB/s 7s83% [13 Packages 675 kB/1742 kB 39%]                                                                                                                835 kB/s 6s84% [13 Packages 1080 kB/1742 kB 62%]                                                                                                               835 kB/s 6s85% [13 Packages 1436 kB/1742 kB 82%]                                                                                                               835 kB/s 5s85% [13 Packages 1618 kB/1742 kB 93%]                                                                                                               865 kB/s 5s85% [Waiting for headers]                                                                                                                           865 kB/s 5s                                                                                                                                                               Get:14 http://archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Packages [61.7 kB]
+85% [14 Packages 32.4 kB/61.7 kB 52%]                                                                                                               865 kB/s 5s85% [13 Packages store 0 B] [14 Packages 43.9 kB/61.7 kB 71%]                                                                                       865 kB/s 5s85% [13 Packages store 0 B] [Waiting for headers]                                                                                                   865 kB/s 5s86% [Connecting to archive.ubuntu.com (91.189.92.23)]                                                                                               865 kB/s 5s86% [14 Packages store 0 B] [Connecting to archive.ubuntu.com (91.189.92.23)]                                                                       865 kB/s 5s87% [Connecting to archive.ubuntu.com (91.189.92.23)]                                                                                               865 kB/s 5s87% [Waiting for headers]                                                                                                                           865 kB/s 5s                                                                                                                                                               Get:15 http://archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [2173 kB]
+87% [15 Packages 2671 B/2173 kB 0%]                                                                                                                 865 kB/s 5s87% [15 Packages 37.6 kB/2173 kB 2%]                                                                                                                865 kB/s 5s87% [15 Packages 112 kB/2173 kB 5%]                                                                                                                 865 kB/s 5s87% [15 Packages 190 kB/2173 kB 9%]                                                                                                                 865 kB/s 4s87% [15 Packages 292 kB/2173 kB 13%]                                                                                                                865 kB/s 4s87% [15 Packages 327 kB/2173 kB 15%]                                                                                                                865 kB/s 4s88% [15 Packages 461 kB/2173 kB 21%]                                                                                                                865 kB/s 4s88% [15 Packages 554 kB/2173 kB 25%]                                                                                                                865 kB/s 4s88% [15 Packages 595 kB/2173 kB 27%]                                                                                                                865 kB/s 4s88% [15 Packages 726 kB/2173 kB 33%]                                                                                                                865 kB/s 4s88% [15 Packages 825 kB/2173 kB 38%]                                                                                                                865 kB/s 4s89% [15 Packages 959 kB/2173 kB 44%]                                                                                                               183 kB/s 19s89% [15 Packages 1067 kB/2173 kB 49%]                                                                                                              183 kB/s 18s90% [15 Packages 1332 kB/2173 kB 61%]                                                                                                              183 kB/s 17s90% [15 Packages 1425 kB/2173 kB 66%]                                                                                                              183 kB/s 16s90% [15 Packages 1606 kB/2173 kB 74%]                                                                                                              183 kB/s 15s91% [15 Packages 1830 kB/2173 kB 84%]                                                                                                              183 kB/s 14s91% [15 Packages 2043 kB/2173 kB 94%]                                                                                                              183 kB/s 13s92% [Working]                                                                                                                                      183 kB/s 12s92% [15 Packages store 0 B] [Waiting for headers]                                                                                                  183 kB/s 12s92% [Waiting for headers]                                                                                                                          183 kB/s 12s                                                                                                                                                               Get:16 http://archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [2240 kB]
+92% [16 Packages 2671 B/2240 kB 0%]                                                                                                                183 kB/s 12s93% [16 Packages 122 kB/2240 kB 5%]                                                                                                                183 kB/s 12s93% [16 Packages 220 kB/2240 kB 10%]                                                                                                               183 kB/s 11s93% [16 Packages 518 kB/2240 kB 23%]                                                                                                                183 kB/s 9s94% [16 Packages 735 kB/2240 kB 33%]                                                                                                                183 kB/s 8s94% [16 Packages 735 kB/2240 kB 33%]                                                                                                                322 kB/s 4s95% [16 Packages 1204 kB/2240 kB 54%]                                                                                                               322 kB/s 3s95% [16 Packages 1342 kB/2240 kB 60%]                                                                                                               322 kB/s 3s96% [16 Packages 1485 kB/2240 kB 66%]                                                                                                               322 kB/s 2s96% [16 Packages 1566 kB/2240 kB 70%]                                                                                                               322 kB/s 2s97% [16 Packages 2015 kB/2240 kB 90%]                                                                                                               322 kB/s 0s98% [Working]                                                                                                                                       322 kB/s 0s98% [16 Packages store 0 B] [Waiting for headers]                                                                                                   322 kB/s 0s98% [Waiting for headers]                                                                                                                           322 kB/s 0s                                                                                                                                                               Get:17 http://archive.ubuntu.com/ubuntu noble-backports/universe amd64 Packages [36.0 kB]
+98% [17 Packages 2675 B/36.0 kB 7%]                                                                                                                 322 kB/s 0s98% [Working]                                                                                                                                       322 kB/s 0s98% [17 Packages store 0 B] [Waiting for headers]                                                                                                   322 kB/s 0s99% [Waiting for headers]                                                                                                                           322 kB/s 0s                                                                                                                                                               Get:18 http://archive.ubuntu.com/ubuntu noble-backports/main amd64 Packages [49.0 kB]
+99% [18 Packages 2675 B/49.0 kB 5%]                                                                                                                 322 kB/s 0s99% [Working]                                                                                                                                       322 kB/s 0s99% [18 Packages store 0 B] [Waiting for headers]                                                                                                   322 kB/s 0s99% [Waiting for headers]                                                                                                                           322 kB/s 0s                                                                                                                                                               Get:19 http://archive.ubuntu.com/ubuntu noble-backports/multiverse amd64 Packages [669 B]
+99% [19 Packages 669 B/669 B 100%]                                                                                                                  322 kB/s 0s99% [Working]                                                                                                                                       322 kB/s 0s99% [19 Packages store 0 B]                                                                                                                         322 kB/s 0s100% [Working]                                                                                                                                      322 kB/s 0s                                                                                                                                                               Fetched 33.7 MB in 59s (569 kB/s)
+Reading package lists... 0%Reading package lists... 0%Reading package lists... 0%Reading package lists... 5%Reading package lists... 5%Reading package lists... 58%Reading package lists... 58%Reading package lists... 59%Reading package lists... 59%Reading package lists... 60%Reading package lists... 60%Reading package lists... 65%Reading package lists... 65%Reading package lists... 73%Reading package lists... 73%Reading package lists... 81%Reading package lists... 81%Reading package lists... 81%Reading package lists... 81%Reading package lists... 81%Reading package lists... 81%Reading package lists... 82%Reading package lists... 82%Reading package lists... 82%Reading package lists... 82%Reading package lists... 86%Reading package lists... 86%Reading package lists... 92%Reading package lists... 92%Reading package lists... 99%Reading package lists... 99%Reading package lists... 99%Reading package lists... 99%Reading package lists... Done
+Reading package lists... 0%Reading package lists... 0%Reading package lists... 0%Reading package lists... 5%Reading package lists... 5%Reading package lists... 58%Reading package lists... 58%Reading package lists... 59%Reading package lists... 59%Reading package lists... 60%Reading package lists... 60%Reading package lists... 65%Reading package lists... 65%Reading package lists... 73%Reading package lists... 73%Reading package lists... 81%Reading package lists... 81%Reading package lists... 81%Reading package lists... 81%Reading package lists... 81%Reading package lists... 81%Reading package lists... 82%Reading package lists... 82%Reading package lists... 82%Reading package lists... 82%Reading package lists... 86%Reading package lists... 86%Reading package lists... 92%Reading package lists... 92%Reading package lists... 99%Reading package lists... 99%Reading package lists... 99%Reading package lists... 99%Reading package lists... Done
+Building dependency tree... 0%Building dependency tree... 0%Building dependency tree... 50%Building dependency tree... 50%Building dependency tree... 96%Building dependency tree... Done
+Reading state information... 0% Reading state information... 98%Reading state information... Done
+The following additional packages will be installed:
+  adduser ca-certificates git-man krb5-locales less libbrotli1 libbsd0 libcbor0.10 libcurl3t64-gnutls libedit2 liberror-perl libexpat1 libfido2-1
+  libgdbm-compat4t64 libgdbm6t64 libgssapi-krb5-2 libk5crypto3 libkeyutils1 libkrb5-3 libkrb5support0 libldap-common libldap2 libnghttp2-14 libperl5.38t64
+  libpsl5t64 librtmp1 libsasl2-2 libsasl2-modules libsasl2-modules-db libssh-4 libssl3t64 libx11-6 libx11-data libxau6 libxcb1 libxdmcp6 libxext6 libxmuu1
+  netbase openssh-client openssl patch perl perl-base perl-modules-5.38 publicsuffix xauth
+Suggested packages:
+  liblocale-gettext-perl cron quota ecryptfs-utils gettext-base git-daemon-run | git-daemon-sysvinit git-doc git-email git-gui gitk gitweb git-cvs
+  git-mediawiki git-svn gdbm-l10n krb5-doc krb5-user libsasl2-modules-gssapi-mit | libsasl2-modules-gssapi-heimdal libsasl2-modules-ldap libsasl2-modules-otp
+  libsasl2-modules-sql keychain libpam-ssh monkeysphere ssh-askpass ed diffutils-doc perl-doc libterm-readline-gnu-perl | libterm-readline-perl-perl make
+  libtap-harness-archive-perl
+The following NEW packages will be installed:
+  adduser ca-certificates git git-man krb5-locales less libbrotli1 libbsd0 libcbor0.10 libcurl3t64-gnutls libedit2 liberror-perl libexpat1 libfido2-1
+  libgdbm-compat4t64 libgdbm6t64 libgssapi-krb5-2 libk5crypto3 libkeyutils1 libkrb5-3 libkrb5support0 libldap-common libldap2 libnghttp2-14 libperl5.38t64
+  libpsl5t64 librtmp1 libsasl2-2 libsasl2-modules libsasl2-modules-db libssh-4 libx11-6 libx11-data libxau6 libxcb1 libxdmcp6 libxext6 libxmuu1 netbase
+  openssh-client openssl patch perl perl-modules-5.38 publicsuffix xauth
+The following packages will be upgraded:
+  libssl3t64 perl-base
+2 upgraded, 46 newly installed, 0 to remove and 46 not upgraded.
+Need to get 22.7 MB of archives.
+After this operation, 92.7 MB of additional disk space will be used.
+0% [Working]0% [Waiting for headers]                        Get:1 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 perl-base amd64 5.38.2-3.2ubuntu0.6 [1826 kB]
+0% [1 perl-base 8192 B/1826 kB 0%]0% [1 perl-base 34.6 kB/1826 kB 2%]0% [1 perl-base 85.6 kB/1826 kB 5%]                                   0% [1 perl-base 128 kB/1826 kB 7%]1% [1 perl-base 225 kB/1826 kB 12%]1% [1 perl-base 346 kB/1826 kB 19%]1% [1 perl-base 374 kB/1826 kB 20%]2% [1 perl-base 576 kB/1826 kB 32%]3% [1 perl-base 739 kB/1826 kB 40%]3% [1 perl-base 977 kB/1826 kB 53%]4% [1 perl-base 1111 kB/1826 kB 61%]4% [1 perl-base 1215 kB/1826 kB 67%]                                                                                                          201 kB/s 1min 46s5% [1 perl-base 1412 kB/1826 kB 77%]                                                                                                          201 kB/s 1min 45s6% [1 perl-base 1777 kB/1826 kB 97%]                                                                                                          201 kB/s 1min 44s7% [Working]                                                                                                                                  201 kB/s 1min 43s                                                                                                                                                               Get:2 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 perl-modules-5.38 all 5.38.2-3.2ubuntu0.6 [3110 kB]
+7% [2 perl-modules-5.38 2618 B/3110 kB 0%]                                                                                                    201 kB/s 1min 43s7% [2 perl-modules-5.38 119 kB/3110 kB 4%]                                                                                                    201 kB/s 1min 43s8% [2 perl-modules-5.38 377 kB/3110 kB 12%]                                                                                                   201 kB/s 1min 41s9% [2 perl-modules-5.38 672 kB/3110 kB 22%]                                                                                                   201 kB/s 1min 40s10% [2 perl-modules-5.38 907 kB/3110 kB 29%]                                                                                                  201 kB/s 1min 39s10% [2 perl-modules-5.38 914 kB/3110 kB 29%]                                                                                                  201 kB/s 1min 39s12% [2 perl-modules-5.38 1441 kB/3110 kB 46%]                                                                                                 201 kB/s 1min 36s12% [2 perl-modules-5.38 1467 kB/3110 kB 47%]                                                                                                 201 kB/s 1min 36s13% [2 perl-modules-5.38 1676 kB/3110 kB 54%]                                                                                                 201 kB/s 1min 35s13% [2 perl-modules-5.38 1763 kB/3110 kB 57%]                                                                                                      394 kB/s 48s15% [2 perl-modules-5.38 2273 kB/3110 kB 73%]                                                                                                      394 kB/s 47s15% [2 perl-modules-5.38 2273 kB/3110 kB 73%]                                                                                                      394 kB/s 47s16% [2 perl-modules-5.38 2547 kB/3110 kB 82%]                                                                                                      394 kB/s 46s17% [2 perl-modules-5.38 2839 kB/3110 kB 91%]                                                                                                      394 kB/s 45s18% [Waiting for headers]                                                                                                                          394 kB/s 44s                                                                                                                                                               Get:3 http://archive.ubuntu.com/ubuntu noble/main amd64 libgdbm6t64 amd64 1.23-5.1build1 [34.4 kB]
+18% [3 libgdbm6t64 29.2 kB/34.4 kB 85%]                                                                                                            394 kB/s 44s19% [Waiting for headers]                                                                                                                          394 kB/s 44s                                                                                                                                                               Get:4 http://archive.ubuntu.com/ubuntu noble/main amd64 libgdbm-compat4t64 amd64 1.23-5.1build1 [6710 B]
+19% [4 libgdbm-compat4t64 6710 B/6710 B 100%]                                                                                                      394 kB/s 44s19% [Waiting for headers]                                                                                                                          394 kB/s 44s                                                                                                                                                               Get:5 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libperl5.38t64 amd64 5.38.2-3.2ubuntu0.6 [4864 kB]
+19% [5 libperl5.38t64 6411 B/4864 kB 0%]                                                                                                           394 kB/s 44s20% [5 libperl5.38t64 235 kB/4864 kB 5%]                                                                                                           394 kB/s 44s22% [5 libperl5.38t64 672 kB/4864 kB 14%]                                                                                                          394 kB/s 43s23% [5 libperl5.38t64 980 kB/4864 kB 20%]                                                                                                          394 kB/s 42s23% [5 libperl5.38t64 1060 kB/4864 kB 22%]                                                                                                         394 kB/s 42s25% [5 libperl5.38t64 1525 kB/4864 kB 31%]                                                                                                         394 kB/s 41s26% [5 libperl5.38t64 1800 kB/4864 kB 37%]                                                                                                         394 kB/s 40s27% [5 libperl5.38t64 2125 kB/4864 kB 44%]                                                                                                         394 kB/s 39s29% [5 libperl5.38t64 2761 kB/4864 kB 57%]                                                                                                         671 kB/s 22s30% [5 libperl5.38t64 2937 kB/4864 kB 60%]                                                                                                         671 kB/s 21s31% [5 libperl5.38t64 3265 kB/4864 kB 67%]                                                                                                         671 kB/s 21s32% [5 libperl5.38t64 3674 kB/4864 kB 76%]                                                                                                         671 kB/s 20s35% [5 libperl5.38t64 4334 kB/4864 kB 89%]                                                                                                         671 kB/s 19s35% [5 libperl5.38t64 4577 kB/4864 kB 94%]                                                                                                         671 kB/s 19s37% [Waiting for headers]                                                                                                                          671 kB/s 19s                                                                                                                                                               Get:6 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 perl amd64 5.38.2-3.2ubuntu0.6 [231 kB]
+37% [6 perl 47.4 kB/231 kB 20%]                                                                                                                    671 kB/s 19s38% [Waiting for headers]                                                                                                                          671 kB/s 18s                                                                                                                                                               Get:7 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libssl3t64 amd64 3.0.13-0ubuntu3.16 [1945 kB]
+38% [7 libssl3t64 49.6 kB/1945 kB 3%]                                                                                                              671 kB/s 18s39% [7 libssl3t64 176 kB/1945 kB 9%]                                                                                                               671 kB/s 18s39% [7 libssl3t64 344 kB/1945 kB 18%]                                                                                                              671 kB/s 18s40% [7 libssl3t64 676 kB/1945 kB 35%]                                                                                                              671 kB/s 17s43% [7 libssl3t64 1364 kB/1945 kB 70%]                                                                                                             671 kB/s 16s44% [7 libssl3t64 1618 kB/1945 kB 83%]                                                                                                             671 kB/s 16s45% [Waiting for headers]                                                                                                                          671 kB/s 15s                                                                                                                                                               Get:8 http://archive.ubuntu.com/ubuntu noble/main amd64 adduser all 3.137ubuntu1 [101 kB]
+45% [8 adduser 8552 B/101 kB 8%]                                                                                                                   671 kB/s 15s46% [8 adduser 53.7 kB/101 kB 53%]                                                                                                                 669 kB/s 15s46% [Waiting for headers]                                                                                                                          669 kB/s 15s                                                                                                                                                               Get:9 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 openssl amd64 3.0.13-0ubuntu3.16 [1004 kB]
+46% [9 openssl 18.0 kB/1004 kB 2%]                                                                                                                 669 kB/s 15s49% [9 openssl 846 kB/1004 kB 84%]                                                                                                                 669 kB/s 14s50% [Waiting for headers]                                                                                                                          669 kB/s 14s                                                                                                                                                               Get:10 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 ca-certificates all 20260816ubuntu0.24.04.1 [139 kB]
+50% [10 ca-certificates 4368 B/139 kB 3%]                                                                                                          669 kB/s 14s51% [Waiting for headers]                                                                                                                          669 kB/s 14s                                                                                                                                                               Get:11 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 krb5-locales all 1.20.1-6ubuntu2.10 [15.3 kB]
+51% [11 krb5-locales 9338 B/15.3 kB 61%]                                                                                                           669 kB/s 14s51% [Waiting for headers]                                                                                                                          669 kB/s 14s                                                                                                                                                               Get:12 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 less amd64 590-2ubuntu2.1 [142 kB]
+51% [12 less 2234 B/142 kB 2%]                                                                                                                     669 kB/s 14s52% [Waiting for headers]                                                                                                                          669 kB/s 13s                                                                                                                                                               Get:13 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libbsd0 amd64 0.12.1-1build1.1 [41.2 kB]
+52% [13 libbsd0 5182 B/41.2 kB 13%]                                                                                                                669 kB/s 13s53% [Waiting for headers]                                                                                                                          669 kB/s 13s                                                                                                                                                               Get:14 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libexpat1 amd64 2.6.1-2ubuntu0.6 [98.9 kB]
+53% [14 libexpat1 3521 B/98.9 kB 4%]                                                                                                               669 kB/s 13s54% [Waiting for headers]                                                                                                                          669 kB/s 13s                                                                                                                                                               Get:15 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libkrb5support0 amd64 1.20.1-6ubuntu2.10 [34.9 kB]
+54% [15 libkrb5support0 9695 B/34.9 kB 28%]                                                                                                        669 kB/s 13s54% [Working]                                                                                                                                      669 kB/s 13s                                                                                                                                                               Get:16 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libk5crypto3 amd64 1.20.1-6ubuntu2.10 [81.9 kB]
+54% [16 libk5crypto3 5810 B/81.9 kB 7%]                                                                                                            669 kB/s 13s55% [Waiting for headers]                                                                                                                          669 kB/s 13s                                                                                                                                                               Get:17 http://archive.ubuntu.com/ubuntu noble/main amd64 libkeyutils1 amd64 1.6.3-3build1 [9490 B]
+55% [17 libkeyutils1 9490 B/9490 B 100%]                                                                                                           669 kB/s 13s55% [Working]                                                                                                                                      669 kB/s 13s                                                                                                                                                               Get:18 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libkrb5-3 amd64 1.20.1-6ubuntu2.10 [348 kB]
+55% [18 libkrb5-3 10.7 kB/348 kB 3%]                                                                                                               669 kB/s 13s57% [Waiting for headers]                                                                                                                          669 kB/s 12s                                                                                                                                                               Get:19 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libgssapi-krb5-2 amd64 1.20.1-6ubuntu2.10 [143 kB]
+57% [19 libgssapi-krb5-2 1155 B/143 kB 1%]                                                                                                         669 kB/s 12s57% [19 libgssapi-krb5-2 101 kB/143 kB 71%]                                                                                                        669 kB/s 12s58% [Waiting for headers]                                                                                                                          669 kB/s 12s                                                                                                                                                               Get:20 http://archive.ubuntu.com/ubuntu noble/main amd64 netbase all 6.4 [13.1 kB]
+58% [20 netbase 13.1 kB/13.1 kB 100%]                                                                                                              669 kB/s 12s58% [Working]                                                                                                                                      669 kB/s 12s                                                                                                                                                               Get:21 http://archive.ubuntu.com/ubuntu noble/main amd64 libcbor0.10 amd64 0.10.2-1.2ubuntu2 [25.8 kB]
+58% [21 libcbor0.10 9766 B/25.8 kB 38%]                                                                                                            669 kB/s 12s59% [Waiting for headers]                                                                                                                          669 kB/s 12s                                                                                                                                                               Get:22 http://archive.ubuntu.com/ubuntu noble/main amd64 libedit2 amd64 3.1-20230828-1build1 [97.6 kB]
+59% [22 libedit2 9191 B/97.6 kB 9%]                                                                                                                669 kB/s 12s60% [Waiting for headers]                                                                                                                          669 kB/s 12s                                                                                                                                                               Get:23 http://archive.ubuntu.com/ubuntu noble/main amd64 libfido2-1 amd64 1.14.0-1build3 [83.5 kB]
+60% [23 libfido2-1 16.5 kB/83.5 kB 20%]                                                                                                            669 kB/s 12s60% [Waiting for headers]                                                                                                                          669 kB/s 12s                                                                                                                                                               Get:24 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libnghttp2-14 amd64 1.59.0-1ubuntu0.4 [74.6 kB]
+61% [24 libnghttp2-14 33.5 kB/74.6 kB 45%]                                                                                                         669 kB/s 12s61% [Waiting for headers]                                                                                                                          669 kB/s 12s                                                                                                                                                               Get:25 http://archive.ubuntu.com/ubuntu noble/main amd64 libpsl5t64 amd64 0.21.2-1.1build1 [57.1 kB]
+61% [25 libpsl5t64 19.9 kB/57.1 kB 35%]                                                                                                            669 kB/s 12s62% [Waiting for headers]                                                                                                                          669 kB/s 12s                                                                                                                                                               Get:26 http://archive.ubuntu.com/ubuntu noble/main amd64 libxau6 amd64 1:1.0.9-1build6 [7160 B]
+62% [26 libxau6 3790 B/7160 B 53%]                                                                                                                 669 kB/s 12s62% [Waiting for headers]                                                                                                                          669 kB/s 12s                                                                                                                                                               Get:27 http://archive.ubuntu.com/ubuntu noble/main amd64 libxdmcp6 amd64 1:1.1.3-0ubuntu6 [10.3 kB]
+62% [27 libxdmcp6 10.3 kB/10.3 kB 100%]                                                                                                            669 kB/s 12s63% [Working]                                                                                                                                      669 kB/s 12s                                                                                                                                                               Get:28 http://archive.ubuntu.com/ubuntu noble/main amd64 libxcb1 amd64 1.15-1ubuntu2 [47.7 kB]
+63% [28 libxcb1 104 B/47.7 kB 0%]                                                                                                                  669 kB/s 12s63% [Waiting for headers]                                                                                                                          669 kB/s 12s                                                                                                                                                               Get:29 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libx11-data all 2:1.8.7-1ubuntu0.1 [116 kB]
+63% [29 libx11-data 10.6 kB/116 kB 9%]                                                                                                             669 kB/s 12s63% [29 libx11-data 12.8 kB/116 kB 11%]                                                                                                            669 kB/s 12s64% [Waiting for headers]                                                                                                                          669 kB/s 11s                                                                                                                                                               Get:30 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libx11-6 amd64 2:1.8.7-1ubuntu0.1 [653 kB]
+64% [30 libx11-6 29.5 kB/653 kB 5%]                                                                                                                669 kB/s 11s65% [30 libx11-6 324 kB/653 kB 50%]                                                                                                                669 kB/s 11s67% [Waiting for headers]                                                                                                                          669 kB/s 10s                                                                                                                                                               Get:31 http://archive.ubuntu.com/ubuntu noble/main amd64 libxext6 amd64 2:1.3.4-1build2 [30.4 kB]
+67% [31 libxext6 30.4 kB/30.4 kB 100%]                                                                                                             669 kB/s 10s67% [Working]                                                                                                                                      669 kB/s 10s                                                                                                                                                               Get:32 http://archive.ubuntu.com/ubuntu noble/main amd64 libxmuu1 amd64 2:1.1.3-3build2 [8958 B]
+67% [32 libxmuu1 5671 B/8958 B 63%]                                                                                                                669 kB/s 10s68% [Waiting for headers]                                                                                                                          669 kB/s 10s                                                                                                                                                               Get:33 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 openssh-client amd64 1:9.6p1-3ubuntu13.20 [909 kB]
+68% [33 openssh-client 19.4 kB/909 kB 2%]                                                                                                          669 kB/s 10s70% [33 openssh-client 586 kB/909 kB 64%]                                                                                                           669 kB/s 9s71% [Waiting for headers]                                                                                                                           669 kB/s 9s                                                                                                                                                               Get:34 http://archive.ubuntu.com/ubuntu noble/main amd64 publicsuffix all 20231001.0357-0.1 [129 kB]
+71% [34 publicsuffix 23.0 kB/129 kB 18%]                                                                                                            669 kB/s 9s72% [Waiting for headers]                                                                                                                           669 kB/s 9s                                                                                                                                                               Get:35 http://archive.ubuntu.com/ubuntu noble/main amd64 xauth amd64 1:1.1.2-1build1 [25.6 kB]
+72% [35 xauth 7632 B/25.6 kB 30%]                                                                                                                   669 kB/s 9s73% [Waiting for headers]                                                                                                                           669 kB/s 9s                                                                                                                                                               Get:36 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libbrotli1 amd64 1.1.0-2ubuntu0.1 [331 kB]
+73% [36 libbrotli1 8834 B/331 kB 3%]                                                                                                                669 kB/s 9s74% [Waiting for headers]                                                                                                                           669 kB/s 8s                                                                                                                                                               Get:37 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libsasl2-modules-db amd64 2.1.28+dfsg1-5ubuntu3.1 [20.4 kB]
+74% [37 libsasl2-modules-db 7030 B/20.4 kB 35%]                                                                                                     669 kB/s 8s75% [Waiting for headers]                                                                                                                           669 kB/s 8s                                                                                                                                                               Get:38 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libsasl2-2 amd64 2.1.28+dfsg1-5ubuntu3.1 [53.2 kB]
+75% [38 libsasl2-2 4954 B/53.2 kB 9%]                                                                                                               669 kB/s 8s75% [Waiting for headers]                                                                                                                           669 kB/s 8s                                                                                                                                                               Get:39 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libldap2 amd64 2.6.10+dfsg-0ubuntu0.24.04.1 [198 kB]
+75% [39 libldap2 6956 B/198 kB 4%]                                                                                                                  669 kB/s 8s76% [Waiting for headers]                                                                                                                           669 kB/s 8s                                                                                                                                                               Get:40 http://archive.ubuntu.com/ubuntu noble/main amd64 librtmp1 amd64 2.4+20151223.gitfa8646d.1-2build7 [56.3 kB]
+77% [40 librtmp1 22.0 kB/56.3 kB 39%]                                                                                                               669 kB/s 8s77% [Waiting for headers]                                                                                                                           669 kB/s 8s                                                                                                                                                               Get:41 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libssh-4 amd64 0.10.6-2ubuntu0.5 [191 kB]
+77% [41 libssh-4 2390 B/191 kB 1%]                                                                                                                  669 kB/s 8s78% [Waiting for headers]                                                                                                                           669 kB/s 8s                                                                                                                                                               Get:42 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libcurl3t64-gnutls amd64 8.5.0-2ubuntu10.16 [337 kB]
+78% [42 libcurl3t64-gnutls 7330 B/337 kB 2%]                                                                                                        669 kB/s 7s79% [42 libcurl3t64-gnutls 278 kB/337 kB 83%]                                                                                                       669 kB/s 7s80% [Waiting for headers]                                                                                                                           923 kB/s 5s                                                                                                                                                               Get:43 http://archive.ubuntu.com/ubuntu noble/main amd64 liberror-perl all 0.17029-2 [25.6 kB]
+80% [43 liberror-perl 21.0 kB/25.6 kB 82%]                                                                                                          923 kB/s 5s80% [Waiting for headers]                                                                                                                           923 kB/s 5s                                                                                                                                                               Get:44 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 git-man all 1:2.43.0-1ubuntu7.4 [1101 kB]
+80% [44 git-man 25.0 kB/1101 kB 2%]                                                                                                                 923 kB/s 5s85% [Waiting for headers]                                                                                                                           923 kB/s 4s                                                                                                                                                               Get:45 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 git amd64 1:2.43.0-1ubuntu7.4 [3681 kB]
+85% [45 git 10.6 kB/3681 kB 0%]                                                                                                                     923 kB/s 4s85% [45 git 218 kB/3681 kB 6%]                                                                                                                      923 kB/s 3s88% [45 git 976 kB/3681 kB 27%]                                                                                                                     923 kB/s 3s90% [45 git 1416 kB/3681 kB 38%]                                                                                                                    923 kB/s 2s93% [45 git 2253 kB/3681 kB 61%]                                                                                                                    923 kB/s 1s94% [45 git 2643 kB/3681 kB 72%]                                                                                                                    923 kB/s 1s96% [45 git 3170 kB/3681 kB 86%]                                                                                                                    923 kB/s 0s96% [45 git 3194 kB/3681 kB 87%]                                                                                                                    923 kB/s 0s98% [Waiting for headers]                                                                                                                           923 kB/s 0s                                                                                                                                                               Get:46 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libldap-common all 2.6.10+dfsg-0ubuntu0.24.04.1 [32.9 kB]
+98% [46 libldap-common 32.9 kB/32.9 kB 100%]                                                                                                        923 kB/s 0s99% [Waiting for headers]                                                                                                                           923 kB/s 0s                                                                                                                                                               Get:47 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libsasl2-modules amd64 2.1.28+dfsg1-5ubuntu3.1 [69.9 kB]
+99% [47 libsasl2-modules 18.1 kB/69.9 kB 26%]                                                                                                       923 kB/s 0s99% [Waiting for headers]                                                                                                                           923 kB/s 0s                                                                                                                                                               Get:48 http://archive.ubuntu.com/ubuntu noble/main amd64 patch amd64 2.7.6-7build3 [104 kB]
+99% [48 patch 30.4 kB/104 kB 29%]                                                                                                                   923 kB/s 0s100% [Working]                                                                                                                                      923 kB/s 0s                                                                                                                                                               Fetched 22.7 MB in 35s (648 kB/s)
+debconf: delaying package configuration, since apt-utils is not installed
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 4381 files and directories currently installed.)
+Preparing to unpack .../perl-base_5.38.2-3.2ubuntu0.6_amd64.deb ...
+Unpacking perl-base (5.38.2-3.2ubuntu0.6) over (5.38.2-3.2ubuntu0.2) ...
+Setting up perl-base (5.38.2-3.2ubuntu0.6) ...
+Selecting previously unselected package perl-modules-5.38.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 4381 files and directories currently installed.)
+Preparing to unpack .../0-perl-modules-5.38_5.38.2-3.2ubuntu0.6_all.deb ...
+Unpacking perl-modules-5.38 (5.38.2-3.2ubuntu0.6) ...
+Selecting previously unselected package libgdbm6t64:amd64.
+Preparing to unpack .../1-libgdbm6t64_1.23-5.1build1_amd64.deb ...
+Unpacking libgdbm6t64:amd64 (1.23-5.1build1) ...
+Selecting previously unselected package libgdbm-compat4t64:amd64.
+Preparing to unpack .../2-libgdbm-compat4t64_1.23-5.1build1_amd64.deb ...
+Unpacking libgdbm-compat4t64:amd64 (1.23-5.1build1) ...
+Selecting previously unselected package libperl5.38t64:amd64.
+Preparing to unpack .../3-libperl5.38t64_5.38.2-3.2ubuntu0.6_amd64.deb ...
+Unpacking libperl5.38t64:amd64 (5.38.2-3.2ubuntu0.6) ...
+Selecting previously unselected package perl.
+Preparing to unpack .../4-perl_5.38.2-3.2ubuntu0.6_amd64.deb ...
+Unpacking perl (5.38.2-3.2ubuntu0.6) ...
+Preparing to unpack .../5-libssl3t64_3.0.13-0ubuntu3.16_amd64.deb ...
+Unpacking libssl3t64:amd64 (3.0.13-0ubuntu3.16) over (3.0.13-0ubuntu3.6) ...
+Setting up libssl3t64:amd64 (3.0.13-0ubuntu3.16) ...
+Selecting previously unselected package adduser.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 6393 files and directories currently installed.)
+Preparing to unpack .../adduser_3.137ubuntu1_all.deb ...
+Unpacking adduser (3.137ubuntu1) ...
+Setting up adduser (3.137ubuntu1) ...
+Selecting previously unselected package openssl.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 6441 files and directories currently installed.)
+Preparing to unpack .../00-openssl_3.0.13-0ubuntu3.16_amd64.deb ...
+Unpacking openssl (3.0.13-0ubuntu3.16) ...
+Selecting previously unselected package ca-certificates.
+Preparing to unpack .../01-ca-certificates_20260816ubuntu0.24.04.1_all.deb ...
+Unpacking ca-certificates (20260816ubuntu0.24.04.1) ...
+Selecting previously unselected package krb5-locales.
+Preparing to unpack .../02-krb5-locales_1.20.1-6ubuntu2.10_all.deb ...
+Unpacking krb5-locales (1.20.1-6ubuntu2.10) ...
+Selecting previously unselected package less.
+Preparing to unpack .../03-less_590-2ubuntu2.1_amd64.deb ...
+Unpacking less (590-2ubuntu2.1) ...
+Selecting previously unselected package libbsd0:amd64.
+Preparing to unpack .../04-libbsd0_0.12.1-1build1.1_amd64.deb ...
+Unpacking libbsd0:amd64 (0.12.1-1build1.1) ...
+Selecting previously unselected package libexpat1:amd64.
+Preparing to unpack .../05-libexpat1_2.6.1-2ubuntu0.6_amd64.deb ...
+Unpacking libexpat1:amd64 (2.6.1-2ubuntu0.6) ...
+Selecting previously unselected package libkrb5support0:amd64.
+Preparing to unpack .../06-libkrb5support0_1.20.1-6ubuntu2.10_amd64.deb ...
+Unpacking libkrb5support0:amd64 (1.20.1-6ubuntu2.10) ...
+Selecting previously unselected package libk5crypto3:amd64.
+Preparing to unpack .../07-libk5crypto3_1.20.1-6ubuntu2.10_amd64.deb ...
+Unpacking libk5crypto3:amd64 (1.20.1-6ubuntu2.10) ...
+Selecting previously unselected package libkeyutils1:amd64.
+Preparing to unpack .../08-libkeyutils1_1.6.3-3build1_amd64.deb ...
+Unpacking libkeyutils1:amd64 (1.6.3-3build1) ...
+Selecting previously unselected package libkrb5-3:amd64.
+Preparing to unpack .../09-libkrb5-3_1.20.1-6ubuntu2.10_amd64.deb ...
+Unpacking libkrb5-3:amd64 (1.20.1-6ubuntu2.10) ...
+Selecting previously unselected package libgssapi-krb5-2:amd64.
+Preparing to unpack .../10-libgssapi-krb5-2_1.20.1-6ubuntu2.10_amd64.deb ...
+Unpacking libgssapi-krb5-2:amd64 (1.20.1-6ubuntu2.10) ...
+Selecting previously unselected package netbase.
+Preparing to unpack .../11-netbase_6.4_all.deb ...
+Unpacking netbase (6.4) ...
+Selecting previously unselected package libcbor0.10:amd64.
+Preparing to unpack .../12-libcbor0.10_0.10.2-1.2ubuntu2_amd64.deb ...
+Unpacking libcbor0.10:amd64 (0.10.2-1.2ubuntu2) ...
+Selecting previously unselected package libedit2:amd64.
+Preparing to unpack .../13-libedit2_3.1-20230828-1build1_amd64.deb ...
+Unpacking libedit2:amd64 (3.1-20230828-1build1) ...
+Selecting previously unselected package libfido2-1:amd64.
+Preparing to unpack .../14-libfido2-1_1.14.0-1build3_amd64.deb ...
+Unpacking libfido2-1:amd64 (1.14.0-1build3) ...
+Selecting previously unselected package libnghttp2-14:amd64.
+Preparing to unpack .../15-libnghttp2-14_1.59.0-1ubuntu0.4_amd64.deb ...
+Unpacking libnghttp2-14:amd64 (1.59.0-1ubuntu0.4) ...
+Selecting previously unselected package libpsl5t64:amd64.
+Preparing to unpack .../16-libpsl5t64_0.21.2-1.1build1_amd64.deb ...
+Unpacking libpsl5t64:amd64 (0.21.2-1.1build1) ...
+Selecting previously unselected package libxau6:amd64.
+Preparing to unpack .../17-libxau6_1%3a1.0.9-1build6_amd64.deb ...
+Unpacking libxau6:amd64 (1:1.0.9-1build6) ...
+Selecting previously unselected package libxdmcp6:amd64.
+Preparing to unpack .../18-libxdmcp6_1%3a1.1.3-0ubuntu6_amd64.deb ...
+Unpacking libxdmcp6:amd64 (1:1.1.3-0ubuntu6) ...
+Selecting previously unselected package libxcb1:amd64.
+Preparing to unpack .../19-libxcb1_1.15-1ubuntu2_amd64.deb ...
+Unpacking libxcb1:amd64 (1.15-1ubuntu2) ...
+Selecting previously unselected package libx11-data.
+Preparing to unpack .../20-libx11-data_2%3a1.8.7-1ubuntu0.1_all.deb ...
+Unpacking libx11-data (2:1.8.7-1ubuntu0.1) ...
+Selecting previously unselected package libx11-6:amd64.
+Preparing to unpack .../21-libx11-6_2%3a1.8.7-1ubuntu0.1_amd64.deb ...
+Unpacking libx11-6:amd64 (2:1.8.7-1ubuntu0.1) ...
+Selecting previously unselected package libxext6:amd64.
+Preparing to unpack .../22-libxext6_2%3a1.3.4-1build2_amd64.deb ...
+Unpacking libxext6:amd64 (2:1.3.4-1build2) ...
+Selecting previously unselected package libxmuu1:amd64.
+Preparing to unpack .../23-libxmuu1_2%3a1.1.3-3build2_amd64.deb ...
+Unpacking libxmuu1:amd64 (2:1.1.3-3build2) ...
+Selecting previously unselected package openssh-client.
+Preparing to unpack .../24-openssh-client_1%3a9.6p1-3ubuntu13.20_amd64.deb ...
+Unpacking openssh-client (1:9.6p1-3ubuntu13.20) ...
+Selecting previously unselected package publicsuffix.
+Preparing to unpack .../25-publicsuffix_20231001.0357-0.1_all.deb ...
+Unpacking publicsuffix (20231001.0357-0.1) ...
+Selecting previously unselected package xauth.
+Preparing to unpack .../26-xauth_1%3a1.1.2-1build1_amd64.deb ...
+Unpacking xauth (1:1.1.2-1build1) ...
+Selecting previously unselected package libbrotli1:amd64.
+Preparing to unpack .../27-libbrotli1_1.1.0-2ubuntu0.1_amd64.deb ...
+Unpacking libbrotli1:amd64 (1.1.0-2ubuntu0.1) ...
+Selecting previously unselected package libsasl2-modules-db:amd64.
+Preparing to unpack .../28-libsasl2-modules-db_2.1.28+dfsg1-5ubuntu3.1_amd64.deb ...
+Unpacking libsasl2-modules-db:amd64 (2.1.28+dfsg1-5ubuntu3.1) ...
+Selecting previously unselected package libsasl2-2:amd64.
+Preparing to unpack .../29-libsasl2-2_2.1.28+dfsg1-5ubuntu3.1_amd64.deb ...
+Unpacking libsasl2-2:amd64 (2.1.28+dfsg1-5ubuntu3.1) ...
+Selecting previously unselected package libldap2:amd64.
+Preparing to unpack .../30-libldap2_2.6.10+dfsg-0ubuntu0.24.04.1_amd64.deb ...
+Unpacking libldap2:amd64 (2.6.10+dfsg-0ubuntu0.24.04.1) ...
+Selecting previously unselected package librtmp1:amd64.
+Preparing to unpack .../31-librtmp1_2.4+20151223.gitfa8646d.1-2build7_amd64.deb ...
+Unpacking librtmp1:amd64 (2.4+20151223.gitfa8646d.1-2build7) ...
+Selecting previously unselected package libssh-4:amd64.
+Preparing to unpack .../32-libssh-4_0.10.6-2ubuntu0.5_amd64.deb ...
+Unpacking libssh-4:amd64 (0.10.6-2ubuntu0.5) ...
+Selecting previously unselected package libcurl3t64-gnutls:amd64.
+Preparing to unpack .../33-libcurl3t64-gnutls_8.5.0-2ubuntu10.16_amd64.deb ...
+Unpacking libcurl3t64-gnutls:amd64 (8.5.0-2ubuntu10.16) ...
+Selecting previously unselected package liberror-perl.
+Preparing to unpack .../34-liberror-perl_0.17029-2_all.deb ...
+Unpacking liberror-perl (0.17029-2) ...
+Selecting previously unselected package git-man.
+Preparing to unpack .../35-git-man_1%3a2.43.0-1ubuntu7.4_all.deb ...
+Unpacking git-man (1:2.43.0-1ubuntu7.4) ...
+Selecting previously unselected package git.
+Preparing to unpack .../36-git_1%3a2.43.0-1ubuntu7.4_amd64.deb ...
+Unpacking git (1:2.43.0-1ubuntu7.4) ...
+Selecting previously unselected package libldap-common.
+Preparing to unpack .../37-libldap-common_2.6.10+dfsg-0ubuntu0.24.04.1_all.deb ...
+Unpacking libldap-common (2.6.10+dfsg-0ubuntu0.24.04.1) ...
+Selecting previously unselected package libsasl2-modules:amd64.
+Preparing to unpack .../38-libsasl2-modules_2.1.28+dfsg1-5ubuntu3.1_amd64.deb ...
+Unpacking libsasl2-modules:amd64 (2.1.28+dfsg1-5ubuntu3.1) ...
+Selecting previously unselected package patch.
+Preparing to unpack .../39-patch_2.7.6-7build3_amd64.deb ...
+Unpacking patch (2.7.6-7build3) ...
+Setting up libexpat1:amd64 (2.6.1-2ubuntu0.6) ...
+Setting up libxau6:amd64 (1:1.0.9-1build6) ...
+Setting up libkeyutils1:amd64 (1.6.3-3build1) ...
+Setting up libgdbm6t64:amd64 (1.23-5.1build1) ...
+Setting up libgdbm-compat4t64:amd64 (1.23-5.1build1) ...
+Setting up libcbor0.10:amd64 (0.10.2-1.2ubuntu2) ...
+Setting up libbrotli1:amd64 (1.1.0-2ubuntu0.1) ...
+Setting up libsasl2-modules:amd64 (2.1.28+dfsg1-5ubuntu3.1) ...
+Setting up libpsl5t64:amd64 (0.21.2-1.1build1) ...
+Setting up libnghttp2-14:amd64 (1.59.0-1ubuntu0.4) ...
+Setting up less (590-2ubuntu2.1) ...
+Setting up krb5-locales (1.20.1-6ubuntu2.10) ...
+Setting up libldap-common (2.6.10+dfsg-0ubuntu0.24.04.1) ...
+Setting up libkrb5support0:amd64 (1.20.1-6ubuntu2.10) ...
+Setting up libsasl2-modules-db:amd64 (2.1.28+dfsg1-5ubuntu3.1) ...
+Setting up libx11-data (2:1.8.7-1ubuntu0.1) ...
+Setting up librtmp1:amd64 (2.4+20151223.gitfa8646d.1-2build7) ...
+Setting up perl-modules-5.38 (5.38.2-3.2ubuntu0.6) ...
+Setting up patch (2.7.6-7build3) ...
+Setting up libk5crypto3:amd64 (1.20.1-6ubuntu2.10) ...
+Setting up libsasl2-2:amd64 (2.1.28+dfsg1-5ubuntu3.1) ...
+Setting up git-man (1:2.43.0-1ubuntu7.4) ...
+Setting up netbase (6.4) ...
+Setting up libkrb5-3:amd64 (1.20.1-6ubuntu2.10) ...
+Setting up libperl5.38t64:amd64 (5.38.2-3.2ubuntu0.6) ...
+Setting up libfido2-1:amd64 (1.14.0-1build3) ...
+Setting up openssl (3.0.13-0ubuntu3.16) ...
+Setting up libbsd0:amd64 (0.12.1-1build1.1) ...
+Setting up publicsuffix (20231001.0357-0.1) ...
+Setting up libldap2:amd64 (2.6.10+dfsg-0ubuntu0.24.04.1) ...
+Setting up libxdmcp6:amd64 (1:1.1.3-0ubuntu6) ...
+Setting up libxcb1:amd64 (1.15-1ubuntu2) ...
+Setting up libedit2:amd64 (3.1-20230828-1build1) ...
+Setting up ca-certificates (20260816ubuntu0.24.04.1) ...
+debconf: unable to initialize frontend: Dialog
+debconf: (No usable dialog-like program is installed, so the dialog based frontend cannot be used. at /usr/share/perl5/Debconf/FrontEnd/Dialog.pm line 79.)
+debconf: falling back to frontend: Readline
+Updating certificates in /etc/ssl/certs...
+120 added, 0 removed; done.
+Setting up perl (5.38.2-3.2ubuntu0.6) ...
+Setting up libgssapi-krb5-2:amd64 (1.20.1-6ubuntu2.10) ...
+Setting up libssh-4:amd64 (0.10.6-2ubuntu0.5) ...
+Setting up libx11-6:amd64 (2:1.8.7-1ubuntu0.1) ...
+Setting up libxmuu1:amd64 (2:1.1.3-3build2) ...
+Setting up openssh-client (1:9.6p1-3ubuntu13.20) ...
+Setting up libcurl3t64-gnutls:amd64 (8.5.0-2ubuntu10.16) ...
+Setting up libxext6:amd64 (2:1.3.4-1build2) ...
+Setting up liberror-perl (0.17029-2) ...
+Setting up git (1:2.43.0-1ubuntu7.4) ...
+Setting up xauth (1:1.1.2-1build1) ...
+Processing triggers for libc-bin (2.39-0ubuntu8.6) ...
+Processing triggers for ca-certificates (20260816ubuntu0.24.04.1) ...
+Updating certificates in /etc/ssl/certs...
+0 added, 0 removed; done.
+Running hooks in /etc/ca-certificates/update.d...
+done.
+[?2004hroot@45027c0924e3:/app/repo# pwd
+[?2004l/app/repo
+[?2004hroot@45027c0924e3:/app/repo# git --version
+[?2004lgit version 2.43.0
+[?2004hroot@45027c0924e3:/app/repo# cd /app/repo && git init
+[?2004l[33mhint: Using 'master' as the name for the initial branch. This default branch name[m
+[33mhint: is subject to change. To configure the initial branch name to use in all[m
+[33mhint: of your new repositories, which will suppress this warning, call:[m
+[33mhint: [m
+[33mhint: 	git config --global init.defaultBranch <name>[m
+[33mhint: [m
+[33mhint: Names commonly chosen instead of 'master' are 'main', 'trunk' and[m
+[33mhint: 'development'. The just-created branch can be renamed via this command:[m
+[33mhint: [m
+[33mhint: 	git branch -m <name>[m
+Initialized empty Git repository in /app/repo/.git/
+[?2004hroot@45027c0924e3:/app/repo# git bundle list-heads /app/bundle1.bundle
+[?2004lc8dca82d38e152cd58eb0b31394af08f37c1385a HEAD
+ef202c5435d34da584a73c5bde633ad0ce190fe7 refs/heads/main
+[?2004hroot@45027c0924e3:/app/repo# git bundle list-heads /app/bundle2.bundle
+[?2004l836b057010803a50730966151008f40d7b9735ed HEAD
+ef202c5435d34da584a73c5bde633ad0ce190fe7 refs/heads/main
+[?2004hroot@45027c0924e3:/app/repo# git fetch /app/bundle1.bundle HEAD:branch1
+[?2004lReceiving objects:  14% (1/7)Receiving objects:  28% (2/7)Receiving objects:  42% (3/7)Receiving objects:  57% (4/7)Receiving objects:  71% (5/7)Receiving objects:  85% (6/7)Receiving objects: 100% (7/7)Receiving objects: 100% (7/7), done.
+From /app/bundle1.bundle
+ * [new ref]         HEAD       -> branch1
+[?2004hroot@45027c0924e3:/app/repo# git fetch /app/bundle2.bundle HEAD:branch2
+[?2004lReceiving objects:  12% (1/8)Receiving objects:  25% (2/8)Receiving objects:  37% (3/8)Receiving objects:  50% (4/8)Receiving objects:  62% (5/8)Receiving objects:  75% (6/8)Receiving objects:  87% (7/8)Receiving objects: 100% (8/8)Receiving objects: 100% (8/8), done.
+From /app/bundle2.bundle
+ * [new ref]         HEAD       -> branch2
+[?2004hroot@45027c0924e3:/app/repo# git branch -a
+[?2004l[?1h=  branch1[m[m
+  branch2[m[m
+[K[?1l>[?2004hroot@45027c0924e3:/app/repo# git log --oneline --decorate --all --graph
+[?2004l[?1h=* [33m836b057[m[33m ([m[1;32mbranch2[m[33m)[m implementation 2 done, using powerful numpy[m
+[31m|[m * [33mc8dca82[m[33m ([m[1;32mbranch1[m[33m)[m Implementation 1 done[m
+[31m|[m[31m/[m  [m
+* [33mef202c5[m Initial commit: Add project structure and stub algo[m
+[K[?1l>[?2004hroot@45027c0924e3:/app/repo# git checkout branch1
+[?2004lSwitched to branch 'branch1'
+[?2004hroot@45027c0924e3:/app/repo# ls -la
+[?2004ltotal 20
+drwxr-xr-x 3 root root 4096 Nov  5 08:46 [0m[01;34m.[0m
+drwxr-xr-x 1 root root 4096 Nov  5 08:44 [01;34m..[0m
+drwxr-xr-x 8 root root 4096 Nov  5 08:46 [01;34m.git[0m
+-rw-r--r-- 1 root root  462 Nov  5 08:46 algo.py
+-rw-r--r-- 1 root root   76 Nov  5 08:46 utils.py
+[?2004hroot@45027c0924e3:/app/repo# sed -n '1,200p' algo.py
+[?2004ldef map(g):
+    num_rows = len(g)
+    num_cols = len(g[0])
+
+    d = {}
+
+    for i in range(num_rows):
+        for j in range(num_cols):
+            c = g[i][j]
+            key = (i + j) % 4
+            if key not in d:
+                d[key] = c
+
+    result = []
+    for i in range(num_rows):
+        row = []
+        for j in range(num_cols):
+            value = d.get((i + j) % 4, 0)
+            row.append(value)
+        result.append(row)
+
+    return result
+[?2004hroot@45027c0924e3:/app/repo# git show branch2:algo.py | sed -n '1,240p'
+[?2004limport numpy as np
+def transform(g_np):
+    num_rows, num_cols = g_np.shape
+    d = {}
+
+    for i in range(num_rows):
+        for j in range(num_cols):
+            c = g_np[i, j]
+            key = (i - j) % 3
+            d[key] = c
+    
+    result = np.zeros_like(g_np)
+    for i in range(num_rows):
+        for j in range(num_cols):
+            result[i, j] = d.get((i + j) % 3, 0)
+            
+    return result
+[?2004hroot@45027c0924e3:/app/repo# cat /app/examples.json
+[?2004l[
+    {
+        "input": [
+            [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1
+            ],
+            [
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                2
+            ],
+            [
+                0,
+                0,
+                0,
+                0,
+                1,
+                2,
+                4
+            ],
+            [
+                0,
+                0,
+                0,
+                1,
+                2,
+                4,
+                0
+            ],
+            [
+                0,
+                0,
+                1,
+                2,
+                4,
+                0,
+                0
+            ]
+        ],
+        "output": [
+            [
+                2,
+                4,
+                1,
+                2,
+                4,
+                1,
+                2
+            ],
+            [
+                4,
+                1,
+                2,
+                4,
+                1,
+                2,
+                4
+            ],
+            [
+                1,
+                2,
+                4,
+                1,
+                2,
+                4,
+                1
+            ],
+            [
+                2,
+                4,
+                1,
+                2,
+                4,
+                1,
+                2
+            ],
+            [
+                4,
+                1,
+                2,
+                4,
+                1,
+                2,
+                4
+            ],
+            [
+                1,
+                2,
+                4,
+                1,
+                2,
+                4,
+                1
+            ],
+            [
+                2,
+                4,
+                1,
+                2,
+                4,
+                1,
+                2
+            ]
+        ]
+    },
+    {
+        "input": [
+            [
+                2,
+                8,
+                3,
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                8,
+                3,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                3,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ]
+        ],
+        "output": [
+            [
+                2,
+                8,
+                3,
+                2,
+                8,
+                3,
+                2
+            ],
+            [
+                8,
+                3,
+                2,
+                8,
+                3,
+                2,
+                8
+            ],
+            [
+                3,
+                2,
+                8,
+                3,
+                2,
+                8,
+                3
+            ],
+            [
+                2,
+                8,
+                3,
+                2,
+                8,
+                3,
+                2
+            ],
+            [
+                8,
+                3,
+                2,
+                8,
+                3,
+                2,
+                8
+            ],
+            [
+                3,
+                2,
+                8,
+                3,
+                2,
+                8,
+                3
+            ],
+            [
+                2,
+                8,
+                3,
+                2,
+                8,
+                3,
+                2
+            ]
+        ]
+    },
+    {
+        "input": [
+            [
+                0,
+                0,
+                0,
+                0,
+                8,
+                3,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                8,
+                3,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                8,
+                3,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                8,
+                3,
+                0,
+                0,
+                0,
+                4
+            ],
+            [
+                8,
+                3,
+                0,
+                0,
+                0,
+                4,
+                0
+            ],
+            [
+                3,
+                0,
+                0,
+                0,
+                4,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                4,
+                0,
+                0,
+                0
+            ]
+        ],
+        "output": [
+            [
+                4,
+                8,
+                3,
+                4,
+                8,
+                3,
+                4
+            ],
+            [
+                8,
+                3,
+                4,
+                8,
+                3,
+                4,
+                8
+            ],
+            [
+                3,
+                4,
+                8,
+                3,
+                4,
+                8,
+                3
+            ],
+            [
+                4,
+                8,
+                3,
+                4,
+                8,
+                3,
+                4
+            ],
+            [
+                8,
+                3,
+                4,
+                8,
+                3,
+                4,
+                8
+            ],
+            [
+                3,
+                4,
+                8,
+                3,
+                4,
+                8,
+                3
+            ],
+            [
+                4,
+                8,
+                3,
+                4,
+                8,
+                3,
+                4
+            ]
+        ]
+    }
+][?2004hroot@45027c0924e3:/app/repo# git diff --stat branch1..branch2
+[?2004l[?1h= .DS_Store        | Bin [31m0[m -> [32m6148[m bytes[m
+ algo.py          |  25 [32m++++++++++[m[31m---------------[m[m
+ requirements.txt |   1 [32m+[m[m
+ utils.py         |   3 [31m---[m[m
+ 4 files changed, 11 insertions(+), 18 deletions(-)[m
+[K[?1l>[?2004hroot@45027c0924e3:/app/repo# git diff branch1..branch2 -- algo.py utils.py
+[?2004l[?1h=[1mdiff --git a/algo.py b/algo.py[m[m
+[1mindex f7ad31f..f5b668f 100644[m[m
+[1m--- a/algo.py[m[m
+[1m+++ b/algo.py[m[m
+[36m@@ -1,22 +1,17 @@[m[m
+[31m-def map(g):[m[m
+[31m-    num_rows = len(g)[m[m
+[31m-    num_cols = len(g[0])[m[m
+[31m-[m[m
+[32m+[m[32mimport numpy as np[m[m
+[32m+[m[32mdef transform(g_np):[m[m
+[32m+[m[32m    num_rows, num_cols = g_np.shape[m[m
+     d = {}[m[m
+ [m[m
+     for i in range(num_rows):[m[m
+         for j in range(num_cols):[m[m
+[31m-            c = g[i][j][m[m
+[31m-            key = (i + j) % 4[m[m
+[31m-            if key not in d:[m[m
+[31m-                d[key] = c[m[m
+[31m-[m[m
+[31m-    result = [][m[m
+[32m+[m[32m            c = g_np[i, j][m[m
+[32m+[m[32m            key = (i - j) % 3[m[m
+[32m+[m[32m            d[key] = c[m[m
+[32m+[m[41m    [m[m
+[32m+[m[32m    result = np.zeros_like(g_np)[m[m
+     for i in range(num_rows):[m[m
+[31m-        row = [][m[m
+         for j in range(num_cols):[m[m
+[31m-            value = d.get((i + j) % 4, 0)[m[m
+[31m-            row.append(value)[m[m
+[31m-        result.append(row)[m[m
+[31m-[m[m
+[32m+[m[32m            result[i, j] = d.get((i + j) % 3, 0)[m[m
+[32m+[m[41m            [m[m
+     return result[m[m
+[1mdiff --git a/utils.py b/utils.py[m[m
+[1mdeleted file mode 100644[m[m
+:[K[K[K:[K[K:[K[K[7mNo next tag  (press RETURN)[27m[40;1H[K[K:[K[Kset mark: ...skipping...
+[1mdiff --git a/algo.py b/algo.py[m[m
+[1mindex f7ad31f..f5b668f 100644[m[m
+[1m--- a/algo.py[m[m
+[1m+++ b/algo.py[m[m
+[36m@@ -1,22 +1,17 @@[m[m
+[31m-def map(g):[m[m
+[31m-    num_rows = len(g)[m[m
+[31m-    num_cols = len(g[0])[m[m
+[31m-[m[m
+[32m+[m[32mimport numpy as np[m[m
+[32m+[m[32mdef transform(g_np):[m[m
+[32m+[m[32m    num_rows, num_cols = g_np.shape[m[m
+     d = {}[m[m
+ [m[m
+     for i in range(num_rows):[m[m
+         for j in range(num_cols):[m[m
+[31m-            c = g[i][j][m[m
+[31m-            key = (i + j) % 4[m[m
+[31m-            if key not in d:[m[m
+[31m-                d[key] = c[m[m
+[31m-[m[m
+[31m-    result = [][m[m
+[32m+[m[32m            c = g_np[i, j][m[m
+[32m+[m[32m            key = (i - j) % 3[m[m
+[32m+[m[32m            d[key] = c[m[m
+[32m+[m[41m    [m[m
+[32m+[m[32m    result = np.zeros_like(g_np)[m[m
+     for i in range(num_rows):[m[m
+[31m-        row = [][m[m
+         for j in range(num_cols):[m[m
+[31m-            value = d.get((i + j) % 4, 0)[m[m
+[31m-            row.append(value)[m[m
+[31m-        result.append(row)[m[m
+[31m-[m[m
+[32m+[m[32m            result[i, j] = d.get((i + j) % 3, 0)[m[m
+[32m+[m[41m            [m[m
+     return result[m[m
+[1mdiff --git a/utils.py b/utils.py[m[m
+[1mdeleted file mode 100644[m[m
+:[K[K...skipping...
+[1mdiff --git a/algo.py b/algo.py[m[m
+[1mindex f7ad31f..f5b668f 100644[m[m
+[1m--- a/algo.py[m[m
+[1m+++ b/algo.py[m[m
+[36m@@ -1,22 +1,17 @@[m[m
+[31m-def map(g):[m[m
+[31m-    num_rows = len(g)[m[m
+[31m-    num_cols = len(g[0])[m[m
+[31m-[m[m
+[32m+[m[32mimport numpy as np[m[m
+[32m+[m[32mdef transform(g_np):[m[m
+[32m+[m[32m    num_rows, num_cols = g_np.shape[m[m
+     d = {}[m[m
+ [m[m
+     for i in range(num_rows):[m[m
+         for j in range(num_cols):[m[m
+[31m-            c = g[i][j][m[m
+[31m-            key = (i + j) % 4[m[m
+[31m-            if key not in d:[m[m
+[31m-                d[key] = c[m[m
+[31m-[m[m
+[31m-    result = [][m[m
+[32m+[m[32m            c = g_np[i, j][m[m
+[32m+[m[32m            key = (i - j) % 3[m[m
+[32m+[m[32m            d[key] = c[m[m
+[32m+[m[41m    [m[m
+[32m+[m[32m    result = np.zeros_like(g_np)[m[m
+     for i in range(num_rows):[m[m
+[31m-        row = [][m[m
+         for j in range(num_cols):[m[m
+[31m-            value = d.get((i + j) % 4, 0)[m[m
+[31m-            row.append(value)[m[m
+[31m-        result.append(row)[m[m
+[31m-[m[m
+[32m+[m[32m            result[i, j] = d.get((i + j) % 3, 0)[m[m
+[32m+[m[41m            [m[m
+     return result[m[m
+[1mdiff --git a/utils.py b/utils.py[m[m
+[1mdeleted file mode 100644[m[m
+:[K[K[K:[K[K[1mindex 3a1e1be..0000000[m[m
+:[K[K[1m--- a/utils.py[m[m
+[1m+++ /dev/null[m[m
+[36m@@ -1,3 +0,0 @@[m[m
+[31m-def mod3(x):[m[m
+[31m-    """A helper function that is not used."""[m[m
+[31m-    return x % 3[m[m
+[7m(END)[27m[K[K[HM[31m-    num_rows = len(g)[m[m
+[HM[31m-def map(g):[m[m
+[HM[36m@@ -1,22 +1,17 @@[m[m
+[HM[1m+++ b/algo.py[m[m
+[HM[1m--- a/algo.py[m[m
+[HM[1mindex f7ad31f..f5b668f 100644[m[m
+[HM[1mdiff --git a/algo.py b/algo.py[m[m
+[40;1H[K:[K[K...skipping...
+[1mdiff --git a/algo.py b/algo.py[m[m
+[1mindex f7ad31f..f5b668f 100644[m[m
+[1m--- a/algo.py[m[m
+[1m+++ b/algo.py[m[m
+[36m@@ -1,22 +1,17 @@[m[m
+[31m-def map(g):[m[m
+[31m-    num_rows = len(g)[m[m
+[31m-    num_cols = len(g[0])[m[m
+[31m-[m[m
+[32m+[m[32mimport numpy as np[m[m
+[32m+[m[32mdef transform(g_np):[m[m
+[32m+[m[32m    num_rows, num_cols = g_np.shape[m[m
+     d = {}[m[m
+ [m[m
+     for i in range(num_rows):[m[m
+         for j in range(num_cols):[m[m
+[31m-            c = g[i][j][m[m
+[31m-            key = (i + j) % 4[m[m
+[31m-            if key not in d:[m[m
+[31m-                d[key] = c[m[m
+[31m-[m[m
+[31m-    result = [][m[m
+[32m+[m[32m            c = g_np[i, j][m[m
+[32m+[m[32m            key = (i - j) % 3[m[m
+[32m+[m[32m            d[key] = c[m[m
+[32m+[m[41m    [m[m
+[32m+[m[32m    result = np.zeros_like(g_np)[m[m
+     for i in range(num_rows):[m[m
+[31m-        row = [][m[m
+         for j in range(num_cols):[m[m
+[31m-            value = d.get((i + j) % 4, 0)[m[m
+[31m-            row.append(value)[m[m
+[31m-        result.append(row)[m[m
+[31m-[m[m
+[32m+[m[32m            result[i, j] = d.get((i + j) % 3, 0)[m[m
+[32m+[m[41m            [m[m
+     return result[m[m
+[1mdiff --git a/utils.py b/utils.py[m[m
+[1mdeleted file mode 100644[m[m
+:[K[K:[K[K/[K[K[7mNo previous regular expression  (press RETURN)[27m[40;1H[K[K:[K[K...skipping...
+[m
+                   [1mSUMMARY[0m [1mOF[0m [1mLESS[0m [1mCOMMANDS[0m[m
+[m
+      Commands marked with * may be preceded by a number, [4mN[24m.[m
+      Notes in parentheses indicate the behavior if [4mN[24m is given.[m
+      A key preceded by a caret indicates the Ctrl key; thus ^K is ctrl-K.[m
+[m
+  h  H                 Display this help.[m
+  q  :q  Q  :Q  ZZ     Exit.[m
+ ---------------------------------------------------------------------------[m
+[m
+                           [1mMOVING[0m[m
+[m
+  e  ^E  j  ^N  CR  *  Forward  one line   (or [4mN[24m lines).[m
+  y  ^Y  k  ^K  ^P  *  Backward one line   (or [4mN[24m lines).[m
+  f  ^F  ^V  SPACE  *  Forward  one window (or [4mN[24m lines).[m
+  b  ^B  ESC-v      *  Backward one window (or [4mN[24m lines).[m
+  z                 *  Forward  one window (and set window to [4mN[24m).[m
+  w                 *  Backward one window (and set window to [4mN[24m).[m
+  ESC-SPACE         *  Forward  one window, but don't stop at end-of-file.[m
+  d  ^D             *  Forward  one half-window (and set half-window to [4mN[24m).[m
+  u  ^U             *  Backward one half-window (and set half-window to [4mN[24m).[m
+  ESC-)  RightArrow *  Right one half screen width (or [4mN[24m positions).[m
+  ESC-(  LeftArrow  *  Left  one half screen width (or [4mN[24m positions).[m
+  ESC-}  ^RightArrow   Right to last column displayed.[m
+  ESC-{  ^LeftArrow    Left  to first column.[m
+  F                    Forward forever; like "tail -f".[m
+  ESC-F                Like F but stop when search pattern is found.[m
+  r  ^R  ^L            Repaint screen.[m
+  R                    Repaint screen, discarding buffered input.[m
+        ---------------------------------------------------[m
+        Default "window" is the screen height.[m
+        Default "half-window" is half of the screen height.[m
+ ---------------------------------------------------------------------------[m
+[m
+                          [1mSEARCHING[0m[m
+[m
+  /[4mpattern[24m          *  Search forward for ([4mN[24m-th) matching line.[m
+  ?[4mpattern[24m          *  Search backward for ([4mN[24m-th) matching line.[m
+[7mHELP -- Press RETURN for more, or q when done[27m[K[K:[K22[K  n                 *  Repeat previous search (for [4mN[24m-th occurrence).[m
+  N                 *  Repeat previous search in reverse direction.[m
+[7mHELP -- Press RETURN for more, or q when done[27m[K[K[HM                   [1mSUMMARY[0m [1mOF[0m [1mLESS[0m [1mCOMMANDS[0m[m
+[HM[m
+[40;1H[K[7mHELP -- Press RETURN for more, or q when done[27m[K[K[7mHELP -- Press RETURN for more, or q when done[27m[K[K[7mNo next tag  (press RETURN)[27m[40;1H[K[K[7mHELP -- Press RETURN for more, or q when done[27m[K[K-[Klog file: [Ktt[Kaa[Ktt[Kuu[Kss[K  [K--[K--[Kss[Khh[Koo[Krr[Ktt[K[K[7mHELP -- Press RETURN for more, or q when done[27m[K[K[7mHELP -- Press RETURN for more, or q when done[27m[K[K-[Klog file: [K  [K--[Kll[Kaa[K[K[7mLog file is already in use  (press RETURN)[27m[40;1H[K[K[7mFinishing logfile... (interrupt to abort)[27m[K...skipping...
+[1mdiff --git a/algo.py b/algo.py[m[m
+[1mindex f7ad31f..f5b668f 100644[m[m
+[1m--- a/algo.py[m[m
+[1m+++ b/algo.py[m[m
+[36m@@ -1,22 +1,17 @@[m[m
+[31m-def map(g):[m[m
+[31m-    num_rows = len(g)[m[m
+[31m-    num_cols = len(g[0])[m[m
+[31m-[m[m
+[32m+[m[32mimport numpy as np[m[m
+[32m+[m[32mdef transform(g_np):[m[m
+[32m+[m[32m    num_rows, num_cols = g_np.shape[m[m
+     d = {}[m[m
+ [m[m
+     for i in range(num_rows):[m[m
+         for j in range(num_cols):[m[m
+[31m-            c = g[i][j][m[m
+[31m-            key = (i + j) % 4[m[m
+[31m-            if key not in d:[m[m
+[31m-                d[key] = c[m[m
+[31m-[m[m
+[31m-    result = [][m[m
+[32m+[m[32m            c = g_np[i, j][m[m
+[32m+[m[32m            key = (i - j) % 3[m[m
+[32m+[m[32m            d[key] = c[m[m
+[32m+[m[41m    [m[m
+[32m+[m[32m    result = np.zeros_like(g_np)[m[m
+     for i in range(num_rows):[m[m
+[31m-        row = [][m[m
+         for j in range(num_cols):[m[m
+[31m-            value = d.get((i + j) % 4, 0)[m[m
+[31m-            row.append(value)[m[m
+[31m-        result.append(row)[m[m
+[31m-[m[m
+[32m+[m[32m            result[i, j] = d.get((i + j) % 3, 0)[m[m
+[32m+[m[41m            [m[m
+     return result[m[m
+[1mdiff --git a/utils.py b/utils.py[m[m
+[1mdeleted file mode 100644[m[m
+:[K[K[K:[K[K:[K[K[7mNo next tag  (press RETURN)[27m[40;1H[K[K:[K[Kset mark: ...skipping...
+[1mdiff --git a/algo.py b/algo.py[m[m
+[1mindex f7ad31f..f5b668f 100644[m[m
+[1m--- a/algo.py[m[m
+[1m+++ b/algo.py[m[m
+[36m@@ -1,22 +1,17 @@[m[m
+[31m-def map(g):[m[m
+[31m-    num_rows = len(g)[m[m
+[31m-    num_cols = len(g[0])[m[m
+[31m-[m[m
+[32m+[m[32mimport numpy as np[m[m
+[32m+[m[32mdef transform(g_np):[m[m
+[32m+[m[32m    num_rows, num_cols = g_np.shape[m[m
+     d = {}[m[m
+ [m[m
+     for i in range(num_rows):[m[m
+         for j in range(num_cols):[m[m
+[31m-            c = g[i][j][m[m
+[31m-            key = (i + j) % 4[m[m
+[31m-            if key not in d:[m[m
+[31m-                d[key] = c[m[m
+[31m-[m[m
+[31m-    result = [][m[m
+[32m+[m[32m            c = g_np[i, j][m[m
+[32m+[m[32m            key = (i - j) % 3[m[m
+[32m+[m[32m            d[key] = c[m[m
+[32m+[m[41m    [m[m
+[32m+[m[32m    result = np.zeros_like(g_np)[m[m
+     for i in range(num_rows):[m[m
+[31m-        row = [][m[m
+         for j in range(num_cols):[m[m
+[31m-            value = d.get((i + j) % 4, 0)[m[m
+[31m-            row.append(value)[m[m
+[31m-        result.append(row)[m[m
+[31m-[m[m
+[32m+[m[32m            result[i, j] = d.get((i + j) % 3, 0)[m[m
+[32m+[m[41m            [m[m
+     return result[m[m
+[1mdiff --git a/utils.py b/utils.py[m[m
+[1mdeleted file mode 100644[m[m
+:[K[K...skipping...
+[1mdiff --git a/algo.py b/algo.py[m[m
+[1mindex f7ad31f..f5b668f 100644[m[m
+[1m--- a/algo.py[m[m
+[1m+++ b/algo.py[m[m
+[36m@@ -1,22 +1,17 @@[m[m
+[31m-def map(g):[m[m
+[31m-    num_rows = len(g)[m[m
+[31m-    num_cols = len(g[0])[m[m
+[31m-[m[m
+[32m+[m[32mimport numpy as np[m[m
+[32m+[m[32mdef transform(g_np):[m[m
+[32m+[m[32m    num_rows, num_cols = g_np.shape[m[m
+     d = {}[m[m
+ [m[m
+     for i in range(num_rows):[m[m
+         for j in range(num_cols):[m[m
+[31m-            c = g[i][j][m[m
+[31m-            key = (i + j) % 4[m[m
+[31m-            if key not in d:[m[m
+[31m-                d[key] = c[m[m
+[31m-[m[m
+[31m-    result = [][m[m
+[32m+[m[32m            c = g_np[i, j][m[m
+[32m+[m[32m            key = (i - j) % 3[m[m
+[32m+[m[32m            d[key] = c[m[m
+[32m+[m[41m    [m[m
+[32m+[m[32m    result = np.zeros_like(g_np)[m[m
+     for i in range(num_rows):[m[m
+[31m-        row = [][m[m
+         for j in range(num_cols):[m[m
+[31m-            value = d.get((i + j) % 4, 0)[m[m
+[31m-            row.append(value)[m[m
+[31m-        result.append(row)[m[m
+[31m-[m[m
+[32m+[m[32m            result[i, j] = d.get((i + j) % 3, 0)[m[m
+[32m+[m[41m            [m[m
+     return result[m[m
+[1mdiff --git a/utils.py b/utils.py[m[m
+[1mdeleted file mode 100644[m[m
+:[K[K[K:[K[K[1mindex 3a1e1be..0000000[m[m
+:[K[K[1m--- a/utils.py[m[m
+[1m+++ /dev/null[m[m
+[36m@@ -1,3 +0,0 @@[m[m
+[31m-def mod3(x):[m[m
+[31m-    """A helper function that is not used."""[m[m
+[31m-    return x % 3[m[m
+[7m(END)[27m[K[K[HM[31m-    num_rows = len(g)[m[m
+[HM[31m-def map(g):[m[m
+[HM[36m@@ -1,22 +1,17 @@[m[m
+[HM[1m+++ b/algo.py[m[m
+[HM[1m--- a/algo.py[m[m
+[HM[1mindex f7ad31f..f5b668f 100644[m[m
+[HM[1mdiff --git a/algo.py b/algo.py[m[m
+[40;1H[K:[K[K...skipping...
+[1mdiff --git a/algo.py b/algo.py[m[m
+[1mindex f7ad31f..f5b668f 100644[m[m
+[1m--- a/algo.py[m[m
+[1m+++ b/algo.py[m[m
+[36m@@ -1,22 +1,17 @@[m[m
+[31m-def map(g):[m[m
+[31m-    num_rows = len(g)[m[m
+[31m-    num_cols = len(g[0])[m[m
+[31m-[m[m
+[32m+[m[32mimport numpy as np[m[m
+[32m+[m[32mdef transform(g_np):[m[m
+[32m+[m[32m    num_rows, num_cols = g_np.shape[m[m
+     d = {}[m[m
+ [m[m
+     for i in range(num_rows):[m[m
+         for j in range(num_cols):[m[m
+[31m-            c = g[i][j][m[m
+[31m-            key = (i + j) % 4[m[m
+[31m-            if key not in d:[m[m
+[31m-                d[key] = c[m[m
+[31m-[m[m
+[31m-    result = [][m[m
+[32m+[m[32m            c = g_np[i, j][m[m
+[32m+[m[32m            key = (i - j) % 3[m[m
+[32m+[m[32m            d[key] = c[m[m
+[32m+[m[41m    [m[m
+[32m+[m[32m    result = np.zeros_like(g_np)[m[m
+     for i in range(num_rows):[m[m
+[31m-        row = [][m[m
+         for j in range(num_cols):[m[m
+[31m-            value = d.get((i + j) % 4, 0)[m[m
+[31m-            row.append(value)[m[m
+[31m-        result.append(row)[m[m
+[31m-[m[m
+[32m+[m[32m            result[i, j] = d.get((i + j) % 3, 0)[m[m
+[32m+[m[41m            [m[m
+     return result[m[m
+[1mdiff --git a/utils.py b/utils.py[m[m
+[1mdeleted file mode 100644[m[m
+:[K[K:[K[K/[K[K[7mNo previous regular expression  (press RETURN)[27m[40;1H[K[K:[K[K...skipping...
+[m
+                   [1mSUMMARY[0m [1mOF[0m [1mLESS[0m [1mCOMMANDS[0m[m
+[m
+      Commands marked with * may be preceded by a number, [4mN[24m.[m
+      Notes in parentheses indicate the behavior if [4mN[24m is given.[m
+      A key preceded by a caret indicates the Ctrl key; thus ^K is ctrl-K.[m
+[m
+  h  H                 Display this help.[m
+  q  :q  Q  :Q  ZZ     Exit.[m
+ ---------------------------------------------------------------------------[m
+[m
+                           [1mMOVING[0m[m
+[m
+  e  ^E  j  ^N  CR  *  Forward  one line   (or [4mN[24m lines).[m
+  y  ^Y  k  ^K  ^P  *  Backward one line   (or [4mN[24m lines).[m
+  f  ^F  ^V  SPACE  *  Forward  one window (or [4mN[24m lines).[m
+  b  ^B  ESC-v      *  Backward one window (or [4mN[24m lines).[m
+  z                 *  Forward  one window (and set window to [4mN[24m).[m
+  w                 *  Backward one window (and set window to [4mN[24m).[m
+  ESC-SPACE         *  Forward  one window, but don't stop at end-of-file.[m
+  d  ^D             *  Forward  one half-window (and set half-window to [4mN[24m).[m
+  u  ^U             *  Backward one half-window (and set half-window to [4mN[24m).[m
+  ESC-)  RightArrow *  Right one half screen width (or [4mN[24m positions).[m
+  ESC-(  LeftArrow  *  Left  one half screen width (or [4mN[24m positions).[m
+  ESC-}  ^RightArrow   Right to last column displayed.[m
+  ESC-{  ^LeftArrow    Left  to first column.[m
+  F                    Forward forever; like "tail -f".[m
+  ESC-F                Like F but stop when search pattern is found.[m
+  r  ^R  ^L            Repaint screen.[m
+  R                    Repaint screen, discarding buffered input.[m
+        ---------------------------------------------------[m
+        Default "window" is the screen height.[m
+        Default "half-window" is half of the screen height.[m
+ ---------------------------------------------------------------------------[m
+[m
+                          [1mSEARCHING[0m[m
+[m
+  /[4mpattern[24m          *  Search forward for ([4mN[24m-th) matching line.[m
+  ?[4mpattern[24m          *  Search backward for ([4mN[24m-th) matching line.[m
+[7mHELP -- Press RETURN for more, or q when done[27m[K[K:[K22[K  n                 *  Repeat previous search (for [4mN[24m-th occurrence).[m
+  N                 *  Repeat previous search in reverse direction.[m
+[7mHELP -- Press RETURN for more, or q when done[27m[K[K[HM                   [1mSUMMARY[0m [1mOF[0m [1mLESS[0m [1mCOMMANDS[0m[m
+[HM[m
+[40;1H[K[7mHELP -- Press RETURN for more, or q when done[27m[K[K[7mHELP -- Press RETURN for more, or q when done[27m[K[K[7mNo next tag  (press RETURN)[27m[40;1H[K[K[7mHELP -- Press RETURN for more, or q when done[27m[K[K-[Klog file: [Ktt[Kaa[Ktt[Kuu[Kss[K  [K--[K--[Kss[Khh[Koo[Krr[Ktt[K[KWarning: "tatus --short" exists; Overwrite, Append, Don't log, or Quit? [40;1H[KOverwrite, Append, Don't log, or Quit? (Type "O", "A", "D" or "Q") [40;1H[KOverwrite, Append, Don't log, or Quit? (Type "O", "A", "D" or "Q") [40;1H[KOverwrite, Append, Don't log, or Quit? (Type "O", "A", "D" or "Q") [40;1H[KOverwrite, Append, Don't log, or Quit? (Type "O", "A", "D" or "Q") [40;1H[KOverwrite, Append, Don't log, or Quit? (Type "O", "A", "D" or "Q") [40;1H[K[7mHELP -- Press RETURN for more, or q when done[27m[K[K  n                 *  Repeat previous search (for [4mN[24m-th occurrence).[m
+[7mHELP -- Press RETURN for more, or q when done[27m[K...skipping...
+[1mdiff --git a/algo.py b/algo.py[m[m
+[1mindex f7ad31f..f5b668f 100644[m[m
+[1m--- a/algo.py[m[m
+[1m+++ b/algo.py[m[m
+[36m@@ -1,22 +1,17 @@[m[m
+[31m-def map(g):[m[m
+[31m-    num_rows = len(g)[m[m
+[31m-    num_cols = len(g[0])[m[m
+[31m-[m[m
+[32m+[m[32mimport numpy as np[m[m
+[32m+[m[32mdef transform(g_np):[m[m
+[32m+[m[32m    num_rows, num_cols = g_np.shape[m[m
+     d = {}[m[m
+ [m[m
+     for i in range(num_rows):[m[m
+         for j in range(num_cols):[m[m
+[31m-            c = g[i][j][m[m
+[31m-            key = (i + j) % 4[m[m
+[31m-            if key not in d:[m[m
+[31m-                d[key] = c[m[m
+[31m-[m[m
+[31m-    result = [][m[m
+[32m+[m[32m            c = g_np[i, j][m[m
+[32m+[m[32m            key = (i - j) % 3[m[m
+[32m+[m[32m            d[key] = c[m[m
+[32m+[m[41m    [m[m
+[32m+[m[32m    result = np.zeros_like(g_np)[m[m
+     for i in range(num_rows):[m[m
+[31m-        row = [][m[m
+         for j in range(num_cols):[m[m
+[31m-            value = d.get((i + j) % 4, 0)[m[m
+[31m-            row.append(value)[m[m
+[31m-        result.append(row)[m[m
+[31m-[m[m
+[32m+[m[32m            result[i, j] = d.get((i + j) % 3, 0)[m[m
+[32m+[m[41m            [m[m
+     return result[m[m
+[1mdiff --git a/utils.py b/utils.py[m[m
+[1mdeleted file mode 100644[m[m
+:[K[K[?1l>[?2004hroot@45027c0924e3:/app/repo# GIT_PAGER=cat git merge branch2
+[?2004lCommitter identity unknown
+
+*** Please tell me who you are.
+
+Run
+
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+
+to set your account's default identity.
+Omit --global to set the identity only in this repository.
+
+fatal: unable to auto-detect email address (got 'root@45027c0924e3.(none)')
+[?2004hroot@45027c0924e3:/app/repo# git status --short
+[?2004l[31m??[m "tatus --short"
+[?2004hroot@45027c0924e3:/app/repo# ls -la
+[?2004ltotal 36
+drwxr-xr-x 3 root root  4096 Nov  5 08:46  [0m[01;34m.[0m
+drwxr-xr-x 1 root root  4096 Nov  5 08:44  [01;34m..[0m
+drwxr-xr-x 8 root root  4096 Nov  5 08:47  [01;34m.git[0m
+-rw-r--r-- 1 root root   462 Nov  5 08:46  algo.py
+-rw-r--r-- 1 root root 15232 Nov  5 08:47 'tatus --short'
+-rw-r--r-- 1 root root    76 Nov  5 08:46  utils.py
+[?2004hroot@45027c0924e3:/app/repo# sed -n '1,240p' algo.py
+[?2004ldef map(g):
+    num_rows = len(g)
+    num_cols = len(g[0])
+
+    d = {}
+
+    for i in range(num_rows):
+        for j in range(num_cols):
+            c = g[i][j]
+            key = (i + j) % 4
+            if key not in d:
+                d[key] = c
+
+    result = []
+    for i in range(num_rows):
+        row = []
+        for j in range(num_cols):
+            value = d.get((i + j) % 4, 0)
+            row.append(value)
+        result.append(row)
+
+    return result
+[?2004hroot@45027c0924e3:/app/repo# rm -f -- 'tatus --short'
+[?2004l[?2004hroot@45027c0924e3:/app/repo# git config user.email 'you@example.com'
+[?2004l[?2004hroot@45027c0924e3:/app/repo# git config user.name 'Your Name'
+[?2004l[?2004hroot@45027c0924e3:/app/repo# GIT_PAGER=cat git merge branch2
+[?2004lAuto-merging algo.py
+CONFLICT (content): Merge conflict in algo.py
+Automatic merge failed; fix conflicts and then commit the result.
+[?2004hroot@45027c0924e3:/app/repo# git status --short
+[?2004l[32mA[m  .DS_Store
+[31mUU[m algo.py
+[32mA[m  requirements.txt
+[?2004hroot@45027c0924e3:/app/repo# git status
+[?2004lOn branch branch1
+You have unmerged paths.
+  (fix conflicts and run "git commit")
+  (use "git merge --abort" to abort the merge)
+
+Changes to be committed:
+	[32mnew file:   .DS_Store[m
+	[32mnew file:   requirements.txt[m
+
+Unmerged paths:
+  (use "git add <file>..." to mark resolution)
+	[31mboth modified:   algo.py[m
+
+[?2004hroot@45027c0924e3:/app/repo# git ls-files -s
+[?2004l100644 83813f1b3d9d02b19625d938d799fe48665d01aa 0	.DS_Store
+100644 3b2f99049bb9c231e7d0f500c0d892b2dbcf418b 1	algo.py
+100644 f7ad31ff6815df076cb2906cde2de3fe3229b04b 2	algo.py
+100644 f5b668f869454ba4b3285f0e2773f98c79e0586e 3	algo.py
+100644 24ce15ab7ead32f98c7ac3edcd34bb2010ff4326 0	requirements.txt
+100644 3a1e1bef332918bcb7331d8fda7a3d203b3ec3ec 0	utils.py
+[?2004hroot@45027c0924e3:/app/repo# grep -n '^<<<<<<<\|^=======\|^>>>>>>>' algo.py || true
+[?2004l[32m[K1[m[K[36m[K:[m[K[01;31m[K<<<<<<<[m[K HEAD
+[32m[K6[m[K[36m[K:[m[K[01;31m[K=======[m[K
+[32m[K10[m[K[36m[K:[m[K[01;31m[K>>>>>>>[m[K branch2
+[32m[K15[m[K[36m[K:[m[K[01;31m[K<<<<<<<[m[K HEAD
+[32m[K29[m[K[36m[K:[m[K[01;31m[K=======[m[K
+[32m[K39[m[K[36m[K:[m[K[01;31m[K>>>>>>>[m[K branch2
+[?2004hroot@45027c0924e3:/app/repo# GIT_PAGER=cat git show ef202c5:algo.py
+[?2004ldef map(grid):
+    """
+    Maps an input grid to an output grid based on learned rules.
+    
+    TODO: Implement the correct mapping logic.
+    """
+    # Placeholder implementation
+    return grid
+[?2004hroot@45027c0924e3:/app/repo# GIT_PAGER=cat git show branch1:utils.py
+[?2004ldef mod3(x):
+    """A helper function that is not used."""
+    return x % 3
+[?2004hroot@45027c0924e3:/app/repo# GIT_PAGER=cat git show branch2:requirements.txt
+[?2004lnumpy
+[?2004hroot@45027c0924e3:/app/repo# file .DS_Store 2>/dev/null; strings .DS_Store 2>/dev/null | head -50
+[?2004l[?2004hroot@45027c0924e3:/app/repo# python3 --version && python3 -c 'import numpy; print(numpy.__version__)' 2>&1
+[?2004lbash: python3: command not found
+[?2004hroot@45027c0924e3:/app/repo# cat > algo.py <<'PY'
+[?2004l[?2004h> def map(grid):
+[?2004l[?2004h>     """Fill a grid with the diagonal color pattern inferred from its non-zero cells."""
+[?2004l[?2004h>     if not grid or not grid[0]:
+[?2004l[?2004h>         return [row[:] for row in grid]
+[?2004l[?2004h> 
+[?2004l[?2004h>     rows = len(grid)
+[?2004l[?2004h>     cols = len(grid[0])
+[?2004l[?2004h>     colors = {}
+[?2004l[?2004h> 
+[?2004l[?2004h>     for r in range(rows):
+[?2004l[?2004h>         for c in range(cols):
+[?2004l[?2004h>             value = grid[r][c]
+[?2004l[?2004h>             if value != 0:
+[?2004l[?2004h>                 colors[(r + c) % 3] = value
+[?2004l[?2004h> 
+[?2004l[?2004h>     result = [[0] * cols for _ in range(rows)]
+[?2004l[?2004h>     for r in range(rows):
+[?2004l[?2004h>         for c in range(cols):
+[?2004l[?2004h>             result[r][c] = colors.get((r + c) % 3, 0)
+[?2004l[?2004h> 
+[?2004l[?2004h>     return result
+[?2004l[?2004h> PY
+[?2004l[?2004hroot@45027c0924e3:/app/repo# sed -n '1,200p' algo.py
+[?2004ldef map(grid):
+    """Fill a grid with the diagonal color pattern inferred from its non-zero cells."""
+    if not grid or not grid[0]:
+        return [row[:] for row in grid]
+
+    rows = len(grid)
+    cols = len(grid[0])
+    colors = {}
+
+    for r in range(rows):
+        for c in range(cols):
+            value = grid[r][c]
+            if value != 0:
+                colors[(r + c) % 3] = value
+
+    result = [[0] * cols for _ in range(rows)]
+    for r in range(rows):
+        for c in range(cols):
+            result[r][c] = colors.get((r + c) % 3, 0)
+
+    return result
+[?2004hroot@45027c0924e3:/app/repo# git add algo.py
+[?2004l[?2004hroot@45027c0924e3:/app/repo# git status --short
+[?2004l[32mA[m  .DS_Store
+[32mM[m  algo.py
+[32mA[m  requirements.txt
+[?2004hroot@45027c0924e3:/app/repo# apt-get install -y python3
+[?2004lReading package lists... 0%Reading package lists... 0%Reading package lists... 0%Reading package lists... 5%Reading package lists... 5%Reading package lists... 58%Reading package lists... 58%Reading package lists... 59%Reading package lists... 59%Reading package lists... 60%Reading package lists... 60%Reading package lists... 65%Reading package lists... 65%Reading package lists... 73%Reading package lists... 73%Reading package lists... 81%Reading package lists... 81%Reading package lists... 81%Reading package lists... 81%Reading package lists... 81%Reading package lists... 81%Reading package lists... 81%Reading package lists... 81%Reading package lists... 81%Reading package lists... 81%Reading package lists... 86%Reading package lists... 86%Reading package lists... 92%Reading package lists... 92%Reading package lists... 99%Reading package lists... 99%Reading package lists... 99%Reading package lists... 99%Reading package lists... Done
+Building dependency tree... 0%Building dependency tree... 0%Building dependency tree... 0%Building dependency tree... 50%Building dependency tree... 50%Building dependency tree... Done
+Reading state information... 0% Reading state information... 2%Reading state information... Done
+The following additional packages will be installed:
+  libpython3-stdlib libpython3.12-minimal libpython3.12-stdlib libreadline8t64 libsqlite3-0 media-types python3-minimal python3.12 python3.12-minimal
+  readline-common tzdata
+Suggested packages:
+  python3-doc python3-tk python3-venv python3.12-venv python3.12-doc binutils binfmt-support readline-doc
+The following NEW packages will be installed:
+  libpython3-stdlib libpython3.12-minimal libpython3.12-stdlib libreadline8t64 libsqlite3-0 media-types python3 python3-minimal python3.12 python3.12-minimal
+  readline-common tzdata
+0 upgraded, 12 newly installed, 0 to remove and 46 not upgraded.
+Need to get 7176 kB of archives.
+After this operation, 27.5 MB of additional disk space will be used.
+0% [Working]0% [Connecting to archive.ubuntu.com (185.125.190.81)]                                                      Get:1 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libpython3.12-minimal amd64 3.12.3-1ubuntu0.17 [839 kB]
+                                                      0% [1 libpython3.12-minimal 4040 B/839 kB 0%]0% [1 libpython3.12-minimal 20.1 kB/839 kB 2%]0% [1 libpython3.12-minimal 43.4 kB/839 kB 5%]1% [1 libpython3.12-minimal 117 kB/839 kB 14%]2% [1 libpython3.12-minimal 173 kB/839 kB 21%]4% [1 libpython3.12-minimal 335 kB/839 kB 40%]6% [1 libpython3.12-minimal 514 kB/839 kB 61%]9% [1 libpython3.12-minimal 776 kB/839 kB 92%]9% [1 libpython3.12-minimal 776 kB/839 kB 92%]                                              11% [Working]             Get:2 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 python3.12-minimal amd64 3.12.3-1ubuntu0.17 [2335 kB]
+11% [2 python3.12-minimal 2618 B/2335 kB 0%]12% [2 python3.12-minimal 90.0 kB/2335 kB 4%]18% [2 python3.12-minimal 614 kB/2335 kB 26%]                                                                                                      237 kB/s 24s18% [2 python3.12-minimal 634 kB/2335 kB 27%]                                                                                                      237 kB/s 24s20% [2 python3.12-minimal 815 kB/2335 kB 35%]                                                                                                      237 kB/s 23s28% [2 python3.12-minimal 1501 kB/2335 kB 64%]                                                                                                     237 kB/s 20s31% [2 python3.12-minimal 1753 kB/2335 kB 75%]                                                                                                     237 kB/s 19s32% [2 python3.12-minimal 1841 kB/2335 kB 79%]                                                                                                     237 kB/s 18s39% [Waiting for headers]                                                                                                                          237 kB/s 16s                                                                                                                                                               Get:3 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 python3-minimal amd64 3.12.3-0ubuntu2.1 [27.4 kB]
+39% [3 python3-minimal 27.4 kB/27.4 kB 100%]                                                                                                       237 kB/s 16s41% [Working]                                                                                                                                      237 kB/s 16s                                                                                                                                                               Get:4 http://archive.ubuntu.com/ubuntu noble/main amd64 media-types all 10.1.0 [27.5 kB]
+41% [4 media-types 9486 B/27.5 kB 35%]                                                                                                             237 kB/s 16s43% [Waiting for headers]                                                                                                                          237 kB/s 16s                                                                                                                                                               Get:5 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 tzdata all 2026e-0ubuntu0.24.04.1 [282 kB]
+43% [5 tzdata 47.3 kB/282 kB 17%]                                                                                                                  237 kB/s 16s47% [Waiting for headers]                                                                                                                          237 kB/s 15s                                                                                                                                                               Get:6 http://archive.ubuntu.com/ubuntu noble/main amd64 readline-common all 8.2-4build1 [56.5 kB]
+48% [6 readline-common 27.0 kB/56.5 kB 48%]                                                                                                        237 kB/s 15s50% [Waiting for headers]                                                                                                                          237 kB/s 15s                                                                                                                                                               Get:7 http://archive.ubuntu.com/ubuntu noble/main amd64 libreadline8t64 amd64 8.2-4build1 [153 kB]
+50% [7 libreadline8t64 16.4 kB/153 kB 11%]                                                                                                         237 kB/s 15s53% [Waiting for headers]                                                                                                                          237 kB/s 14s                                                                                                                                                               Get:8 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libsqlite3-0 amd64 3.45.1-1ubuntu2.9 [702 kB]
+53% [8 libsqlite3-0 13.7 kB/702 kB 2%]                                                                                                             237 kB/s 14s60% [8 libsqlite3-0 636 kB/702 kB 91%]                                                                                                             237 kB/s 11s63% [Waiting for headers]                                                                                                                          237 kB/s 11s                                                                                                                                                               Get:9 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libpython3.12-stdlib amd64 3.12.3-1ubuntu0.17 [2071 kB]
+63% [9 libpython3.12-stdlib 2912 B/2071 kB 0%]                                                                                                     237 kB/s 11s68% [9 libpython3.12-stdlib 467 kB/2071 kB 23%]                                                                                                     237 kB/s 9s73% [9 libpython3.12-stdlib 900 kB/2071 kB 43%]                                                                                                     237 kB/s 7s78% [9 libpython3.12-stdlib 1389 kB/2071 kB 67%]                                                                                                    237 kB/s 5s84% [9 libpython3.12-stdlib 1916 kB/2071 kB 93%]                                                                                                    237 kB/s 3s87% [Waiting for headers]                                                                                                                           787 kB/s 0s                                                                                                                                                               Get:10 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 python3.12 amd64 3.12.3-1ubuntu0.17 [651 kB]
+88% [10 python3.12 18.9 kB/651 kB 3%]                                                                                                               787 kB/s 0s96% [Waiting for headers]                                                                                                                           787 kB/s 0s                                                                                                                                                               Get:11 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libpython3-stdlib amd64 3.12.3-0ubuntu2.1 [10.1 kB]
+96% [11 libpython3-stdlib 10.1 kB/10.1 kB 100%]                                                                                                     787 kB/s 0s98% [Waiting for headers]                                                                                                                           787 kB/s 0s                                                                                                                                                               Get:12 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 python3 amd64 3.12.3-0ubuntu2.1 [23.0 kB]
+98% [12 python3 5400 B/23.0 kB 23%]                                                                                                                 787 kB/s 0s100% [Working]                                                                                                                                      787 kB/s 0s                                                                                                                                                               Fetched 7176 kB in 13s (557 kB/s)
+debconf: delaying package configuration, since apt-utils is not installed
+Selecting previously unselected package libpython3.12-minimal:amd64.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 8532 files and directories currently installed.)
+Preparing to unpack .../libpython3.12-minimal_3.12.3-1ubuntu0.17_amd64.deb ...
+Unpacking libpython3.12-minimal:amd64 (3.12.3-1ubuntu0.17) ...
+Selecting previously unselected package python3.12-minimal.
+Preparing to unpack .../python3.12-minimal_3.12.3-1ubuntu0.17_amd64.deb ...
+Unpacking python3.12-minimal (3.12.3-1ubuntu0.17) ...
+Setting up libpython3.12-minimal:amd64 (3.12.3-1ubuntu0.17) ...
+Setting up python3.12-minimal (3.12.3-1ubuntu0.17) ...
+Selecting previously unselected package python3-minimal.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 8843 files and directories currently installed.)
+Preparing to unpack .../0-python3-minimal_3.12.3-0ubuntu2.1_amd64.deb ...
+Unpacking python3-minimal (3.12.3-0ubuntu2.1) ...
+Selecting previously unselected package media-types.
+Preparing to unpack .../1-media-types_10.1.0_all.deb ...
+Unpacking media-types (10.1.0) ...
+Selecting previously unselected package tzdata.
+Preparing to unpack .../2-tzdata_2026e-0ubuntu0.24.04.1_all.deb ...
+Unpacking tzdata (2026e-0ubuntu0.24.04.1) ...
+Selecting previously unselected package readline-common.
+Preparing to unpack .../3-readline-common_8.2-4build1_all.deb ...
+Unpacking readline-common (8.2-4build1) ...
+Selecting previously unselected package libreadline8t64:amd64.
+Preparing to unpack .../4-libreadline8t64_8.2-4build1_amd64.deb ...
+Adding 'diversion of /lib/x86_64-linux-gnu/libhistory.so.8 to /lib/x86_64-linux-gnu/libhistory.so.8.usr-is-merged by libreadline8t64'
+Adding 'diversion of /lib/x86_64-linux-gnu/libhistory.so.8.2 to /lib/x86_64-linux-gnu/libhistory.so.8.2.usr-is-merged by libreadline8t64'
+Adding 'diversion of /lib/x86_64-linux-gnu/libreadline.so.8 to /lib/x86_64-linux-gnu/libreadline.so.8.usr-is-merged by libreadline8t64'
+Adding 'diversion of /lib/x86_64-linux-gnu/libreadline.so.8.2 to /lib/x86_64-linux-gnu/libreadline.so.8.2.usr-is-merged by libreadline8t64'
+Unpacking libreadline8t64:amd64 (8.2-4build1) ...
+Selecting previously unselected package libsqlite3-0:amd64.
+Preparing to unpack .../5-libsqlite3-0_3.45.1-1ubuntu2.9_amd64.deb ...
+Unpacking libsqlite3-0:amd64 (3.45.1-1ubuntu2.9) ...
+Selecting previously unselected package libpython3.12-stdlib:amd64.
+Preparing to unpack .../6-libpython3.12-stdlib_3.12.3-1ubuntu0.17_amd64.deb ...
+Unpacking libpython3.12-stdlib:amd64 (3.12.3-1ubuntu0.17) ...
+Selecting previously unselected package python3.12.
+Preparing to unpack .../7-python3.12_3.12.3-1ubuntu0.17_amd64.deb ...
+Unpacking python3.12 (3.12.3-1ubuntu0.17) ...
+Selecting previously unselected package libpython3-stdlib:amd64.
+Preparing to unpack .../8-libpython3-stdlib_3.12.3-0ubuntu2.1_amd64.deb ...
+Unpacking libpython3-stdlib:amd64 (3.12.3-0ubuntu2.1) ...
+Setting up python3-minimal (3.12.3-0ubuntu2.1) ...
+Selecting previously unselected package python3.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 9842 files and directories currently installed.)
+Preparing to unpack .../python3_3.12.3-0ubuntu2.1_amd64.deb ...
+Unpacking python3 (3.12.3-0ubuntu2.1) ...
+Setting up media-types (10.1.0) ...
+Setting up libsqlite3-0:amd64 (3.45.1-1ubuntu2.9) ...
+Setting up tzdata (2026e-0ubuntu0.24.04.1) ...
+debconf: unable to initialize frontend: Dialog
+debconf: (No usable dialog-like program is installed, so the dialog based frontend cannot be used. at /usr/share/perl5/Debconf/FrontEnd/Dialog.pm line 79.)
+debconf: falling back to frontend: Readline
+Configuring tzdata
+------------------
+
+Please select the geographic area in which you live. Subsequent configuration questions will narrow this down by presenting a list of cities, representing the
+time zones in which they are located.
+
+  1. Africa  2. America  3. Antarctica  4. Arctic  5. Asia  6. Atlantic  7. Australia  8. Europe  9. Indian  10. Pacific  11. Etc  12. Legacy
+[4mGeographic area: [24m[1m8
+[0m[0m
+Please select the city or region corresponding to your time zone.
+
+  1. Amsterdam  8. Bratislava   15. Dublin       22. Kaliningrad  29. Madrid     36. Oslo       43. San_Marino  50. Tallinn    57. Vilnius
+  2. Andorra    9. Brussels     16. Gibraltar    23. Kirov        30. Malta      37. Paris      44. Sarajevo    51. Tirane     58. Volgograd
+  3. Astrakhan  10. Bucharest   17. Guernsey     24. Kyiv         31. Mariehamn  38. Podgorica  45. Saratov     52. Tiraspol   59. Warsaw
+  4. Athens     11. Budapest    18. Helsinki     25. Lisbon       32. Minsk      39. Prague     46. Simferopol  53. Ulyanovsk  60. Zagreb
+  5. Belfast    12. Busingen    19. Isle_of_Man  26. Ljubljana    33. Monaco     40. Riga       47. Skopje      54. Vaduz      61. Zurich
+  6. Belgrade   13. Chisinau    20. Istanbul     27. London       34. Moscow     41. Rome       48. Sofia       55. Vatican
+  7. Berlin     14. Copenhagen  21. Jersey       28. Luxembourg   35. Nicosia    42. Samara     49. Stockholm   56. Vienna
+[4mTime zone: [24m[1m27
+[0m[0m
+
+Current default time zone: 'Europe/London'
+Local time is now:      Thu Nov  5 08:49:44 GMT 2026.
+Universal Time is now:  Thu Nov  5 08:49:44 UTC 2026.
+Run 'dpkg-reconfigure tzdata' if you wish to change it.
+
+Setting up readline-common (8.2-4build1) ...
+Setting up libreadline8t64:amd64 (8.2-4build1) ...
+Setting up libpython3.12-stdlib:amd64 (3.12.3-1ubuntu0.17) ...
+Setting up python3.12 (3.12.3-1ubuntu0.17) ...
+Setting up libpython3-stdlib:amd64 (3.12.3-0ubuntu2.1) ...
+Setting up python3 (3.12.3-0ubuntu2.1) ...
+running python rtupdate hooks for python3.12...
+running python post-rtupdate hooks for python3.12...
+Processing triggers for libc-bin (2.39-0ubuntu8.6) ...
+[?2004hroot@45027c0924e3:/app/repo# python3 - <<'PY'
+[?2004l[?2004h> import json
+[?2004l[?2004h> from algo import map
+[?2004l[?2004h> 
+[?2004l[?2004h> with open('/app/examples.json') as f:
+[?2004l[?2004h>     examples = json.load(f)
+[?2004l[?2004h> 
+[?2004l[?2004h> all_ok = True
+[?2004l[?2004h> for i, ex in enumerate(examples, 1):
+[?2004l[?2004h>     got = map(ex['input'])
+[?2004l[?2004h>     ok = got == ex['output']
+[?2004l[?2004h>     print(f'example {i}: {ok}')
+[?2004l[?2004h>     if not ok:
+[?2004l[?2004h>         print('expected:', ex['output'])
+[?2004l[?2004h>         print('got     :', got)
+[?2004l[?2004h>         all_ok = False
+[?2004l[?2004h> 
+[?2004l[?2004h> if all_ok:
+[?2004l[?2004h>     print('ALL EXAMPLES PASS')
+[?2004l[?2004h> else:
+[?2004l[?2004h>     raise SystemExit(1)
+[?2004l[?2004h> PY
+[?2004lexample 1: True
+example 2: True
+example 3: True
+ALL EXAMPLES PASS
+[?2004hroot@45027c0924e3:/app/repo# GIT_PAGER=cat git commit --no-edit
+[?2004l[branch1 b0e07b2] Merge branch 'branch2' into branch1
+[?2004hroot@45027c0924e3:/app/repo# git status
+[?2004lOn branch branch1
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	[31m__pycache__/[m
+
+nothing added to commit but untracked files present (use "git add" to track)
+[?2004hroot@45027c0924e3:/app/repo# git branch -vv
+[?2004l[?1h=* [32mbranch1[m b0e07b2 Merge branch 'branch2' into branch1[m
+  branch2[m 836b057 implementation 2 done, using powerful numpy[m
+[K[?1l>[?2004hroot@45027c0924e3:/app/repo# git log --oneline --decorate --graph --all
+[?2004l[?1h=*   [33mb0e07b2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mbranch1[m[33m)[m Merge branch 'branch2' into branch1[m
+[31m|[m[32m\[m  [m
+[31m|[m * [33m836b057[m[33m ([m[1;32mbranch2[m[33m)[m implementation 2 done, using powerful numpy[m
+* [32m|[m [33mc8dca82[m Implementation 1 done[m
+[32m|[m[32m/[m  [m
+* [33mef202c5[m Initial commit: Add project structure and stub algo[m
+[K[?1l>[?2004hroot@45027c0924e3:/app/repo# ls -la /app/repo/algo.py
+[?2004l-rw-r--r-- 1 root root 573 Nov  5 08:49 /app/repo/algo.py
+[?2004hroot@45027c0924e3:/app/repo# grep -n '^def map' /app/repo/algo.py
+[?2004l[32m[K1[m[K[36m[K:[m[K[01;31m[Kdef map[m[K(grid):
+[?2004hroot@45027c0924e3:/app/repo# rm -rf __pycache__
+[?2004l[?2004hroot@45027c0924e3:/app/repo# git status --short
+[?2004l[?2004hroot@45027c0924e3:/app/repo# git branch --list
+[?2004l[?1h=* [32mbranch1[m[m
+  branch2[m[m
+[K[?1l>[?2004hroot@45027c0924e3:/app/repo# 

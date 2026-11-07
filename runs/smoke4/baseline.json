@@ -1,0 +1,44 @@
+{
+  "aggregate": {
+    "cost_usd": 0.008154408,
+    "mean_reward": 1.0,
+    "planned_trials": 1,
+    "tasks": 1,
+    "tasks_with_valid_trials": 1,
+    "tokens_in": 33138,
+    "tokens_out": 4971,
+    "valid_trials": 1
+  },
+  "arm": "H0",
+  "decision": "baseline_valid",
+  "k": {
+    "k_ast": 16299,
+    "k_bytes": 171048,
+    "k_cc": 593,
+    "k_chars": 171022,
+    "k_gzip": 38016,
+    "k_lines_nb": 2893
+  },
+  "k_reps": 1,
+  "root": "D:\\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\\vendor\\terminus2",
+  "subject": "terminus2",
+  "tasks": {
+    "terminal-bench/fix-git": {
+      "cost_usd": 0.008154408,
+      "mean_reward": 1.0,
+      "tokens_in": 33138,
+      "tokens_out": 4971,
+      "trials": 1,
+      "trials_with_tokens": 1,
+      "valid_trials": 1
+    }
+  },
+  "validity": {
+    "complete": true,
+    "infra_frac": 0.0,
+    "missing_frac": 0.0,
+    "reasons": [],
+    "status": "pass",
+    "token_coverage": 1.0
+  }
+}

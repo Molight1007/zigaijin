@@ -1,0 +1,4449 @@
+[?2004hroot@81939509ff13:/app# ls -la
+[?2004ltotal 32
+drwxr-xr-x 1 root root  4096 Sep 13  2025 .
+drwxr-xr-x 1 root root  4096 Nov  5 07:25 ..
+-rw-r--r-- 1 root root 17578 Sep 13  2025 interp.py
+drwxr-xr-x 2 root root  4096 Sep 13  2025 test
+[?2004hroot@81939509ff13:/app# sed -n '1,240p' interp.py
+[?2004l#!/usr/bin/env python3
+
+import sys
+
+sys.setrecursionlimit(10000)  # Increase recursion limit for deep computations
+
+DEBUG = False
+
+
+class SchemeError(Exception):
+    pass
+
+
+class Pair:
+    def __init__(self, car, cdr):
+        self.car = car
+        self.cdr = cdr
+
+    def __repr__(self):
+        return f"({self._to_string()})"
+
+    def _to_string(self):
+        result = repr(self.car)
+        current = self.cdr
+        while isinstance(current, Pair):
+            result += f" {repr(current.car)}"
+            current = current.cdr
+        if current is not None:
+            result += f" . {repr(current)}"
+        return result
+
+
+class Environment:
+    def __init__(self, parent=None):
+        self.bindings = {}
+        self.parent = parent
+
+    def define(self, name, value):
+        self.bindings[name] = value
+
+    def set(self, name, value):
+        if name in self.bindings:
+            self.bindings[name] = value
+        elif self.parent is not None:
+            self.parent.set(name, value)
+        else:
+            raise SchemeError(f"Undefined variable: {name}")
+
+    def get(self, name):
+        if name in self.bindings:
+            return self.bindings[name]
+        elif self.parent is not None:
+            return self.parent.get(name)
+        else:
+            raise SchemeError(f"Undefined variable: {name}")
+
+
+class Procedure:
+    def __init__(self, params, body, env):
+        self.params = params
+        self.body = body
+        self.env = env
+
+    def __repr__(self):
+        return "#<procedure>"
+
+
+class String:
+    def __init__(self, value):
+        self.value = value
+
+    def __repr__(self):
+        return f'"{self.value}"'
+
+    def __str__(self):
+        return self.value
+
+    def __eq__(self, other):
+        if isinstance(other, String):
+            return self.value == other.value
+        return False
+
+
+def tokenize(code):
+    tokens = []
+    i = 0
+    while i < len(code):
+        if code[i].isspace():
+            i += 1
+        elif code[i] == ";":
+            while i < len(code) and code[i] != "\n":
+                i += 1
+        elif code[i] in "()'":
+            tokens.append(code[i])
+            i += 1
+        elif code[i] == '"':
+            i += 1
+            start = i
+            while i < len(code) and code[i] != '"':
+                if code[i] == "\\":
+                    i += 2
+                else:
+                    i += 1
+            tokens.append(String(code[start:i]))
+            i += 1
+        else:
+            start = i
+            while i < len(code) and not code[i].isspace() and code[i] not in "()';":
+                i += 1
+            tokens.append(code[start:i])
+    return tokens
+
+
+def eval_expr(expr, env):
+    if DEBUG:
+        print(f"[DEBUG] Evaluating: {repr(expr)[:100]}...")
+
+    # Add recursion depth tracking
+    if not hasattr(eval_expr, "depth"):
+        eval_expr.depth = 0
+    eval_expr.depth += 1
+    if eval_expr.depth > 5000:
+        print(
+            f"[RECURSION] Deep recursion detected! Last expression: {repr(expr)[:200]}"
+        )
+        raise RecursionError("Recursion limit exceeded")
+
+    try:
+        if isinstance(expr, int) or isinstance(expr, bool):
+            result = expr
+            if DEBUG:
+                print(f"[DEBUG] -> Returning {repr(result)}")
+            return result
+
+        elif isinstance(expr, String):
+            # String literal
+            if DEBUG:
+                print(f"[DEBUG] -> Returning string: {repr(expr)}")
+            return expr
+
+        elif isinstance(expr, str):
+            # Symbol, look it up
+            result = env.get(expr)
+            if DEBUG:
+                print(
+                    f"[DEBUG] -> Symbol '{expr}' evaluated to: {repr(result)[:100]}..."
+                )
+            return result
+
+        elif isinstance(expr, Procedure):
+            if DEBUG:
+                print("[DEBUG] -> Returning procedure")
+            return expr
+
+        elif expr is None:
+            if DEBUG:
+                print("[DEBUG] -> Returning None")
+            return None
+
+        elif not isinstance(expr, Pair):
+            # This shouldn't happen with our parser
+            result = env.get(expr)
+            if DEBUG:
+                print(f"[DEBUG] -> Returning from env: {repr(result)}")
+            return result
+
+        car = expr.car
+
+        if car == "quote":
+            result = expr.cdr.car
+            if DEBUG:
+                print(f"[DEBUG] -> Quote returned: {repr(result)}")
+            return result
+
+        elif car == "if":
+            condition = eval_expr(expr.cdr.car, env)
+            if condition is not False:
+                return eval_expr(expr.cdr.cdr.car, env)
+            elif expr.cdr.cdr.cdr is not None:
+                return eval_expr(expr.cdr.cdr.cdr.car, env)
+            else:
+                return None
+
+        elif car == "define":
+            name_or_list = expr.cdr.car
+            if isinstance(name_or_list, Pair):
+                # Function definition shorthand: (define (f x y) body)
+                name = name_or_list.car
+                params = []
+                param_list = name_or_list.cdr
+                while param_list is not None:
+                    params.append(param_list.car)
+                    param_list = param_list.cdr
+
+                # Create lambda
+                body = expr.cdr.cdr
+                proc = Procedure(params, [], env)
+                proc.body = []
+                while body is not None:
+                    proc.body.append(body.car)
+                    body = body.cdr
+
+                env.define(name, proc)
+            else:
+                # Simple definition: (define x value)
+                name = name_or_list
+                value = eval_expr(expr.cdr.cdr.car, env)
+                env.define(name, value)
+            return None
+
+        elif car == "set!":
+            name = expr.cdr.car
+            value = eval_expr(expr.cdr.cdr.car, env)
+            env.set(name, value)
+            return None
+
+        elif car == "lambda":
+            params = []
+            param_list = expr.cdr.car
+            while param_list is not None:
+                params.append(param_list.car)
+                param_list = param_list.cdr
+
+            body = []
+            body_list = expr.cdr.cdr
+            while body_list is not None:
+                body.append(body_list.car)
+                body_list = body_list.cdr
+
+            return Procedure(params, body, env)
+
+        elif car == "let":
+            new_env = Environment(env)
+            bindings = expr.cdr.car
+            while bindings is not None:
+                binding = bindings.car
+                name = binding.car
+                value = eval_expr(binding.cdr.car, env)
+                new_env.define(name, value)
+                bindings = bindings.cdr
+[?2004hroot@81939509ff13:/app# ls -la test
+[?2004ltotal 140
+drwxr-xr-x 2 root root 4096 Sep 13  2025 .
+drwxr-xr-x 1 root root 4096 Sep 13  2025 ..
+-rw-r--r-- 1 root root  497 Sep 13  2025 01-factorial.scm
+-rw-r--r-- 1 root root  686 Sep 13  2025 02-fibonacci.scm
+-rw-r--r-- 1 root root 1033 Sep 13  2025 03-list-operations.scm
+-rw-r--r-- 1 root root  894 Sep 13  2025 04-higher-order.scm
+-rw-r--r-- 1 root root  921 Sep 13  2025 05-simple-io.scm
+-rw-r--r-- 1 root root  992 Sep 13  2025 06-interactive-io.scm
+-rw-r--r-- 1 root root 1067 Sep 13  2025 08-progn-sequencing.scm
+-rw-r--r-- 1 root root  895 Sep 13  2025 09-mutual-recursion.scm
+-rw-r--r-- 1 root root 1945 Sep 13  2025 10-advanced-features.scm
+-rw-r--r-- 1 root root 2108 Sep 13  2025 README.md
+-rw-r--r-- 1 root root 1410 Sep 13  2025 accumulator_patterns.scm
+-rw-r--r-- 1 root root 1311 Sep 13  2025 binary_tree.scm
+-rw-r--r-- 1 root root  341 Sep 13  2025 calculator.scm
+-rw-r--r-- 1 root root 1179 Sep 13  2025 church_numerals.scm
+-rw-r--r-- 1 root root  904 Sep 13  2025 closures.scm
+-rw-r--r-- 1 root root 1104 Sep 13  2025 continuation_passing.scm
+-rw-r--r-- 1 root root 1578 Sep 13  2025 currying.scm
+-rw-r--r-- 1 root root  719 Sep 13  2025 filter_operations.scm
+-rw-r--r-- 1 root root  800 Sep 13  2025 fold_operations.scm
+-rw-r--r-- 1 root root 1397 Sep 13  2025 function_composition.scm
+-rw-r--r-- 1 root root 1279 Sep 13  2025 lazy_evaluation.scm
+-rw-r--r-- 1 root root 1683 Sep 13  2025 list_operations.scm
+-rw-r--r-- 1 root root  637 Sep 13  2025 map_operations.scm
+-rw-r--r-- 1 root root 1694 Sep 13  2025 memoization.scm
+-rw-r--r-- 1 root root 1892 Sep 13  2025 mutual_recursion.scm
+-rw-r--r-- 1 root root 1133 Sep 13  2025 nested_defines.scm
+-rw-r--r-- 1 root root 2009 Sep 13  2025 oeis_sequences.scm
+-rw-r--r-- 1 root root 2351 Sep 13  2025 oeis_sequences2.scm
+-rw-r--r-- 1 root root 2555 Sep 13  2025 oeis_sequences3.scm
+-rw-r--r-- 1 root root 2780 Sep 13  2025 recursive_structures.scm
+-rw-r--r-- 1 root root   84 Sep 13  2025 test_read.scm
+-rw-r--r-- 1 root root 2468 Sep 13  2025 variadic_functions.scm
+-rw-r--r-- 1 root root  846 Sep 13  2025 y_combinator.scm
+[?2004hroot@81939509ff13:/app# sed -n '241,520p' interp.py
+[?2004l
+            result = None
+            body = expr.cdr.cdr
+            while body is not None:
+                result = eval_expr(body.car, new_env)
+                body = body.cdr
+            return result
+
+        elif car == "begin" or car == "progn":
+            result = None
+            body = expr.cdr
+            while body is not None:
+                result = eval_expr(body.car, env)
+                body = body.cdr
+            return result
+
+        elif car == "cond":
+            clauses = expr.cdr
+            while clauses is not None:
+                clause = clauses.car
+                test = clause.car
+                if test == "else" or eval_expr(test, env) is not False:
+                    # Evaluate the body of this clause
+                    result = None
+                    body = clause.cdr
+                    while body is not None:
+                        result = eval_expr(body.car, env)
+                        body = body.cdr
+                    return result
+                clauses = clauses.cdr
+            return None
+
+        else:
+            if DEBUG:
+                print("[DEBUG] Evaluating application...")
+            proc = eval_expr(car, env)
+            args = []
+            arg_list = expr.cdr
+            while arg_list is not None:
+                args.append(eval_expr(arg_list.car, env))
+                arg_list = arg_list.cdr
+
+            if DEBUG:
+                print(f"[DEBUG] Applying {repr(proc)[:50]}... to args: {args}")
+
+            if isinstance(proc, Procedure):
+                if len(args) != len(proc.params):
+                    raise SchemeError(
+                        f"Arity mismatch: expected {len(proc.params)} arguments, "
+                        f"got {len(args)} in evaluating {proc.body}"
+                    )
+
+                new_env = Environment(proc.env)
+                for param, arg in zip(proc.params, args):
+                    new_env.define(param, arg)
+
+                result = None
+                for body_expr in proc.body:
+                    result = eval_expr(body_expr, new_env)
+                if DEBUG:
+                    print(f"[DEBUG] -> Application returned: {repr(result)}")
+                return result
+
+            elif callable(proc):
+                result = proc(*args)
+                if DEBUG:
+                    print(f"[DEBUG] -> Primitive returned: {repr(result)}")
+                return result
+
+            else:
+                raise SchemeError(f"Not a procedure: {proc}")
+    finally:
+        eval_expr.depth -= 1
+
+
+def make_global_env():
+    env = Environment()
+
+    env.define("+", lambda *args: sum(args))
+    env.define("-", lambda a, b=None: -a if b is None else a - b)
+    env.define("*", lambda *args: eval(f"{'*'.join(map(str, args))}" if args else "1"))
+    env.define(
+        "/", lambda a, b: a // b if isinstance(a, int) and isinstance(b, int) else a / b
+    )
+    env.define("=", lambda a, b: a == b)
+    env.define("<", lambda a, b: a < b)
+    env.define(">", lambda a, b: a > b)
+    env.define("<=", lambda a, b: a <= b)
+    env.define(">=", lambda a, b: a >= b)
+
+    env.define("cons", lambda a, b: Pair(a, b))
+    env.define("car", lambda p: p.car if isinstance(p, Pair) else None)
+    env.define("cdr", lambda p: p.cdr if isinstance(p, Pair) else None)
+    env.define("null?", lambda x: x is None)
+    env.define("pair?", lambda x: isinstance(x, Pair))
+
+    env.define("eq?", lambda a, b: a == b)
+    env.define("equal?", lambda a, b: a == b)
+
+    env.define("not", lambda x: x is False)
+    env.define("and", lambda *args: all(args))
+    env.define("or", lambda *args: any(args))
+
+    env.define("getchr", lambda: ord(sys.stdin.read(1)))
+    env.define("putchr", lambda n: sys.stdout.write(chr(n)) or None)
+    env.define("chr", lambda n: chr(n))
+
+    # Read function - reads an S-expression from input
+    def read_sexp():
+        line = input()
+        tokens = tokenize(line)
+        if tokens:
+            expr, _ = parse_expr(tokens, 0)
+            return expr
+        return None
+
+    env.define("read", read_sexp)
+
+    def symbol_from_list(lst):
+        chars = []
+        while lst is not None:
+            if isinstance(lst, Pair):
+                chars.append(chr(lst.car))
+                lst = lst.cdr
+            else:
+                break
+        return "".join(chars)
+
+    env.define("symbol", symbol_from_list)
+
+    # Additional built-ins needed for eval.scm
+    env.define("symbol?", lambda x: isinstance(x, str))
+    env.define("string?", lambda x: isinstance(x, String))
+    env.define("number?", lambda x: isinstance(x, int))
+    env.define("set-car!", lambda p, v: setattr(p, "car", v) or None)
+    env.define("set-cdr!", lambda p, v: setattr(p, "cdr", v) or None)
+    env.define("else", True)  # else is always true in cond
+    env.define(
+        "display", lambda x: print(str(x) if isinstance(x, String) else x, end="")
+    )
+    env.define("newline", lambda: print())
+
+    # File I/O functions
+    open_files = {}  # Track open file handles
+    file_counter = 0
+
+    def fopen(filename, mode):
+        nonlocal file_counter
+        try:
+            # Convert String objects to regular strings
+            if isinstance(filename, String):
+                filename = str(filename)
+            if isinstance(mode, String):
+                mode = str(mode)
+            f = open(filename, mode)
+            file_counter += 1
+            file_id = f"file_{file_counter}"
+            open_files[file_id] = f
+            return file_id
+        except IOError:
+            return False
+
+    def fclose(file_id):
+        if file_id in open_files:
+            open_files[file_id].close()
+            del open_files[file_id]
+            return True
+        return False
+
+    def fgetchr(file_id):
+        if file_id in open_files:
+            ch = open_files[file_id].read(1)
+            if ch:
+                return ord(ch)
+            return -1  # EOF
+        return False
+
+    def fputchr(file_id, n):
+        if file_id in open_files:
+            open_files[file_id].write(chr(n))
+            open_files[file_id].flush()
+            return None
+        return False
+
+    def fdisplay(file_id, obj):
+        if file_id in open_files:
+            if isinstance(obj, String):
+                open_files[file_id].write(str(obj))
+            else:
+                open_files[file_id].write(str(obj))
+            open_files[file_id].flush()
+            return None
+        return False
+
+    def fread(file_id):
+        if file_id in open_files:
+            tokens = []
+            paren_count = 0
+
+            while True:
+                line = open_files[file_id].readline()
+                if not line:  # EOF
+                    return None
+
+                # Skip empty lines and comments when we have no tokens yet
+                if not tokens and (not line.strip() or line.strip().startswith(";")):
+                    continue
+
+                # Tokenize line and add to accumulated tokens
+                line_tokens = tokenize(line.strip())
+                tokens.extend(line_tokens)
+
+                # Count parentheses to check if expression is complete
+                for token in line_tokens:
+                    if token == "(":
+                        paren_count += 1
+                    elif token == ")":
+                        paren_count -= 1
+
+                # If parentheses are balanced and we have tokens, try to parse
+                if tokens and paren_count == 0:
+                    try:
+                        expr, _ = parse_expr(tokens, 0)
+                        return expr
+                    except Exception:
+                        # If parsing fails with balanced parens, skip this expression
+                        tokens = []
+                        paren_count = 0
+                        continue
+        return False
+
+    env.define("fopen", fopen)
+    env.define("fclose", fclose)
+    env.define("fgetchr", fgetchr)
+    env.define("fputchr", fputchr)
+    env.define("fdisplay", fdisplay)
+    env.define("fread", fread)
+
+    return env
+
+
+def run_file(filename):
+    env = make_global_env()
+
+    with open(filename, "r") as f:
+        content = f.read()
+
+    tokens = tokenize(content)
+    index = 0
+
+    while index < len(tokens):
+        try:
+            # Parse one complete expression
+            expr, new_index = parse_expr(tokens, index)
+            index = new_index
+
+            # Evaluate it
+            eval_expr(expr, env)
+
+            # Don't print results - only display/newline should print
+            pass
+
+        except SchemeError as e:
+            print(f"Error: {e}")
+            break
+
+        except Exception as e:
+            print(f"Unexpected error: {e}")
+            break
+
+
+def parse_expr(tokens, index):
+    if index >= len(tokens):
+        raise SchemeError("Unexpected end of input")
+
+    token = tokens[index]
+
+    if token == "(":
+        index += 1
+        elements = []
+[?2004hroot@81939509ff13:/app# for f in test/calculator.scm test/01-factorial.scm test/05-simple-io.scm test/06-interactive-io.scm test/08-progn-sequencing.scm test/10--advanced-features.scm; do echo '===== ' $f; cat "$f"; done
+[?2004l=====  test/calculator.scm
+(display "Reading")
+(newline)
+(let ((line (read)))
+  (cond
+   ((= (car line) '+)
+    (display (+ (car (cdr line)) (car (cdr (cdr line))))))
+   ((= (car line) '-)
+    (display (- (car (cdr line)) (car (cdr (cdr line))))))
+   ((= (car line) '*)
+    (display (* (car (cdr line)) (car (cdr (cdr line))))))))
+(newline)
+(display "Done")
+(newline)
+=====  test/01-factorial.scm
+;; Test 1: Factorial - Classic recursive function
+
+(define (factorial n)
+  (if (= n 0)
+      1
+      (* n (factorial (- n 1)))))
+
+;; Test factorial of 5
+(display (factorial 5))
+(newline)
+
+;; Test factorial of 10
+(display (factorial 10))
+(newline)
+
+;; Tail-recursive version
+(define (factorial-tail n)
+  (define (fact-iter n acc)
+    (if (= n 0)
+        acc
+        (fact-iter (- n 1) (* n acc))))
+  (fact-iter n 1))
+
+;; Test factorial of 20 (tail-recursive)
+(display (factorial-tail 20))
+(newline)=====  test/05-simple-io.scm
+;; Test 5: Simple I/O operations
+
+(display "Testing simple I/O...")
+(newline)
+
+;; Test display with different types
+(display "String: ")
+(display "Hello, World!")
+(newline)
+
+(display "Number: ")
+(display 42)
+(newline)
+
+(display "Boolean true: ")
+(display #t)
+(newline)
+
+(display "Boolean false: ")
+(display #f)
+(newline)
+
+(display "List: ")
+(display '(1 2 3 4 5))
+(newline)
+
+;; Test character output
+(display "Character output: ")
+(putchr 65)  ; 'A'
+(putchr 32)  ; space
+(putchr 66)  ; 'B'
+(putchr 32)  ; space
+(putchr 67)  ; 'C'
+(newline)
+
+;; Test progn with display
+(display "Progn with side effects: ")
+(progn
+  (display "First ")
+  (display "Second ")
+  (display "Third")
+  (newline)
+  42)  ; Return value
+
+;; Test conditionals with display
+(display "Conditional display: ")
+(if (> 5 3)
+    (display "5 is greater than 3")
+    (display "This won't print"))
+(newline)
+
+(display "Simple I/O tests completed!")
+(newline)=====  test/06-interactive-io.scm
+;; Test 6: Interactive I/O with read
+
+(display "Interactive calculator")
+(newline)
+(display "Enter two numbers and an operation (+, -, *, /)")
+(newline)
+
+(display "First number: ")
+(define num1 (read))
+(display "Second number: ")
+(define num2 (read))
+(display "Operation (+, -, *, /): ")
+(define op (read))
+
+(define result
+  (cond ((eq? op '+) (+ num1 num2))
+        ((eq? op '-) (- num1 num2))
+        ((eq? op '*) (* num1 num2))
+        ((eq? op '/) (/ num1 num2))
+        (else 'invalid-operation)))
+
+(display "Result: ")
+(display result)
+(newline)
+
+;; Mini REPL
+(display "Mini expression evaluator (type 'quit to exit)")
+(newline)
+
+(define (mini-repl)
+  (display "> ")
+  (let ((expr (read)))
+    (if (eq? expr 'quit)
+        (display "Goodbye!")
+        (progn
+          (display "You entered: ")
+          (display expr)
+          (newline)
+          ;; In a real REPL, we'd evaluate expr here
+          (mini-repl)))))
+
+;; Comment out to avoid infinite loop in batch mode
+;; (mini-repl)=====  test/08-progn-sequencing.scm
+;; Test 8: progn and sequencing with side effects
+
+(display "Testing progn sequencing:")
+(newline)
+
+;; progn returns the last expression
+(define result 
+  (progn
+    (display "First... ")
+    (display "Second... ")
+    (display "Third... ")
+    (+ 10 20)))
+
+(display "Result: ")
+(display result)
+(newline)
+
+;; Counter with side effects
+(define counter 0)
+
+(define (increment!)
+  (set! counter (+ counter 1))
+  counter)
+
+(display "Counting: ")
+(progn
+  (display (increment!))
+  (display " ")
+  (display (increment!))
+  (display " ")
+  (display (increment!))
+  (newline))
+
+;; Simulating a for loop with progn
+(define (for-loop start end body)
+  (if (<= start end)
+      (progn
+        (body start)
+        (for-loop (+ start 1) end body))))
+
+(display "For loop 1-5: ")
+(for-loop 1 5 
+  (lambda (i) 
+    (progn 
+      (display i)
+      (display " "))))
+(newline)
+
+;; Multiple statements in let
+(let ((x 10)
+      (y 20))
+  (progn
+    (display "x = ")
+    (display x)
+    (display ", y = ")
+    (display y)
+    (display ", x + y = ")
+    (display (+ x y))
+    (newline)))=====  test/10-advanced-features.scm
+;; Test 10: Advanced features - Y combinator, quasiquote simulation, macros
+
+;; Y combinator for anonymous recursion
+(define Y
+  (lambda (f)
+    ((lambda (x) (f (lambda (y) ((x x) y))))
+     (lambda (x) (f (lambda (y) ((x x) y)))))))
+
+;; Factorial using Y combinator
+(display "Factorial using Y combinator:")
+(newline)
+(define fact-y
+  (Y (lambda (f)
+       (lambda (n)
+         (if (= n 0)
+             1
+             (* n (f (- n 1))))))))
+
+(display "5! = ")
+(display (fact-y 5))
+(newline)
+
+;; Quasiquote simulation using list operations
+(define (quasiquote-sim template)
+  ;; Simplified - just handles lists with 'unquote markers
+  template)
+
+;; Association lists and property lists
+(define person '((name . "John") (age . 30) (city . "NYC")))
+
+(define (assoc-get key alist)
+  (cond ((null? alist) #f)
+        ((eq? (car (car alist)) key) (cdr (car alist)))
+        (else (assoc-get key (cdr alist)))))
+
+(display "Person data:")
+(newline)
+(display "Name: ")
+(display (assoc-get 'name person))
+(newline)
+(display "Age: ")
+(display (assoc-get 'age person))
+(newline)
+
+;; Simple object system using closures
+(define (make-counter init)
+  (let ((count init))
+    (lambda (msg)
+      (cond ((eq? msg 'get) count)
+            ((eq? msg 'inc) (set! count (+ count 1)))
+            ((eq? msg 'reset) (set! count init))))))
+
+(define c1 (make-counter 0))
+(display "Counter object:")
+(newline)
+(c1 'inc)
+(c1 'inc)
+(display "After 2 increments: ")
+(display (c1 'get))
+(newline)
+(c1 'reset)
+(display "After reset: ")
+(display (c1 'get))
+(newline)
+
+;; Continuation-like behavior with callbacks
+(define (with-file filename mode callback)
+  (let ((f (fopen filename mode)))
+    (let ((result (callback f)))
+      (fclose f)
+      result)))
+
+(display "File handling with callback:")
+(newline)
+(with-file "callback-test.txt" "w"
+  (lambda (f)
+    (fdisplay f "Written with callback!")
+    (fputchr f 10)
+    #t))
+(display "File written successfully")
+(newline)[?2004hroot@81939509ff13:/app# wc -l interp.py
+[?2004l586 interp.py
+[?2004hroot@81939509ff13:/app# nl -ba interp.py | sed -n '300,430p'
+[?2004l   300	                if DEBUG:
+   301	                    print(f"[DEBUG] -> Application returned: {repr(result)}")
+   302	                return result
+   303	
+   304	            elif callable(proc):
+   305	                result = proc(*args)
+   306	                if DEBUG:
+   307	                    print(f"[DEBUG] -> Primitive returned: {repr(result)}")
+   308	                return result
+   309	
+   310	            else:
+   311	                raise SchemeError(f"Not a procedure: {proc}")
+   312	    finally:
+   313	        eval_expr.depth -= 1
+   314	
+   315	
+   316	def make_global_env():
+   317	    env = Environment()
+   318	
+   319	    env.define("+", lambda *args: sum(args))
+   320	    env.define("-", lambda a, b=None: -a if b is None else a - b)
+   321	    env.define("*", lambda *args: eval(f"{'*'.join(map(str, args))}" if args else "1"))
+   322	    env.define(
+   323	        "/", lambda a, b: a // b if isinstance(a, int) and isinstance(b, int) else a / b
+   324	    )
+   325	    env.define("=", lambda a, b: a == b)
+   326	    env.define("<", lambda a, b: a < b)
+   327	    env.define(">", lambda a, b: a > b)
+   328	    env.define("<=", lambda a, b: a <= b)
+   329	    env.define(">=", lambda a, b: a >= b)
+   330	
+   331	    env.define("cons", lambda a, b: Pair(a, b))
+   332	    env.define("car", lambda p: p.car if isinstance(p, Pair) else None)
+   333	    env.define("cdr", lambda p: p.cdr if isinstance(p, Pair) else None)
+   334	    env.define("null?", lambda x: x is None)
+   335	    env.define("pair?", lambda x: isinstance(x, Pair))
+   336	
+   337	    env.define("eq?", lambda a, b: a == b)
+   338	    env.define("equal?", lambda a, b: a == b)
+   339	
+   340	    env.define("not", lambda x: x is False)
+   341	    env.define("and", lambda *args: all(args))
+   342	    env.define("or", lambda *args: any(args))
+   343	
+   344	    env.define("getchr", lambda: ord(sys.stdin.read(1)))
+   345	    env.define("putchr", lambda n: sys.stdout.write(chr(n)) or None)
+   346	    env.define("chr", lambda n: chr(n))
+   347	
+   348	    # Read function - reads an S-expression from input
+   349	    def read_sexp():
+   350	        line = input()
+   351	        tokens = tokenize(line)
+   352	        if tokens:
+   353	            expr, _ = parse_expr(tokens, 0)
+   354	            return expr
+   355	        return None
+   356	
+   357	    env.define("read", read_sexp)
+   358	
+   359	    def symbol_from_list(lst):
+   360	        chars = []
+   361	        while lst is not None:
+   362	            if isinstance(lst, Pair):
+   363	                chars.append(chr(lst.car))
+   364	                lst = lst.cdr
+   365	            else:
+   366	                break
+   367	        return "".join(chars)
+   368	
+   369	    env.define("symbol", symbol_from_list)
+   370	
+   371	    # Additional built-ins needed for eval.scm
+   372	    env.define("symbol?", lambda x: isinstance(x, str))
+   373	    env.define("string?", lambda x: isinstance(x, String))
+   374	    env.define("number?", lambda x: isinstance(x, int))
+   375	    env.define("set-car!", lambda p, v: setattr(p, "car", v) or None)
+   376	    env.define("set-cdr!", lambda p, v: setattr(p, "cdr", v) or None)
+   377	    env.define("else", True)  # else is always true in cond
+   378	    env.define(
+   379	        "display", lambda x: print(str(x) if isinstance(x, String) else x, end="")
+   380	    )
+   381	    env.define("newline", lambda: print())
+   382	
+   383	    # File I/O functions
+   384	    open_files = {}  # Track open file handles
+   385	    file_counter = 0
+   386	
+   387	    def fopen(filename, mode):
+   388	        nonlocal file_counter
+   389	        try:
+   390	            # Convert String objects to regular strings
+   391	            if isinstance(filename, String):
+   392	                filename = str(filename)
+   393	            if isinstance(mode, String):
+   394	                mode = str(mode)
+   395	            f = open(filename, mode)
+   396	            file_counter += 1
+   397	            file_id = f"file_{file_counter}"
+   398	            open_files[file_id] = f
+   399	            return file_id
+   400	        except IOError:
+   401	            return False
+   402	
+   403	    def fclose(file_id):
+   404	        if file_id in open_files:
+   405	            open_files[file_id].close()
+   406	            del open_files[file_id]
+   407	            return True
+   408	        return False
+   409	
+   410	    def fgetchr(file_id):
+   411	        if file_id in open_files:
+   412	            ch = open_files[file_id].read(1)
+   413	            if ch:
+   414	                return ord(ch)
+   415	            return -1  # EOF
+   416	        return False
+   417	
+   418	    def fputchr(file_id, n):
+   419	        if file_id in open_files:
+   420	            open_files[file_id].write(chr(n))
+   421	            open_files[file_id].flush()
+   422	            return None
+   423	        return False
+   424	
+   425	    def fdisplay(file_id, obj):
+   426	        if file_id in open_files:
+   427	            if isinstance(obj, String):
+   428	                open_files[file_id].write(str(obj))
+   429	            else:
+   430	                open_files[file_id].write(str(obj))
+[?2004hroot@81939509ff13:/app# nl -ba interp.py | sed -n '431,560p'
+[?2004l   431	            open_files[file_id].flush()
+   432	            return None
+   433	        return False
+   434	
+   435	    def fread(file_id):
+   436	        if file_id in open_files:
+   437	            tokens = []
+   438	            paren_count = 0
+   439	
+   440	            while True:
+   441	                line = open_files[file_id].readline()
+   442	                if not line:  # EOF
+   443	                    return None
+   444	
+   445	                # Skip empty lines and comments when we have no tokens yet
+   446	                if not tokens and (not line.strip() or line.strip().startswith(";")):
+   447	                    continue
+   448	
+   449	                # Tokenize line and add to accumulated tokens
+   450	                line_tokens = tokenize(line.strip())
+   451	                tokens.extend(line_tokens)
+   452	
+   453	                # Count parentheses to check if expression is complete
+   454	                for token in line_tokens:
+   455	                    if token == "(":
+   456	                        paren_count += 1
+   457	                    elif token == ")":
+   458	                        paren_count -= 1
+   459	
+   460	                # If parentheses are balanced and we have tokens, try to parse
+   461	                if tokens and paren_count == 0:
+   462	                    try:
+   463	                        expr, _ = parse_expr(tokens, 0)
+   464	                        return expr
+   465	                    except Exception:
+   466	                        # If parsing fails with balanced parens, skip this expression
+   467	                        tokens = []
+   468	                        paren_count = 0
+   469	                        continue
+   470	        return False
+   471	
+   472	    env.define("fopen", fopen)
+   473	    env.define("fclose", fclose)
+   474	    env.define("fgetchr", fgetchr)
+   475	    env.define("fputchr", fputchr)
+   476	    env.define("fdisplay", fdisplay)
+   477	    env.define("fread", fread)
+   478	
+   479	    return env
+   480	
+   481	
+   482	def run_file(filename):
+   483	    env = make_global_env()
+   484	
+   485	    with open(filename, "r") as f:
+   486	        content = f.read()
+   487	
+   488	    tokens = tokenize(content)
+   489	    index = 0
+   490	
+   491	    while index < len(tokens):
+   492	        try:
+   493	            # Parse one complete expression
+   494	            expr, new_index = parse_expr(tokens, index)
+   495	            index = new_index
+   496	
+   497	            # Evaluate it
+   498	            eval_expr(expr, env)
+   499	
+   500	            # Don't print results - only display/newline should print
+   501	            pass
+   502	
+   503	        except SchemeError as e:
+   504	            print(f"Error: {e}")
+   505	            break
+   506	
+   507	        except Exception as e:
+   508	            print(f"Unexpected error: {e}")
+   509	            break
+   510	
+   511	
+   512	def parse_expr(tokens, index):
+   513	    if index >= len(tokens):
+   514	        raise SchemeError("Unexpected end of input")
+   515	
+   516	    token = tokens[index]
+   517	
+   518	    if token == "(":
+   519	        index += 1
+   520	        elements = []
+   521	        while index < len(tokens) and tokens[index] != ")":
+   522	            expr, index = parse_expr(tokens, index)
+   523	            elements.append(expr)
+   524	        if index >= len(tokens):
+   525	            raise SchemeError("Missing closing parenthesis")
+   526	        index += 1
+   527	
+   528	        result = None
+   529	        for i in range(len(elements) - 1, -1, -1):
+   530	            result = Pair(elements[i], result)
+   531	        return result, index
+   532	
+   533	    elif token == ")":
+   534	        raise SchemeError("Unexpected closing parenthesis")
+   535	
+   536	    elif isinstance(token, String):
+   537	        return token, index + 1
+   538	
+   539	    elif token == "'":
+   540	        expr, index = parse_expr(tokens, index + 1)
+   541	        return Pair("quote", Pair(expr, None)), index
+   542	
+   543	    else:
+   544	        # Try to parse as number
+   545	        try:
+   546	            return int(token), index + 1
+   547	        except ValueError:
+   548	            pass
+   549	
+   550	        # Check for boolean literals
+   551	        if token == "#t":
+   552	            return True, index + 1
+   553	        elif token == "#f":
+   554	            return False, index + 1
+   555	
+   556	        # Otherwise it's a symbol
+   557	        return token, index + 1
+   558	
+   559	
+   560	def parse(tokens):
+[?2004hroot@81939509ff13:/app# nl -ba interp.py | sed -n '560,620p'
+[?2004l   560	def parse(tokens):
+   561	    expr, _ = parse_expr(tokens, 0)
+   562	    return expr
+   563	
+   564	
+   565	if __name__ == "__main__":
+   566	    if len(sys.argv) > 1:
+   567	        run_file(sys.argv[1])
+   568	    else:
+   569	        # If no file provided, read from stdin
+   570	        content = sys.stdin.read()
+   571	        tokens = tokenize(content)
+   572	        env = make_global_env()
+   573	        index = 0
+   574	
+   575	        while index < len(tokens):
+   576	            try:
+   577	                expr, new_index = parse_expr(tokens, index)
+   578	                index = new_index
+   579	                result = eval_expr(expr, env)
+   580	                # Don't print results - only display/newline should print
+   581	            except SchemeError as e:
+   582	                print(f"Error: {e}")
+   583	                break
+   584	            except Exception as e:
+   585	                print(f"Unexpected error: {e}")
+   586	                break
+[?2004hroot@81939509ff13:/app# sed -n '1,200p' test/calculator.scm
+[?2004l(display "Reading")
+(newline)
+(let ((line (read)))
+  (cond
+   ((= (car line) '+)
+    (display (+ (car (cdr line)) (car (cdr (cdr line))))))
+   ((= (car line) '-)
+    (display (- (car (cdr line)) (car (cdr (cdr line))))))
+   ((= (car line) '*)
+    (display (* (car (cdr line)) (car (cdr (cdr line))))))))
+(newline)
+(display "Done")
+(newline)
+[?2004hroot@81939509ff13:/app# cat test/test_read.scm
+[?2004l(display "Reading")
+(newline)
+(display (read))
+(newline)
+(display "Done")
+(newline)
+[?2004hroot@81939509ff13:/app# grep -Rho "([a-zA-Z0-9!?+*/<>=_-]*" test | sed 's/^(//' | sort -u | head -200
+[?2004lbash: !?+*/<>=_-]*" test | sed 's/^(//' | sort -u | head -200: event not found
+[?2004hroot@81939509ff13:/app# cat test/README.md
+[?2004l# Scheme Interpreter Test Suite
+
+This directory contains a number of test programs demonstrating various features of the Scheme interpreter.
+
+## Running Tests
+
+To run a test:
+
+```bash
+python3 ../interp.py 01-factorial.scm
+```
+
+## Test Programs
+
+Below is description of first 10 tests.
+
+### 01-factorial.scm
+
+- Recursive factorial function
+- Tail-recursive factorial implementation
+- Tests basic recursion and arithmetic
+
+### 02-fibonacci.scm
+
+- Recursive Fibonacci sequence
+- Iterative Fibonacci with accumulator
+- Demonstrates different algorithmic approaches
+
+### 03-list-operations.scm
+
+- List manipulation: length, reverse, map, filter
+- Working with cons cells
+- Functional programming patterns
+
+### 04-higher-order.scm
+
+- Functions that return functions (closures)
+- Function composition
+- Fold/reduce operations
+- Demonstrates lexical scoping
+
+### 05-file-io.scm
+
+- File operations: fopen, fclose, fread, fwrite
+- Character-based I/O: fgetchr, fputchr
+- Reading and writing S-expressions
+
+### 06-interactive-io.scm
+
+- Interactive input with `read`
+- Simple calculator example
+- REPL skeleton (commented out for batch mode)
+
+### 07-string-manipulation.scm
+
+- Creating strings from character lists with `symbol`
+- Character code manipulation
+- ASCII operations
+
+### 08-progn-sequencing.scm
+
+- Using `progn` for sequencing side effects
+- Simulating imperative constructs
+- State mutation with `set!`
+
+### 09-mutual-recursion.scm
+
+- Mutually recursive functions (even?/odd?)
+- List processing with mutual recursion
+- Tests forward references
+
+### 10-advanced-features.scm
+
+- Y combinator for anonymous recursion
+- Association lists
+- Object-oriented programming with closures
+- File handling with callbacks
+
+## Features Demonstrated
+
+- **Core Language**: define, lambda, if, cond, let, set!
+- **Data Types**: numbers, symbols, lists, booleans
+- **List Operations**: cons, car, cdr, null?, pair?
+- **Control Flow**: progn/begin, recursion, iteration
+- **I/O**: read, display, file operations
+- **Higher-Order Functions**: map, filter, fold, compose
+- **Advanced**: closures, mutual recursion, Y combinator
+[?2004hroot@81939509ff13:/app# for f in test/02-fibonacci.scm test/03-list-operations.scm test/04-higher-order.scm test/07* test/09-mutual-recursion.scm; do echo "====== $f"; cat "$f"; done
+[?2004l===== test/02-fibonacci.scm
+;; Test 2: Fibonacci - Another classic recursive function
+
+(define (fib n)
+  (cond ((= n 0) 0)
+        ((= n 1) 1)
+        (else (+ (fib (- n 1)) (fib (- n 2))))))
+
+;; Generate list of first n Fibonacci numbers
+(define (fib-list n)
+  (define (fib-list-helper i)
+    (if (>= i n)
+        '()
+        (cons (fib i) (fib-list-helper (+ i 1)))))
+  (fib-list-helper 0))
+
+;; Display first 10 Fibonacci numbers as a list
+(display (fib-list 10))
+(newline)
+
+;; Efficient iterative version
+(define (fib-iter n)
+  (define (fib-helper n a b)
+    (if (= n 0)
+        a
+        (fib-helper (- n 1) b (+ a b))))
+  (fib-helper n 0 1))
+
+;; Display 20th Fibonacci number
+(display (fib-iter 20))
+(newline)===== test/03-list-operations.scm
+;; Test 3: List operations - Working with cons cells
+
+;; List creation and manipulation
+(define lst '(1 2 3 4 5))
+;; Original list
+(display lst)
+(newline)
+
+;; Custom length function
+(define (my-length lst)
+  (if (null? lst)
+      0
+      (+ 1 (my-length (cdr lst)))))
+
+;; Length of list
+(display (my-length lst))
+(newline)
+
+;; Reverse a list
+(define (reverse lst)
+  (define (reverse-iter lst acc)
+    (if (null? lst)
+        acc
+        (reverse-iter (cdr lst) (cons (car lst) acc))))
+  (reverse-iter lst '()))
+
+;; Reversed list
+(display (reverse lst))
+(newline)
+
+;; Map function
+(define (my-map f lst)
+  (if (null? lst)
+      '()
+      (cons (f (car lst)) (my-map f (cdr lst)))))
+
+;; Squared values
+(display (my-map (lambda (x) (* x x)) lst))
+(newline)
+
+;; Filter function
+(define (filter pred lst)
+  (cond ((null? lst) '())
+        ((pred (car lst)) (cons (car lst) (filter pred (cdr lst))))
+        (else (filter pred (cdr lst)))))
+
+;; Even numbers from list
+(display (filter (lambda (x) (= (- x (* 2 (/ x 2))) 0)) lst))
+(newline)===== test/04-higher-order.scm
+;; Test 4: Higher-order functions and closures
+
+;; Function that returns a function
+(define (make-adder n)
+  (lambda (x) (+ x n)))
+
+(define add5 (make-adder 5))
+(define add10 (make-adder 10))
+
+;; add5(3)
+(display (add5 3))
+(newline)
+
+;; add10(3)
+(display (add10 3))
+(newline)
+
+;; Compose function
+(define (compose f g)
+  (lambda (x) (f (g x))))
+
+(define square (lambda (x) (* x x)))
+(define inc (lambda (x) (+ x 1)))
+
+(define square-then-inc (compose inc square))
+(define inc-then-square (compose square inc))
+
+;; square-then-inc(5)
+(display (square-then-inc 5))
+(newline)
+
+;; inc-then-square(5)
+(display (inc-then-square 5))
+(newline)
+
+;; Fold/reduce
+(define (fold-left f init lst)
+  (if (null? lst)
+      init
+      (fold-left f (f init (car lst)) (cdr lst))))
+
+;; Sum of 1-5
+(display (fold-left + 0 '(1 2 3 4 5)))
+(newline)
+
+;; Product of 1-5
+(display (fold-left * 1 '(1 2 3 4 5)))
+(newline)===== test/07*
+cat: 'test/07*': No such file or directory
+===== test/09-mutual-recursion.scm
+;; Test 9: Mutual recursion - even? and odd?
+
+(define (even? n)
+  (if (= n 0)
+      #t
+      (odd? (- n 1))))
+
+(define (odd? n)
+  (if (= n 0)
+      #f
+      (even? (- n 1))))
+
+(display "Testing even? and odd?:")
+(newline)
+
+(define (test-number n)
+  (progn
+    (display n)
+    (display " is ")
+    (if (even? n)
+        (display "even")
+        (display "odd"))
+    (newline)))
+
+(test-number 0)
+(test-number 1)
+(test-number 10)
+(test-number 15)
+(test-number 100)
+
+;; Mutual recursion with lists
+(define (take-even lst)
+  (if (null? lst)
+      '()
+      (cons (car lst) (take-odd (cdr lst)))))
+
+(define (take-odd lst)
+  (if (null? lst)
+      '()
+      (take-even (cdr lst))))
+
+(display "Alternate elements of (1 2 3 4 5 6 7 8):")
+(newline)
+(display "Even positions: ")
+(display (take-even '(1 2 3 4 5 6 7 8)))
+(newline)
+(display "Odd positions: ")
+(display (take-odd '(1 2 3 4 5 6 7 8)))
+(newline)[?2004hroot@81939509ff13:/app# for f in test/accumulator_patterns.scm test/binary_tree.scm test/church_numerals.scm test/closures.scm test/continuation_passing.scm testt/currying.scm; do echo "===== $f"; cat "$f"; done
+[?2004l===== test/accumulator_patterns.scm
+;; Test accumulator patterns and tail recursion
+
+;; Tail-recursive factorial with accumulator
+(define (factorial-acc n acc)
+  (if (= n 0)
+      acc
+      (factorial-acc (- n 1) (* n acc))))
+
+(define (factorial n)
+  (factorial-acc n 1))
+
+;; Tail-recursive reverse
+(define (reverse-acc lst acc)
+  (if (null? lst)
+      acc
+      (reverse-acc (cdr lst) (cons (car lst) acc))))
+
+(define (reverse lst)
+  (reverse-acc lst '()))
+
+;; Tail-recursive sum
+(define (sum-acc lst acc)
+  (if (null? lst)
+      acc
+      (sum-acc (cdr lst) (+ (car lst) acc))))
+
+(define (sum lst)
+  (sum-acc lst 0))
+
+;; Tail-recursive length
+(define (length-acc lst acc)
+  (if (null? lst)
+      acc
+      (length-acc (cdr lst) (+ acc 1))))
+
+(define (length lst)
+  (length-acc lst 0))
+
+;; Tests
+(display "Factorial of 6: ")
+(display (factorial 6))
+(newline)
+
+(display "Reverse of (1 2 3 4 5): ")
+(display (reverse '(1 2 3 4 5)))
+(newline)
+
+(display "Sum of (10 20 30 40): ")
+(display (sum '(10 20 30 40)))
+(newline)
+
+(display "Length of (a b c d e f): ")
+(display (length '(a b c d e f)))
+(newline)
+
+;; Multi-accumulator pattern
+(define (sum-and-product lst sum-acc prod-acc)
+  (if (null? lst)
+      (cons sum-acc prod-acc)
+      (sum-and-product (cdr lst) 
+                       (+ sum-acc (car lst))
+                       (* prod-acc (car lst)))))
+
+(display "Sum and product of (2 3 4): ")
+(display (sum-and-product '(2 3 4) 0 1))
+(newline)===== test/binary_tree.scm
+;; Test binary tree operations
+;; Binary tree as nested pairs: (value left right)
+
+;; Define append function
+(define (append lst1 lst2)
+  (if (null? lst1)
+      lst2
+      (cons (car lst1) (append (cdr lst1) lst2))))
+
+(define (make-tree value left right)
+  (cons value (cons left right)))
+
+(define (tree-value tree)
+  (car tree))
+
+(define (tree-left tree)
+  (car (cdr tree)))
+
+(define (tree-right tree)
+  (cdr (cdr tree)))
+
+(define (tree-insert value tree)
+  (if (null? tree)
+      (make-tree value '() '())
+      (if (< value (tree-value tree))
+          (make-tree (tree-value tree)
+                     (tree-insert value (tree-left tree))
+                     (tree-right tree))
+          (make-tree (tree-value tree)
+                     (tree-left tree)
+                     (tree-insert value (tree-right tree))))))
+
+(define (tree-inorder tree)
+  (if (null? tree)
+      '()
+      (append (tree-inorder (tree-left tree))
+              (cons (tree-value tree)
+                    (tree-inorder (tree-right tree))))))
+
+;; Test tree operations
+(define tree1 (make-tree 5 '() '()))
+(define tree2 (tree-insert 3 tree1))
+(define tree3 (tree-insert 7 tree2))
+(define tree4 (tree-insert 1 tree3))
+(define tree5 (tree-insert 9 tree4))
+
+(display "Tree in-order traversal: ")
+(display (tree-inorder tree5))
+(newline)===== test/church_numerals.scm
+;; Test Church numerals - numbers as functions
+
+;; Church numeral definitions
+(define zero (lambda (f) (lambda (x) x)))
+(define one (lambda (f) (lambda (x) (f x))))
+(define two (lambda (f) (lambda (x) (f (f x)))))
+
+;; Successor function
+(define succ
+  (lambda (n)
+    (lambda (f)
+      (lambda (x)
+        (f ((n f) x))))))
+
+;; Addition
+(define add
+  (lambda (m)
+    (lambda (n)
+      (lambda (f)
+        (lambda (x)
+          ((m f) ((n f) x)))))))
+
+;; Multiplication
+(define mult
+  (lambda (m)
+    (lambda (n)
+      (lambda (f)
+        (m (n f))))))
+
+;; Convert Church numeral to regular number
+(define church-to-int
+  (lambda (n)
+    ((n (lambda (x) (+ x 1))) 0)))
+
+;; Test Church numerals
+(define three (succ two))
+(define four (succ three))
+
+(display "zero as int: ")
+(display (church-to-int zero))
+(newline)
+
+(display "one as int: ")
+(display (church-to-int one))
+(newline)
+
+(display "two as int: ")
+(display (church-to-int two))
+(newline)
+
+(display "three (succ two) as int: ")
+(display (church-to-int three))
+(newline)
+
+(display "2 + 3 = ")
+(display (church-to-int ((add two) three)))
+(newline)
+
+(display "2 * 3 = ")
+(display (church-to-int ((mult two) three)))
+(newline)===== test/closures.scm
+;; Test closures and lexical scoping
+
+(define (make-counter)
+  (let ((count 0))
+    (lambda ()
+      (set! count (+ count 1))
+      count)))
+
+(define (make-adder n)
+  (lambda (x) (+ x n)))
+
+(define (make-multiplier n)
+  (lambda (x) (* x n)))
+
+;; Test counter closure
+(define counter1 (make-counter))
+(define counter2 (make-counter))
+
+(display "Counter1 first call: ")
+(display (counter1))
+(newline)
+
+(display "Counter1 second call: ")
+(display (counter1))
+(newline)
+
+(display "Counter2 first call: ")
+(display (counter2))
+(newline)
+
+(display "Counter1 third call: ")
+(display (counter1))
+(newline)
+
+;; Test adder closures
+(define add5 (make-adder 5))
+(define add10 (make-adder 10))
+
+(display "add5 to 3: ")
+(display (add5 3))
+(newline)
+
+(display "add10 to 3: ")
+(display (add10 3))
+(newline)
+
+;; Test multiplier
+(define times3 (make-multiplier 3))
+(display "times3 of 4: ")
+(display (times3 4))
+(newline)===== test/continuation_passing.scm
+;; Test continuation-passing style
+
+;; Regular factorial
+(define (fact-normal n)
+  (if (= n 0)
+      1
+      (* n (fact-normal (- n 1)))))
+
+;; CPS factorial
+(define (fact-cps n cont)
+  (if (= n 0)
+      (cont 1)
+      (fact-cps (- n 1)
+                (lambda (res) (cont (* n res))))))
+
+(display "Normal factorial of 5: ")
+(display (fact-normal 5))
+(newline)
+
+(display "CPS factorial of 5: ")
+(display (fact-cps 5 (lambda (x) x)))
+(newline)
+
+;; CPS fibonacci
+(define (fib-cps n cont)
+  (cond ((= n 0) (cont 0))
+        ((= n 1) (cont 1))
+        (else 
+         (fib-cps (- n 1)
+                  (lambda (a)
+                    (fib-cps (- n 2)
+                             (lambda (b)
+                               (cont (+ a b)))))))))
+
+(display "CPS fibonacci of 6: ")
+(display (fib-cps 6 (lambda (x) x)))
+(newline)
+
+;; CPS list sum
+(define (sum-cps lst cont)
+  (if (null? lst)
+      (cont 0)
+      (sum-cps (cdr lst)
+               (lambda (rest-sum)
+                 (cont (+ (car lst) rest-sum))))))
+
+(display "CPS sum of (1 2 3 4 5): ")
+(display (sum-cps '(1 2 3 4 5) (lambda (x) x)))
+(newline)===== test/currying.scm
+;; Test currying and partial application
+
+;; Manual currying
+(define (curry2 f)
+  (lambda (x)
+    (lambda (y)
+      (f x y))))
+
+(define (curry3 f)
+  (lambda (x)
+    (lambda (y)
+      (lambda (z)
+        (f x y z)))))
+
+;; Uncurry
+(define (uncurry2 f)
+  (lambda (x y)
+    ((f x) y)))
+
+(define (uncurry3 f)
+  (lambda (x y z)
+    (((f x) y) z)))
+
+;; Test functions
+(define (add x y) (+ x y))
+(define (multiply x y) (* x y))
+(define (combine x y z) (+ (* x y) z))
+
+;; Curry the functions
+(define curried-add (curry2 add))
+(define curried-mult (curry2 multiply))
+(define curried-combine (curry3 combine))
+
+;; Test curried functions
+(display "Curried add 5 to 3: ")
+(display ((curried-add 5) 3))
+(newline)
+
+(define add5 (curried-add 5))
+(display "add5 to 10: ")
+(display (add5 10))
+(newline)
+
+(define mult3 (curried-mult 3))
+(display "mult3 by 7: ")
+(display (mult3 7))
+(newline)
+
+;; Test curried combine
+(display "Curried combine 2 * 3 + 4: ")
+(display (((curried-combine 2) 3) 4))
+(newline)
+
+(define combine2 (curried-combine 2))
+(define combine2-3 (combine2 3))
+(display "Partially applied combine2-3 + 5: ")
+(display (combine2-3 5))
+(newline)
+
+;; Flip arguments
+(define (flip f)
+  (lambda (y)
+    (lambda (x)
+      ((f x) y))))
+
+(define flipped-sub (flip (curry2 -)))
+(display "Flipped subtraction 10 - 3: ")
+(display ((flipped-sub 10) 3))
+(newline)
+
+;; Composition with curried functions
+(define (compose-curried f g)
+  (lambda (x)
+    (f (g x))))
+
+(define add2-then-mult3 (compose-curried mult3 (curried-add 2)))
+(display "(2 + 4) * 3 = ")
+(display (add2-then-mult3 4))
+(newline)[?2004hroot@81939509ff13:/app# nl -ba interp.py | sed -n '418,434p'
+[?2004l   418	    def fputchr(file_id, n):
+   419	        if file_id in open_files:
+   420	            open_files[file_id].write(chr(n))
+   421	            open_files[file_id].flush()
+   422	            return None
+   423	        return False
+   424	
+   425	    def fdisplay(file_id, obj):
+   426	        if file_id in open_files:
+   427	            if isinstance(obj, String):
+   428	                open_files[file_id].write(str(obj))
+   429	            else:
+   430	                open_files[file_id].write(str(obj))
+   431	            open_files[file_id].flush()
+   432	            return None
+   433	        return False
+   434	
+[?2004hroot@81939509ff13:/app# grep -RIn ') *(' test --include='*.scm' || true
+[?2004ltest/y_combinator.scm:6:    ((lambda (x) (f (lambda (v) ((x x) v))))
+test/y_combinator.scm:7:     (lambda (x) (f (lambda (v) ((x x) v)))))))
+test/y_combinator.scm:27:               (else (+ (fib (- n 1)) (fib (- n 2)))))))))
+test/variadic_functions.scm:7:      (cons (car lst1) (append (cdr lst1) lst2))))
+test/variadic_functions.scm:18:      (+ (car lst) (sum-all (cdr lst)))))
+test/variadic_functions.scm:24:      (* (car lst) (product-all (cdr lst)))))
+test/variadic_functions.scm:55:      (append (car lsts) (concat-all (cdr lsts)))))
+test/variadic_functions.scm:74:(display "Concatenate ((1 2) (3 4) (5 6)): ")
+test/variadic_functions.scm:75:(display (concat-all '((1 2) (3 4) (5 6))))
+test/variadic_functions.scm:82:      (cons (f (car lst)) (apply-to-all f (cdr lst)))))
+test/variadic_functions.scm:85:(display (apply-to-all (lambda (x) (* x x)) '(1 2 3 4)))
+test/variadic_functions.scm:95:            ((car funcs) ((compose-all (cdr funcs)) x))))))
+test/variadic_functions.scm:97:(define add1 (lambda (x) (+ x 1)))
+test/variadic_functions.scm:98:(define double (lambda (x) (* x 2)))
+test/variadic_functions.scm:99:(define square (lambda (x) (* x x)))
+test/10-advanced-features.scm:6:    ((lambda (x) (f (lambda (y) ((x x) y))))
+test/10-advanced-features.scm:7:     (lambda (x) (f (lambda (y) ((x x) y)))))))
+test/10-advanced-features.scm:29:(define person '((name . "John") (age . 30) (city . "NYC")))
+test/10-advanced-features.scm:33:        ((eq? (car (car alist)) key) (cdr (car alist)))
+test/10-advanced-features.scm:50:            ((eq? msg 'inc) (set! count (+ count 1)))
+test/10-advanced-features.scm:51:            ((eq? msg 'reset) (set! count init))))))
+test/memoization.scm:6:        ((equal? key (car (car alist))) (car alist))
+test/currying.scm:25:(define (add x y) (+ x y))
+test/currying.scm:26:(define (multiply x y) (* x y))
+test/currying.scm:27:(define (combine x y z) (+ (* x y) z))
+test/03-list-operations.scm:24:        (reverse-iter (cdr lst) (cons (car lst) acc))))
+test/03-list-operations.scm:35:      (cons (f (car lst)) (my-map f (cdr lst)))))
+test/03-list-operations.scm:38:(display (my-map (lambda (x) (* x x)) lst))
+test/03-list-operations.scm:44:        ((pred (car lst)) (cons (car lst) (filter pred (cdr lst))))
+test/03-list-operations.scm:48:(display (filter (lambda (x) (= (- x (* 2 (/ x 2))) 0)) lst))
+test/accumulator_patterns.scm:7:      (factorial-acc (- n 1) (* n acc))))
+test/accumulator_patterns.scm:16:      (reverse-acc (cdr lst) (cons (car lst) acc))))
+test/accumulator_patterns.scm:25:      (sum-acc (cdr lst) (+ (car lst) acc))))
+test/accumulator_patterns.scm:34:      (length-acc (cdr lst) (+ acc 1))))
+test/binary_tree.scm:8:      (cons (car lst1) (append (cdr lst1) lst2))))
+test/function_composition.scm:4:  (lambda (x) (f (g x))))
+test/function_composition.scm:11:(define (add1 x) (+ x 1))
+test/function_composition.scm:12:(define (square x) (* x x))
+test/function_composition.scm:13:(define (double x) (* x 2))
+test/function_composition.scm:39:  (lambda (x) (f (g (h x)))))
+test/09-mutual-recursion.scm:35:      (cons (car lst) (take-odd (cdr lst)))))
+test/continuation_passing.scm:14:                (lambda (res) (cont (* n res))))))
+test/continuation_passing.scm:26:  (cond ((= n 0) (cont 0))
+test/continuation_passing.scm:27:        ((= n 1) (cont 1))
+test/continuation_passing.scm:48:(display (sum-cps '(1 2 3 4 5) (lambda (x) x)))
+test/recursive_structures.scm:7:      (cons (car lst1) (append (cdr lst1) lst2))))
+test/recursive_structures.scm:14:(define (push stack val) (cons val stack))
+test/recursive_structures.scm:15:(define (pop stack) (cdr stack))
+test/recursive_structures.scm:16:(define (top stack) (car stack))
+test/recursive_structures.scm:17:(define (empty? stack) (null? stack))
+test/recursive_structures.scm:20:(define (make-queue) (cons '() '()))
+test/recursive_structures.scm:22:  (cons (cons val (car q)) (cdr q)))
+test/recursive_structures.scm:27:        (cons '() (cdr reversed)))
+test/recursive_structures.scm:28:      (cons (car q) (cdr (cdr q)))))
+test/recursive_structures.scm:38:      (append (reverse (cdr lst)) (list (car lst)))))
+test/recursive_structures.scm:57:(define (node-data node) (car node))
+test/recursive_structures.scm:58:(define (node-children node) (cdr node))
+test/recursive_structures.scm:62:             (map (lambda (child) (tree-map f child))
+test/recursive_structures.scm:68:      (cons (f (car lst)) (map f (cdr lst)))))
+test/recursive_structures.scm:111:(define doubled-tree (tree-map (lambda (x) (* x 2)) tree1))
+test/lazy_evaluation.scm:19:  (cons-stream n (lambda () (integers-from (+ n 1)))))
+test/lazy_evaluation.scm:26:            (stream-take (- n 1) (stream-cdr stream)))))
+test/lazy_evaluation.scm:31:               (lambda () (stream-map f (stream-cdr stream)))))
+test/lazy_evaluation.scm:41:(define squares (stream-map (lambda (x) (* x x)) nats))
+test/lazy_evaluation.scm:50:    (cons-stream a (lambda () (fib-gen b (+ a b)))))
+test/02-fibonacci.scm:6:        (else (+ (fib (- n 1)) (fib (- n 2))))))
+test/02-fibonacci.scm:13:        (cons (fib i) (fib-list-helper (+ i 1)))))
+test/nested_defines.scm:17:    (+ (inner-function 5) (another-inner 2)))
+test/nested_defines.scm:23:  (+ (middle-function 3) (parallel-middle 2)))
+test/04-higher-order.scm:5:  (lambda (x) (+ x n)))
+test/04-higher-order.scm:20:  (lambda (x) (f (g x))))
+test/04-higher-order.scm:22:(define square (lambda (x) (* x x)))
+test/04-higher-order.scm:23:(define inc (lambda (x) (+ x 1)))
+test/04-higher-order.scm:40:      (fold-left f (f init (car lst)) (cdr lst))))
+test/01-factorial.scm:21:        (fact-iter (- n 1) (* n acc))))
+test/oeis_sequences.scm:38:    (cond ((= n 0) (if (= k 0) 1 0))
+test/oeis_sequences.scm:42:                   (stirling2 (- n 1) (- k 1))))))
+test/oeis_sequences.scm:46:        (sum-stirling n (+ k 1) (+ acc (stirling2 n k)))))
+test/oeis_sequences.scm:56:        (cons (f i) (gen (+ i 1)))))
+test/oeis_sequences2.scm:41:    (cond ((= count n) (- num 1))
+test/oeis_sequences2.scm:42:          ((is-prime? num) (find-prime (+ count 1) (+ num 1)))
+test/oeis_sequences2.scm:50:  (and (is-prime? p) (is-prime? (+ p 2))))
+test/oeis_sequences2.scm:54:    (cond ((= count n) (- num 1))
+test/oeis_sequences2.scm:55:          ((is-twin-prime? num) (find-twin (+ count 1) (+ num 1)))
+test/oeis_sequences2.scm:72:        (cons (f i) (gen (+ i 1)))))
+test/closures.scm:10:  (lambda (x) (+ x n)))
+test/closures.scm:13:  (lambda (x) (* x n)))
+test/fold_operations.scm:6:      (fold-left f (f init (car lst)) (cdr lst))))
+test/fold_operations.scm:11:      (f (car lst) (fold-right f init (cdr lst)))))
+test/fold_operations.scm:25:  (fold-left (lambda (acc x) (cons x acc)) '() lst))
+test/filter_operations.scm:6:         (cons (car lst) (filter pred (cdr lst))))
+test/map_operations.scm:6:      (cons (f (car lst)) (map f (cdr lst)))))
+test/map_operations.scm:8:(define (square x) (* x x))
+test/map_operations.scm:9:(define (double x) (* x 2))
+test/map_operations.scm:10:(define (add1 x) (+ x 1))
+test/church_numerals.scm:4:(define zero (lambda (f) (lambda (x) x)))
+test/church_numerals.scm:5:(define one (lambda (f) (lambda (x) (f x))))
+test/church_numerals.scm:6:(define two (lambda (f) (lambda (x) (f (f x)))))
+test/church_numerals.scm:21:          ((m f) ((n f) x)))))))
+test/church_numerals.scm:33:    ((n (lambda (x) (+ x 1))) 0)))
+test/calculator.scm:6:    (display (+ (car (cdr line)) (car (cdr (cdr line))))))
+test/calculator.scm:8:    (display (- (car (cdr line)) (car (cdr (cdr line))))))
+test/calculator.scm:10:    (display (* (car (cdr line)) (car (cdr (cdr line))))))))
+test/06-interactive-io.scm:16:  (cond ((eq? op '+) (+ num1 num2))
+test/06-interactive-io.scm:17:        ((eq? op '-) (- num1 num2))
+test/06-interactive-io.scm:18:        ((eq? op '*) (* num1 num2))
+test/06-interactive-io.scm:19:        ((eq? op '/) (/ num1 num2))
+test/list_operations.scm:10:      (cons (car lst1) (append (cdr lst1) lst2))))
+test/list_operations.scm:14:  (if (or (null? lst1) (null? lst2))
+test/list_operations.scm:16:      (cons (cons (car lst1) (car lst2))
+test/list_operations.scm:17:            (zip (cdr lst1) (cdr lst2)))))
+test/list_operations.scm:23:         (append (flatten (car lst)) (flatten (cdr lst))))
+test/list_operations.scm:24:        (else (cons (car lst) (flatten (cdr lst))))))
+test/list_operations.scm:32:            (cons (cons (car lst) (car rest)) (cdr rest))
+test/list_operations.scm:33:            (cons (car rest) (cons (car lst) (cdr rest)))))))
+test/list_operations.scm:44:      (if (member? (car lst) (cdr lst))
+test/list_operations.scm:46:          (cons (car lst) (remove-duplicates (cdr lst))))))
+test/list_operations.scm:53:(display "Flatten ((1 2) (3 (4 5)) 6): ")
+test/list_operations.scm:54:(display (flatten '((1 2) (3 (4 5)) 6)))
+test/list_operations.scm:57:(define (even? n) (= (- n (* (/ n 2) 2)) 0))
+test/oeis_sequences3.scm:8:           (collatz (/ n 2) (+ steps 1)))
+test/oeis_sequences3.scm:10:           (collatz (+ (* 3 n) 1) (+ steps 1)))))
+test/oeis_sequences3.scm:36:    (cond ((= count n) (- num 1))
+test/oeis_sequences3.scm:37:          ((is-prime? num) (find-prime (+ count 1) (+ num 1)))
+test/oeis_sequences3.scm:46:      (* (nth-prime (- n 1)) (primorial (- n 1)))))
+test/oeis_sequences3.scm:56:     (* (factorial n) (factorial n))))
+test/oeis_sequences3.scm:71:        (cons (f i) (gen (+ i 1)))))
+test/oeis_sequences3.scm:79:(define (pell-from-0 n) (pell n))
+test/oeis_sequences3.scm:88:(define (cbc-from-0 n) (central-binomial n))
+test/oeis_sequences3.scm:93:(define (der-from-0 n) (derangements n))
+test/mutual_recursion.scm:79:          (cons (car lst) (parse-expr (cdr lst))))))
+test/mutual_recursion.scm:86:          (cons (car lst) (parse-block (cdr lst))))))
+[?2004hroot@81939509ff13:/app# grep -RIn '\.' test --include='*.scm' | head -40
+[?2004ltest/05-simple-io.scm:3:(display "Testing simple I/O...")
+test/10-advanced-features.scm:29:(define person '((name . "John") (age . 30) (city . "NYC")))
+test/10-advanced-features.scm:75:(with-file "callback-test.txt" "w"
+test/memoization.scm:62:  (display "...")
+test/function_composition.scm:47:(define (make-pipeline . funcs)
+test/08-progn-sequencing.scm:9:    (display "First... ")
+test/08-progn-sequencing.scm:10:    (display "Second... ")
+test/08-progn-sequencing.scm:11:    (display "Third... ")
+[?2004hroot@81939509ff13:/app# sed -n '1,130p' test/variadic_functions.scm
+[?2004l;; Test variable argument functions (simulated)
+
+;; Define helper functions
+(define (append lst1 lst2)
+  (if (null? lst1)
+      lst2
+      (cons (car lst1) (append (cdr lst1) lst2))))
+
+(define (list3 a b c)
+  (cons a (cons b (cons c '()))))
+
+;; Since we don't have rest parameters, simulate with lists
+
+;; Sum any number of arguments
+(define (sum-all lst)
+  (if (null? lst)
+      0
+      (+ (car lst) (sum-all (cdr lst)))))
+
+;; Product of all arguments
+(define (product-all lst)
+  (if (null? lst)
+      1
+      (* (car lst) (product-all (cdr lst)))))
+
+;; Max of all arguments
+(define (max-all lst)
+  (if (null? lst)
+      #f
+      (if (null? (cdr lst))
+          (car lst)
+          (let ((rest-max (max-all (cdr lst))))
+            (if (> (car lst) rest-max)
+                (car lst)
+                rest-max)))))
+
+;; Min of all arguments
+(define (min-all lst)
+  (if (null? lst)
+      #f
+      (if (null? (cdr lst))
+          (car lst)
+          (let ((rest-min (min-all (cdr lst))))
+            (if (< (car lst) rest-min)
+                (car lst)
+                rest-min)))))
+
+;; Create list from arguments
+(define (list-of lst) lst)
+
+;; Concatenate all lists
+(define (concat-all lsts)
+  (if (null? lsts)
+      '()
+      (append (car lsts) (concat-all (cdr lsts)))))
+
+;; Tests
+(display "Sum of (1 2 3 4 5): ")
+(display (sum-all '(1 2 3 4 5)))
+(newline)
+
+(display "Product of (2 3 4): ")
+(display (product-all '(2 3 4)))
+(newline)
+
+(display "Max of (3 1 4 1 5 9 2 6): ")
+(display (max-all '(3 1 4 1 5 9 2 6)))
+(newline)
+
+(display "Min of (3 1 4 1 5 9 2 6): ")
+(display (min-all '(3 1 4 1 5 9 2 6)))
+(newline)
+
+(display "Concatenate ((1 2) (3 4) (5 6)): ")
+(display (concat-all '((1 2) (3 4) (5 6))))
+(newline)
+
+;; Function that takes function and applies to all args
+(define (apply-to-all f lst)
+  (if (null? lst)
+      '()
+      (cons (f (car lst)) (apply-to-all f (cdr lst)))))
+
+(display "Square all (1 2 3 4): ")
+(display (apply-to-all (lambda (x) (* x x)) '(1 2 3 4)))
+(newline)
+
+;; Compose functions variadic style
+(define (compose-all funcs)
+  (if (null? funcs)
+      (lambda (x) x)
+      (if (null? (cdr funcs))
+          (car funcs)
+          (lambda (x)
+            ((car funcs) ((compose-all (cdr funcs)) x))))))
+
+(define add1 (lambda (x) (+ x 1)))
+(define double (lambda (x) (* x 2)))
+(define square (lambda (x) (* x x)))
+
+(define complex-fn (compose-all (list3 square double add1)))
+(display "((x + 1) * 2)^2 of 3: ")
+(display (complex-fn 3))
+(newline)[?2004hroot@81939509ff13:/app# sed -n '1,120p' test/function_composition.scm
+[?2004l;; Test function composition and higher-order functions
+
+(define (compose f g)
+  (lambda (x) (f (g x))))
+
+(define (twice f)
+  (compose f f))
+
+(define (identity x) x)
+
+(define (add1 x) (+ x 1))
+(define (square x) (* x x))
+(define (double x) (* x 2))
+
+;; Test basic composition
+(define square-then-add1 (compose add1 square))
+(display "square then add1 of 3: ")
+(display (square-then-add1 3))
+(newline)
+
+(define add1-then-square (compose square add1))
+(display "add1 then square of 3: ")
+(display (add1-then-square 3))
+(newline)
+
+;; Test twice
+(define add2 (twice add1))
+(display "add2 (twice add1) of 5: ")
+(display (add2 5))
+(newline)
+
+(define quad (twice double))
+(display "quad (twice double) of 3: ")
+(display (quad 3))
+(newline)
+
+;; Compose multiple functions
+(define (compose3 f g h)
+  (lambda (x) (f (g (h x)))))
+
+(define complex (compose3 square add1 double))
+(display "double, add1, then square of 2: ")
+(display (complex 2))
+(newline)
+
+;; Function that returns composed function
+(define (make-pipeline . funcs)
+  (if (null? funcs)
+      identity
+      (if (null? (cdr funcs))
+          (car funcs)
+          (compose (car funcs)
+                   (make-pipeline (cdr funcs))))))
+
+;; This won't work without rest parameters, so simplified version:
+(define pipeline (compose square (compose add1 double)))
+(display "Pipeline (double, add1, square) of 3: ")
+(display (pipeline 3))
+(newline)[?2004hroot@81939509ff13:/app# python3 interp.py test/10-advanced-features.scm
+[?2004lFactorial using Y combinator:
+5! = 120
+Person data:
+Name: ('.' "John")
+Age: ('.' 30)
+Counter object:
+After 2 increments: 2
+After reset: 0
+File handling with callback:
+File written successfully
+[?2004hroot@81939509ff13:/app# python3 interp.py test/variadic_functions.scm
+[?2004lSum of (1 2 3 4 5): 15
+Product of (2 3 4): 24
+Max of (3 1 4 1 5 9 2 6): 9
+Min of (3 1 4 1 5 9 2 6): 1
+Concatenate ((1 2) (3 4) (5 6)): (1 2 3 4 5 6)
+Square all (1 2 3 4): (1 4 9 16)
+((x + 1) * 2)^2 of 3: 64
+[?2004hroot@81939509ff13:/app# cat > eval.scm <<'EOF'
+[?2004l[?2004h> ; eval.scm - metacircular evaluator for interp.py
+[?2004l[?2004h> 
+[?2004l[?2004h> (define (lookup-binding name bindings)
+[?2004l[?2004h>   (if (null? bindings)
+[?2004l[?2004h>       '()
+[?2004l[?2004h>       (if (eq? name (car (car bindings)))
+[?2004l[?2004h>           (car bindings)
+[?2004l[?2004h>           (lookup-binding name (cdr bindings)))))
+[?2004l[?2004h> 
+[?2004l[?2004h> (define (env-lookup name env)
+[?2004l[?2004h>   (let ((b (lookup-binding name (car env))))
+[?2004l[?2004h>     (if (null? b)
+[?2004l[?2004h>         (if (null? (cdr env))
+[?2004l[?2004h>             '()
+[?2004l[?2004h>             (env-lookup name (cdr env)))
+[?2004l[?2004h>         (cdr b))))
+[?2004l[?2004h> 
+[?2004l[?2004h> (define (env-define env name val)
+[?2004l[?2004h>   (set-car! env (cons (cons name val) (car env))))
+[?2004l[?2004h> 
+[?2004l[?2004h> (define (env-set name val env)
+[?2004l[?2004h>   (let ((b (lookup-binding name (car env))))
+[?2004l[?2004h>     (if (null? b)
+[?2004l[?2004h>         (if (null? (cdr env))
+[?2004l[?2004h>             '()
+[?2004l[?2004h>             (env-set name val (cdr env)))
+[?2004l[?2004h>         (set-cdr! b val))))
+[?2004l[?2004h> 
+[?2004l[?2004h> (define (bind-params params args env)
+[?2004l[?2004h>   (if (null? params)
+[?2004l[?2004h>       '()
+[?2004l[?2004h>       (progn
+[?2004l[?2004h>         (env-define env (car params) (car args))
+[?2004l[?2004h>         (bind-params (cdr params) (cdr args) env))))
+[?2004l[?2004h> 
+[?2004l[?2004h> (define (make-closure params body env)
+[?2004l[?2004h>   (cons 'closure (cons params (cons body env))))
+[?2004l[?2004h> 
+[?2004l[?2004h> (define (closure? x)
+[?2004l[?2004h>   (if (pair? x)
+[?2004l[?2004h>       (eq? (car x) 'closure)
+[?2004l[?2004h>       #f))
+[?2004l[?2004h> 
+[?2004l[?2004h> (define (closure-params p) (car (cdr p)))
+[?2004l[?2004h> (define (closure-body p) (car (cdr (cdr p))))
+[?2004l[?2004h> (define (closure-env p) (car (cdr (cdr (cdr p)))))
+[?2004l[?2004h> 
+[?2004l[?2004h> (define (eval-sequence body env)
+[?2004l[?2004h>   (if (null? body)
+[?2004l[?2004h>       '()
+[?2004l[?2004h>       (let ((result (m-eval (car body) env)))
+[?2004l[?2004h>         (if (null? (cdr body))
+[?2004l[?2004h>             result
+[?2004l[?2004h>             (eval-sequence (cdr body) env)))))
+[?2004l[?2004h> 
+[?2004l[?2004h> (define (eval-args arglist env)
+[?2004l[?2004h>   (if (null? arglist)
+[?2004l[?2004h>       '()
+[?2004l[?2004h>       (cons (m-eval (car arglist) env)
+[?2004l[?2004h>             (eval-args (cdr arglist) env))))
+[?2004l[?2004h> 
+[?2004l[?2004h> (define (m-eval expr env)
+[?2004l[?2004h>   (cond ((eq? expr #t) #t)
+[?2004l[?2004h>         ((eq? expr #f) #f)
+[?2004l[?2004h>         ((number? expr) expr)
+[?2004l[?2004h>         ((string? expr) expr)
+[?2004l[?2004h>         ((symbol? expr) (env-lookup expr env))
+[?2004l[?2004h>         ((pair? expr) (m-eval-pair expr env))
+[?2004l[?2004h>         (else expr)))
+[?2004l[?2004h> 
+[?2004l[?2004h> (define (m-eval-pair expr env)
+[?2004l[?2004h>   (let ((op (car expr)))
+[?2004l[?2004h>     (cond ((eq? op 'quote) (car (cdr expr)))
+[?2004l[?2004h>           ((eq? op 'if) (m-eval-if expr env))
+[?2004l[?2004h>           ((eq? op 'define) (m-eval-define expr env))
+[?2004l[?2004h>           ((eq? op 'set!) (m-eval-set expr env))
+[?2004l[?2004h>           ((eq? op 'lambda) (make-closure (car (cdr expr)) (cdr (cdr expr)) env))
+[?2004l[?2004h>           ((eq? op 'let) (m-eval-let expr env))
+[?2004l[?2004h>           ((eq? op 'begin) (eval-sequence (cdr expr) env))
+[?2004l[?2004h>           ((eq? op 'progn) (eval-sequence (cdr expr) env))
+[?2004l[?2004h>           ((eq? op 'cond) (m-eval-cond (cdr expr) env))
+[?2004l[?2004h>           (else (m-apply (m-eval op env)
+[?2004l[?2004h>                          (eval-args (cdr expr) env))))))
+[?2004l[?2004h> 
+[?2004l[?2004h> (define (m-eval-if expr env)
+[?2004l[?2004h>   (let ((condition (m-eval (car (cdr expr)) env)))
+[?2004l[?2004h>     (if (eq? condition #f)
+[?2004l[?2004h>         (if (null? (cdr (cdr (cdr expr))))
+[?2004l[?2004h>             '()
+[?2004l[?2004h>             (m-eval (car (cdr (cdr (cdr expr)))) env))
+[?2004l[?2004h>         (m-eval (car (cdr (cdr expr))) env))))
+[?2004l[?2004h> 
+[?2004l[?2004h> (define (m-eval-define expr env)
+[?2004l[?2004h>   (let ((target (car (cdr expr))))
+[?2004l[?2004h>     (if (symbol? target)
+[?2004l[?2004h>         (progn
+[?2004l[?2004h>           (env-define env target (m-eval (car (cdr (cdr expr))) env))
+[?2004l[?2004h>           '())
+[?2004l[?2004h>         (progn
+[?2004l[?2004h>           (env-define env (car target)
+[?2004l[?2004h>                      (make-closure (cdr target) (cdr (cdr expr)) env))
+[?2004l[?2004h>           '()))))
+[?2004l[?2004h> 
+[?2004l[?2004h> (define (m-eval-set expr env)
+[?2004l[?2004h>   (let ((name (car (cdr expr))))
+[?2004l[?2004h>     (env-set name (m-eval (car (cdr (cdr expr))) env) env)))
+[?2004l[?2004h> 
+[?2004l[?2004h> (define (bind-let-values bindings env newenv)
+[?2004l[?2004h>   (if (null? bindings)
+[?2004l[?2004h>       '()
+[?2004l[?2004h>       (let ((binding (car bindings)))
+[?2004l[?2004h>         (progn
+[?2004l[?2004h>           (env-define newenv (car binding)
+[?2004l[?2004h>                      (m-eval (car (cdr binding)) env))
+[?2004l[?2004h>           (bind-let-values (cdr bindings) env newenv)))))
+[?2004l[?2004h> 
+[?2004l[?2004h> (define (m-eval-let expr env)
+[?2004l[?2004h>   (let ((newenv (cons '() env)))
+[?2004l[?2004h>     (progn
+[?2004l[?2004h>       (bind-let-values (car (cdr expr)) env newenv)
+[?2004l[?2004h>       (eval-sequence (cdr (cdr expr)) newenv))))
+[?2004l[?2004h> 
+[?2004l[?2004h> (define (m-eval-cond clauses env)
+[?2004l[?2004h>   (if (null? clauses)
+[?2004l[?2004h>       '()
+[?2004l[?2004h>       (let ((clause (car clauses)))
+[?2004l[?2004h>         (if (eq? (car clause) 'else)
+[?2004l[?2004h>             (eval-sequence (cdr clause) env)
+[?2004l[?2004h>             (if (eq? (m-eval (car clause) env) #f)
+[?2004l[?2004h>                 (m-eval-cond (cdr clauses) env)
+[?2004l[?2004h>                 (eval-sequence (cdr clause) env))))))
+[?2004l[?2004h> EOF
+[?2004l[?2004hroot@81939509ff13:/app# cat >> eval.scm <<'EOF'
+[?2004l[?2004h> 
+[?2004l[?2004h> (define (m-apply proc args)
+[?2004l[?2004h>   (if (closure? proc)
+[?2004l[?2004h>       (let ((newenv (cons '() (closure-env proc))))
+[?2004l[?2004h>         (progn
+[?2004l[?2004h>           (bind-params (closure-params proc) args newenv)
+[?2004l[?2004h>           (eval-sequence (closure-body proc) newenv)))
+[?2004l[?2004h>       (m-apply-primitive proc args)))
+[?2004l[?2004h> 
+[?2004l[?2004h> (define (arg1 args) (car args))
+[?2004l[?2004h> (define (arg2 args) (car (cdr args)))
+[?2004l[?2004h> (define (arg3 args) (car (cdr (cdr args))))
+[?2004l[?2004h> 
+[?2004l[?2004h> (define (sum-args args)
+[?2004l[?2004h>   (if (null? args)
+[?2004l[?2004h>       0
+[?2004l[?2004h>       (prim-plus (car args) (sum-args (cdr args)))))
+[?2004l[?2004h> 
+[?2004l[?2004h> (define (product-args args)
+[?2004l[?2004h>   (if (null? args)
+[?2004l[?2004h>       1
+[?2004l[?2004h>       (prim-mul (car args) (product-args (cdr args)))))
+[?2004l[?2004h> 
+[?2004l[?2004h> (define (all-args args)
+[?2004l[?2004h>   (if (null? args)
+[?2004l[?2004h>       #t
+[?2004l[?2004h>       (if (eq? (car args) #f)
+[?2004l[?2004h>           #f
+[?2004l[?2004h>           (all-args (cdr args)))))
+[?2004l[?2004h> 
+[?2004l[?2004h> (define (any-args args)
+[?2004l[?2004h>   (if (null? args)
+[?2004l[?2004h>       #f
+[?2004l[?2004h>       (if (eq? (car args) #f)
+[?2004l[?2004h>           (any-args (cdr args))
+[?2004l[?2004h>           #t)))
+[?2004l[?2004h> 
+[?2004l[?2004h> (define (m-apply-primitive proc args)
+[?2004l[?2004h>   (cond
+[?2004l[?2004h>    ((eq? proc prim-plus) (sum-args args))
+[?2004l[?2004h>    ((eq? proc prim-minus) (if (null? (cdr args)) (prim-minus (arg1 args)) (prim-minus (arg1 args) (arg2 args))))
+[?2004l[?2004h>    ((eq? proc prim-mul) (product-args args))
+[?2004l[?2004h>    ((eq? proc prim-div) (prim-div (arg1 args) (arg2 args)))
+[?2004l[?2004h>    ((eq? proc prim-eq) (prim-eq (arg1 args) (arg2 args)))
+[?2004l[?2004h>    ((eq? proc prim-lt) (prim-lt (arg1 args) (arg2 args)))
+[?2004l[?2004h>    ((eq? proc prim-gt) (prim-gt (arg1 args) (arg2 args)))
+[?2004l[?2004h>    ((eq? proc prim-le) (prim-le (arg1 args) (arg2 args)))
+[?2004l[?2004h>    ((eq? proc prim-ge) (prim-ge (arg1 args) (arg2 args)))
+[?2004l[?2004h>    ((eq? proc prim-cons) (prim-cons (arg1 args) (arg2 args)))
+[?2004l[?2004h>    ((eq? proc prim-car) (prim-car (arg1 args)))
+[?2004l[?2004h>    ((eq? proc prim-cdr) (prim-cdr (arg1 args)))
+[?2004l[?2004h>    ((eq? proc prim-null) (prim-null (arg1 args)))
+[?2004l[?2004h>    ((eq? proc prim-pair) (prim-pair (arg1 args)))
+[?2004l[?2004h>    ((eq? proc prim-equal) (prim-equal (arg1 args) (arg2 args)))
+[?2004l[?2004h>    ((eq? proc prim-not) (prim-not (arg1 args)))
+[?2004l[?2004h>    ((eq? proc prim-and) (all-args args))
+[?2004l[?2004h>    ((eq? proc prim-or) (any-args args))
+[?2004l[?2004h>    ((eq? proc prim-getchr) (prim-getchr))
+[?2004l[?2004h>    ((eq? proc prim-putchr) (prim-putchr (arg1 args)))
+[?2004l[?2004h>    ((eq? proc prim-chr) (prim-chr (arg1 args)))
+[?2004l[?2004h>    ((eq? proc prim-read) (prim-read))
+[?2004l[?2004h>    ((eq? proc prim-symbol) (prim-symbol (arg1 args)))
+[?2004l[?2004h>    ((eq? proc prim-symbolp) (prim-symbolp (arg1 args)))
+[?2004l[?2004h>    ((eq? proc prim-stringp) (prim-stringp (arg1 args)))
+[?2004l[?2004h>    ((eq? proc prim-numberp) (prim-numberp (arg1 args)))
+[?2004l[?2004h>    ((eq? proc prim-setcar) (prim-setcar (arg1 args) (arg2 args)))
+[?2004l[?2004h>    ((eq? proc prim-setcdr) (prim-setcdr (arg1 args) (arg2 args)))
+[?2004l[?2004h>    ((eq? proc prim-display) (prim-display (arg1 args)))
+[?2004l[?2004h>    ((eq? proc prim-newline) (prim-newline))
+[?2004l[?2004h>    ((eq? proc prim-fopen) (prim-fopen (arg1 args) (arg2 args)))
+[?2004l[?2004h>    ((eq? proc prim-fclose) (prim-fclose (arg1 args)))
+[?2004l[?2004h>    ((eq? proc prim-fgetchr) (prim-fgetchr (arg1 args)))
+[?2004l[?2004h>    ((eq? proc prim-fputchr) (prim-fputchr (arg1 args) (arg2 args)))
+[?2004l[?2004h>    ((eq? proc prim-fdisplay) (prim-fdisplay (arg1 args) (arg2 args)))
+[?2004l[?2004h>    ((eq? proc prim-fread) (prim-fread (arg1 args)))
+[?2004l[?2004h>    (else '())))
+[?2004l[?2004h> EOF
+[?2004l[?2004hroot@81939509ff13:/app# grep -RIn "(list \|(length \|(append \|(map \|(reverse \|(apply " test --include='*.scm' | head -80
+[?2004ltest/variadic_functions.scm:4:(define (append lst1 lst2)
+test/variadic_functions.scm:7:      (cons (car lst1) (append (cdr lst1) lst2))))
+test/variadic_functions.scm:55:      (append (car lsts) (concat-all (cdr lsts)))))
+test/03-list-operations.scm:20:(define (reverse lst)
+test/03-list-operations.scm:28:(display (reverse lst))
+test/accumulator_patterns.scm:18:(define (reverse lst)
+test/accumulator_patterns.scm:36:(define (length lst)
+test/accumulator_patterns.scm:45:(display (reverse '(1 2 3 4 5)))
+test/accumulator_patterns.scm:53:(display (length '(a b c d e f)))
+test/binary_tree.scm:5:(define (append lst1 lst2)
+test/binary_tree.scm:8:      (cons (car lst1) (append (cdr lst1) lst2))))
+test/binary_tree.scm:36:      (append (tree-inorder (tree-left tree))
+test/recursive_structures.scm:4:(define (append lst1 lst2)
+test/recursive_structures.scm:7:      (cons (car lst1) (append (cdr lst1) lst2))))
+test/recursive_structures.scm:9:(define (list x)
+test/recursive_structures.scm:26:      (let ((reversed (reverse (car q))))
+test/recursive_structures.scm:32:      (car (reverse (car q)))
+test/recursive_structures.scm:35:(define (reverse lst)
+test/recursive_structures.scm:38:      (append (reverse (cdr lst)) (list (car lst)))))
+test/recursive_structures.scm:62:             (map (lambda (child) (tree-map f child))
+test/recursive_structures.scm:65:(define (map f lst)
+test/recursive_structures.scm:68:      (cons (f (car lst)) (map f (cdr lst)))))
+test/recursive_structures.scm:109:                  (list (make-node 4 '())))
+test/map_operations.scm:3:(define (map f lst)
+test/map_operations.scm:6:      (cons (f (car lst)) (map f (cdr lst)))))
+test/map_operations.scm:19:(display (map square numbers))
+test/map_operations.scm:23:(display (map double numbers))
+test/map_operations.scm:27:(display (map add1 numbers))
+test/map_operations.scm:32:  (map f (map f lst)))
+test/list_operations.scm:7:(define (append lst1 lst2)
+test/list_operations.scm:10:      (cons (car lst1) (append (cdr lst1) lst2))))
+test/list_operations.scm:23:         (append (flatten (car lst)) (flatten (cdr lst))))
+[?2004hroot@81939509ff13:/app# cat >> eval.scm <<'EOF'
+[?2004l[?2004h> 
+[?2004l[?2004h> (define prim-plus +)
+[?2004l[?2004h> (define prim-minus -)
+[?2004l[?2004h> (define prim-mul *)
+[?2004l[?2004h> (define prim-div /)
+[?2004l[?2004h> (define prim-eq =)
+[?2004l[?2004h> (define prim-lt <)
+[?2004l[?2004h> (define prim-gt >)
+[?2004l[?2004h> (define prim-le <=)
+[?2004l[?2004h> (define prim-ge >=)
+[?2004l[?2004h> (define prim-cons cons)
+[?2004l[?2004h> (define prim-car car)
+[?2004l[?2004h> (define prim-cdr cdr)
+[?2004l[?2004h> (define prim-null null?)
+[?2004l[?2004h> (define prim-pair pair?)
+[?2004l[?2004h> (define prim-equal equal?)
+[?2004l[?2004h> (define prim-not not)
+[?2004l[?2004h> (define prim-and and)
+[?2004l[?2004h> (define prim-or or)
+[?2004l[?2004h> (define prim-getchr getchr)
+[?2004l[?2004h> (define prim-putchr putchr)
+[?2004l[?2004h> (define prim-chr chr)
+[?2004l[?2004h> (define prim-read read)
+[?2004l[?2004h> (define prim-symbol symbol)
+[?2004l[?2004h> (define prim-symbolp symbol?)
+[?2004l[?2004h> (define prim-stringp string?)
+[?2004l[?2004h> (define prim-numberp number?)
+[?2004l[?2004h> (define prim-setcar set-car!)
+[?2004l[?2004h> (define prim-setcdr set-cdr!)
+[?2004l[?2004h> (define prim-display display)
+[?2004l[?2004h> (define prim-newline newline)
+[?2004l[?2004h> (define prim-fopen fopen)
+[?2004l[?2004h> (define prim-fclose fclose)
+[?2004l[?2004h> (define prim-fgetchr fgetchr)
+[?2004l[?2004h> (define prim-fputchr fputchr)
+[?2004l[?2004h> (define prim-fdisplay fdisplay)
+[?2004l[?2004h> (define prim-fread fread)
+[?2004l[?2004h> 
+[?2004l[?2004h> (define global-env
+[?2004l[?2004h>   (cons
+[?2004l[?2004h>    (list
+[?2004l[?2004h>     (cons '+ prim-plus)
+[?2004l[?2004h>     (cons '- prim-minus)
+[?2004l[?2004h>     (cons '* prim-mul)
+[?2004l[?2004h>     (cons '/ prim-div)
+[?2004l[?2004h>     (cons '= prim-eq)
+[?2004l[?2004h>     (cons '< prim-lt)
+[?2004l[?2004h>     (cons '> prim-gt)
+[?2004l[?2004h>     (cons '<= prim-le)
+[?2004l[?2004h>     (cons '>= prim-ge)
+[?2004l[?2004h>     (cons 'cons prim-cons)
+[?2004l[?2004h>     (cons 'car prim-car)
+[?2004l[?2004h>     (cons 'cdr prim-cdr)
+[?2004l[?2004h>     (cons 'null? prim-null)
+[?2004l[?2004h>     (cons 'pair? prim-pair)
+[?2004l[?2004h>     (cons 'eq? prim-equal)
+[?2004l[?2004h>     (cons 'equal? prim-equal)
+[?2004l[?2004h>     (cons 'not prim-not)
+[?2004l[?2004h>     (cons 'and prim-and)
+[?2004l[?2004h>     (cons 'or prim-or)
+[?2004l[?2004h>     (cons 'getchr prim-getchr)
+[?2004l[?2004h>     (cons 'putchr prim-putchr)
+[?2004l[?2004h>     (cons 'chr prim-chr)
+[?2004l[?2004h>     (cons 'read prim-read)
+[?2004l[?2004h>     (cons 'symbol prim-symbol)
+[?2004l[?2004h>     (cons 'symbol? prim-symbolp)
+[?2004l[?2004h>     (cons 'string? prim-stringp)
+[?2004l[?2004h>     (cons 'number? prim-numberp)
+[?2004l[?2004h>     (cons 'set-car! prim-setcar)
+[?2004l[?2004h>     (cons 'set-cdr! prim-setcdr)
+[?2004l[?2004h>     (cons 'display prim-display)
+[?2004l[?2004h>     (cons 'newline prim-newline)
+[?2004l[?2004h>     (cons 'fopen prim-fopen)
+[?2004l[?2004h>     (cons 'fclose prim-fclose)
+[?2004l[?2004h>     (cons 'fgetchr prim-fgetchr)
+[?2004l[?2004h>     (cons 'fputchr prim-fputchr)
+[?2004l[?2004h>     (cons 'fdisplay prim-fdisplay)
+[?2004l[?2004h>     (cons 'fread prim-fread))
+[?2004l[?2004h>    '()))
+[?2004l[?2004h> 
+[?2004l[?2004h> (define (run-file-loop f)
+[?2004l[?2004h>   (let ((expr (prim-fread f)))
+[?2004l[?2004h>     (if (null? expr)
+[?2004l[?2004h>         (prim-fclose f)
+[?2004l[?2004h>         (progn
+[?2004l[?2004h>           (m-eval expr global-env)
+[?2004l[?2004h>           (run-file-loop f)))))
+[?2004l[?2004h> 
+[?2004l[?2004h> (define (run-file filename)
+[?2004l[?2004h>   (let ((f (prim-fopen filename "r")))
+[?2004l[?2004h>     (if (eq? f #f)
+[?2004l[?2004h>         '()
+[?2004l[?2004h>         (run-file-loop f))))
+[?2004l[?2004h> 
+[?2004l[?2004h> (define target-file (prim-read))
+[?2004l[?2004h> (run-file target-file)
+[?2004l[?2004h> EOF
+[?2004l[?2004hroot@81939509ff13:/app# echo -e 'test/calculator.scm\n(+ 7 8)' | python3 interp.py eval.scm
+[?2004lError: Undefined variable: list
+[?2004hroot@81939509ff13:/app# grep -n "define global-env\|define (run-file-loop" eval.scm
+[?2004l246:(define global-env
+288:(define (run-file-loop f)
+[?2004hroot@81939509ff13:/app# sed -n '315,370p' eval.scm
+[?2004l[?2004hroot@81939509ff13:/app# nl -ba eval.scm | sed -n '238,295p'
+[?2004l   238	(define prim-newline newline)
+   239	(define prim-fopen fopen)
+   240	(define prim-fclose fclose)
+   241	(define prim-fgetchr fgetchr)
+   242	(define prim-fputchr fputchr)
+   243	(define prim-fdisplay fdisplay)
+   244	(define prim-fread fread)
+   245	
+   246	(define global-env
+   247	  (cons
+   248	   (list
+   249	    (cons '+ prim-plus)
+   250	    (cons '- prim-minus)
+   251	    (cons '* prim-mul)
+   252	    (cons '/ prim-div)
+   253	    (cons '= prim-eq)
+   254	    (cons '< prim-lt)
+   255	    (cons '> prim-gt)
+   256	    (cons '<= prim-le)
+   257	    (cons '>= prim-ge)
+   258	    (cons 'cons prim-cons)
+   259	    (cons 'car prim-car)
+   260	    (cons 'cdr prim-cdr)
+   261	    (cons 'null? prim-null)
+   262	    (cons 'pair? prim-pair)
+   263	    (cons 'eq? prim-equal)
+   264	    (cons 'equal? prim-equal)
+   265	    (cons 'not prim-not)
+   266	    (cons 'and prim-and)
+   267	    (cons 'or prim-or)
+   268	    (cons 'getchr prim-getchr)
+   269	    (cons 'putchr prim-putchr)
+   270	    (cons 'chr prim-chr)
+   271	    (cons 'read prim-read)
+   272	    (cons 'symbol prim-symbol)
+   273	    (cons 'symbol? prim-symbolp)
+   274	    (cons 'string? prim-stringp)
+   275	    (cons 'number? prim-numberp)
+   276	    (cons 'set-car! prim-setcar)
+   277	    (cons 'set-cdr! prim-setcdr)
+   278	    (cons 'display prim-display)
+   279	    (cons 'newline prim-newline)
+   280	    (cons 'fopen prim-fopen)
+   281	    (cons 'fclose prim-fclose)
+   282	    (cons 'fgetchr prim-fgetchr)
+   283	    (cons 'fputchr prim-fputchr)
+   284	    (cons 'fdisplay prim-fdisplay)
+   285	    (cons 'fread prim-fread))
+   286	   '()))
+   287	
+   288	(define (run-file-loop f)
+   289	  (let ((expr (prim-fread f)))
+   290	    (if (null? expr)
+   291	        (prim-fclose f)
+   292	        (progn
+   293	          (m-eval expr global-env)
+   294	          (run-file-loop f)))))
+   295	
+[?2004hroot@81939509ff13:/app# python3 - <<'PY'
+[?2004l[?2004h> from pathlib import Path
+[?2004l[?2004h> p = Path('eval.scm')
+[?2004l[?2004h> lines = p.read_text().splitlines()
+[?2004l[?2004h> pre = lines[:245]
+[?2004l[?2004h> post = lines[286:]
+[?2004l[?2004h> entries = [
+[?2004l[?2004h>     ('+', 'prim-plus'), ('-', 'prim-minus'), ('*', 'prim-mul'), ('/', 'prim-div'),
+[?2004l[?2004h>     ('=', 'prim-eq'), ('<', 'prim-lt'), ('>', 'prim-gt'), ('<=', 'prim-le'), ('>=', 'prim-ge'),
+[?2004l[?2004h>     ('cons', 'prim-cons'), ('car', 'prim-car'), ('cdr', 'prim-cdr'),
+[?2004l[?2004h>     ('null?', 'prim-null'), ('pair?', 'prim-pair'), ('eq?', 'prim-equal'),
+[?2004l[?2004h>     ('equal?', 'prim-equal'), ('not', 'prim-not'), ('and', 'prim-and'), ('or', 'prim-or'),
+[?2004l[?2004h>     ('getchr', 'prim-getchr'), ('putchr', 'prim-putchr'), ('chr', 'prim-chr'),
+[?2004l[?2004h>     ('read', 'prim-read'), ('symbol', 'prim-symbol'), ('symbol?', 'prim-symbolp'),
+[?2004l[?2004h>     ('string?', 'prim-stringp'), ('number?', 'prim-numberp'),
+[?2004l[?2004h>     ('set-car!', 'prim-setcar'), ('set-cdr!', 'prim-setcdr'),
+[?2004l[?2004h>     ('display', 'prim-display'), ('newline', 'prim-newline'),
+[?2004l[?2004h>     ('fopen', 'prim-fopen'), ('fclose', 'prim-fclose'), ('fgetchr', 'prim-fgetchr'),
+[?2004l[?2004h>     ('fputchr', 'prim-fputchr'), ('fdisplay', 'prim-fdisplay'), ('fread', 'prim-fread'),
+[?2004l[?2004h> ]
+[?2004l[?2004h> middle = ["(define global-env (cons '() '()))"]
+[?2004l[?2004h> middle += [f"(env-define global-env '{name} {prim})" for name, prim in entries]
+[?2004l[?2004h> p.write_text('\n'.join(pre + middle + post) + '\n')
+[?2004l[?2004h> PY
+[?2004l[?2004hroot@81939509ff13:/app# sed -n '240,330p' eval.scm
+[?2004l(define prim-fclose fclose)
+(define prim-fgetchr fgetchr)
+(define prim-fputchr fputchr)
+(define prim-fdisplay fdisplay)
+(define prim-fread fread)
+
+(define global-env (cons '() '()))
+(env-define global-env '+ prim-plus)
+(env-define global-env '- prim-minus)
+(env-define global-env '* prim-mul)
+(env-define global-env '/ prim-div)
+(env-define global-env '= prim-eq)
+(env-define global-env '< prim-lt)
+(env-define global-env '> prim-gt)
+(env-define global-env '<= prim-le)
+(env-define global-env '>= prim-ge)
+(env-define global-env 'cons prim-cons)
+(env-define global-env 'car prim-car)
+(env-define global-env 'cdr prim-cdr)
+(env-define global-env 'null? prim-null)
+(env-define global-env 'pair? prim-pair)
+(env-define global-env 'eq? prim-equal)
+(env-define global-env 'equal? prim-equal)
+(env-define global-env 'not prim-not)
+(env-define global-env 'and prim-and)
+(env-define global-env 'or prim-or)
+(env-define global-env 'getchr prim-getchr)
+(env-define global-env 'putchr prim-putchr)
+(env-define global-env 'chr prim-chr)
+(env-define global-env 'read prim-read)
+(env-define global-env 'symbol prim-symbol)
+(env-define global-env 'symbol? prim-symbolp)
+(env-define global-env 'string? prim-stringp)
+(env-define global-env 'number? prim-numberp)
+(env-define global-env 'set-car! prim-setcar)
+(env-define global-env 'set-cdr! prim-setcdr)
+(env-define global-env 'display prim-display)
+(env-define global-env 'newline prim-newline)
+(env-define global-env 'fopen prim-fopen)
+(env-define global-env 'fclose prim-fclose)
+(env-define global-env 'fgetchr prim-fgetchr)
+(env-define global-env 'fputchr prim-fputchr)
+(env-define global-env 'fdisplay prim-fdisplay)
+(env-define global-env 'fread prim-fread)
+
+(define (run-file-loop f)
+  (let ((expr (prim-fread f)))
+    (if (null? expr)
+        (prim-fclose f)
+        (progn
+          (m-eval expr global-env)
+          (run-file-loop f)))))
+
+(define (run-file filename)
+  (let ((f (prim-fopen filename "r")))
+    (if (eq? f #f)
+        '()
+        (run-file-loop f))))
+
+(define target-file (prim-read))
+(run-file target-file)
+[?2004hroot@81939509ff13:/app# echo -e 'test/calculator.scm\n(+ 7 8)' | python3 interp.py eval.scm
+[?2004lReading
+15
+Done
+[?2004hroot@81939509ff13:/app# echo '(+ 7 8)' | python3 interp.py test/calculator.scm
+[?2004lReading
+15
+Done
+[?2004hroot@81939509ff13:/app# echo -e 'eval.scm\ntest/calculator.scm\n(+ 7 8)' | python3 interp.py eval.scm
+[?2004l[?2004hroot@81939509ff13:/app# echo -e 'test/test_read.scm\nhello' | python3 interp.py eval.scm; echo STATUS:$?
+[?2004lReading
+hello
+Done
+STATUS:0
+[?2004hroot@81939509ff13:/app# echo -e 'eval.scm\ntest/test_read.scm\nhello' | python3 interp.py eval.scm; echo STATUS:$?
+[?2004lSTATUS:0
+[?2004hroot@81939509ff13:/app# nl -ba eval.scm | sed -n '1,240p'
+[?2004l     1	; eval.scm - metacircular evaluator for interp.py
+     2	
+     3	(define (lookup-binding name bindings)
+     4	  (if (null? bindings)
+     5	      '()
+     6	      (if (eq? name (car (car bindings)))
+     7	          (car bindings)
+     8	          (lookup-binding name (cdr bindings)))))
+     9	
+    10	(define (env-lookup name env)
+    11	  (let ((b (lookup-binding name (car env))))
+    12	    (if (null? b)
+    13	        (if (null? (cdr env))
+    14	            '()
+    15	            (env-lookup name (cdr env)))
+    16	        (cdr b))))
+    17	
+    18	(define (env-define env name val)
+    19	  (set-car! env (cons (cons name val) (car env))))
+    20	
+    21	(define (env-set name val env)
+    22	  (let ((b (lookup-binding name (car env))))
+    23	    (if (null? b)
+    24	        (if (null? (cdr env))
+    25	            '()
+    26	            (env-set name val (cdr env)))
+    27	        (set-cdr! b val))))
+    28	
+    29	(define (bind-params params args env)
+    30	  (if (null? params)
+    31	      '()
+    32	      (progn
+    33	        (env-define env (car params) (car args))
+    34	        (bind-params (cdr params) (cdr args) env))))
+    35	
+    36	(define (make-closure params body env)
+    37	  (cons 'closure (cons params (cons body env))))
+    38	
+    39	(define (closure? x)
+    40	  (if (pair? x)
+    41	      (eq? (car x) 'closure)
+    42	      #f))
+    43	
+    44	(define (closure-params p) (car (cdr p)))
+    45	(define (closure-body p) (car (cdr (cdr p))))
+    46	(define (closure-env p) (car (cdr (cdr (cdr p)))))
+    47	
+    48	(define (eval-sequence body env)
+    49	  (if (null? body)
+    50	      '()
+    51	      (let ((result (m-eval (car body) env)))
+    52	        (if (null? (cdr body))
+    53	            result
+    54	            (eval-sequence (cdr body) env)))))
+    55	
+    56	(define (eval-args arglist env)
+    57	  (if (null? arglist)
+    58	      '()
+    59	      (cons (m-eval (car arglist) env)
+    60	            (eval-args (cdr arglist) env))))
+    61	
+    62	(define (m-eval expr env)
+    63	  (cond ((eq? expr #t) #t)
+    64	        ((eq? expr #f) #f)
+    65	        ((number? expr) expr)
+    66	        ((string? expr) expr)
+    67	        ((symbol? expr) (env-lookup expr env))
+    68	        ((pair? expr) (m-eval-pair expr env))
+    69	        (else expr)))
+    70	
+    71	(define (m-eval-pair expr env)
+    72	  (let ((op (car expr)))
+    73	    (cond ((eq? op 'quote) (car (cdr expr)))
+    74	          ((eq? op 'if) (m-eval-if expr env))
+    75	          ((eq? op 'define) (m-eval-define expr env))
+    76	          ((eq? op 'set!) (m-eval-set expr env))
+    77	          ((eq? op 'lambda) (make-closure (car (cdr expr)) (cdr (cdr expr)) env))
+    78	          ((eq? op 'let) (m-eval-let expr env))
+    79	          ((eq? op 'begin) (eval-sequence (cdr expr) env))
+    80	          ((eq? op 'progn) (eval-sequence (cdr expr) env))
+    81	          ((eq? op 'cond) (m-eval-cond (cdr expr) env))
+    82	          (else (m-apply (m-eval op env)
+    83	                         (eval-args (cdr expr) env))))))
+    84	
+    85	(define (m-eval-if expr env)
+    86	  (let ((condition (m-eval (car (cdr expr)) env)))
+    87	    (if (eq? condition #f)
+    88	        (if (null? (cdr (cdr (cdr expr))))
+    89	            '()
+    90	            (m-eval (car (cdr (cdr (cdr expr)))) env))
+    91	        (m-eval (car (cdr (cdr expr))) env))))
+    92	
+    93	(define (m-eval-define expr env)
+    94	  (let ((target (car (cdr expr))))
+    95	    (if (symbol? target)
+    96	        (progn
+    97	          (env-define env target (m-eval (car (cdr (cdr expr))) env))
+    98	          '())
+    99	        (progn
+   100	          (env-define env (car target)
+   101	                     (make-closure (cdr target) (cdr (cdr expr)) env))
+   102	          '()))))
+   103	
+   104	(define (m-eval-set expr env)
+   105	  (let ((name (car (cdr expr))))
+   106	    (env-set name (m-eval (car (cdr (cdr expr))) env) env)))
+   107	
+   108	(define (bind-let-values bindings env newenv)
+   109	  (if (null? bindings)
+   110	      '()
+   111	      (let ((binding (car bindings)))
+   112	        (progn
+   113	          (env-define newenv (car binding)
+   114	                     (m-eval (car (cdr binding)) env))
+   115	          (bind-let-values (cdr bindings) env newenv)))))
+   116	
+   117	(define (m-eval-let expr env)
+   118	  (let ((newenv (cons '() env)))
+   119	    (progn
+   120	      (bind-let-values (car (cdr expr)) env newenv)
+   121	      (eval-sequence (cdr (cdr expr)) newenv))))
+   122	
+   123	(define (m-eval-cond clauses env)
+   124	  (if (null? clauses)
+   125	      '()
+   126	      (let ((clause (car clauses)))
+   127	        (if (eq? (car clause) 'else)
+   128	            (eval-sequence (cdr clause) env)
+   129	            (if (eq? (m-eval (car clause) env) #f)
+   130	                (m-eval-cond (cdr clauses) env)
+   131	                (eval-sequence (cdr clause) env))))))
+   132	
+   133	(define (m-apply proc args)
+   134	  (if (closure? proc)
+   135	      (let ((newenv (cons '() (closure-env proc))))
+   136	        (progn
+   137	          (bind-params (closure-params proc) args newenv)
+   138	          (eval-sequence (closure-body proc) newenv)))
+   139	      (m-apply-primitive proc args)))
+   140	
+   141	(define (arg1 args) (car args))
+   142	(define (arg2 args) (car (cdr args)))
+   143	(define (arg3 args) (car (cdr (cdr args))))
+   144	
+   145	(define (sum-args args)
+   146	  (if (null? args)
+   147	      0
+   148	      (prim-plus (car args) (sum-args (cdr args)))))
+   149	
+   150	(define (product-args args)
+   151	  (if (null? args)
+   152	      1
+   153	      (prim-mul (car args) (product-args (cdr args)))))
+   154	
+   155	(define (all-args args)
+   156	  (if (null? args)
+   157	      #t
+   158	      (if (eq? (car args) #f)
+   159	          #f
+   160	          (all-args (cdr args)))))
+   161	
+   162	(define (any-args args)
+   163	  (if (null? args)
+   164	      #f
+   165	      (if (eq? (car args) #f)
+   166	          (any-args (cdr args))
+   167	          #t)))
+   168	
+   169	(define (m-apply-primitive proc args)
+   170	  (cond
+   171	   ((eq? proc prim-plus) (sum-args args))
+   172	   ((eq? proc prim-minus) (if (null? (cdr args)) (prim-minus (arg1 args)) (prim-minus (arg1 args) (arg2 args))))
+   173	   ((eq? proc prim-mul) (product-args args))
+   174	   ((eq? proc prim-div) (prim-div (arg1 args) (arg2 args)))
+   175	   ((eq? proc prim-eq) (prim-eq (arg1 args) (arg2 args)))
+   176	   ((eq? proc prim-lt) (prim-lt (arg1 args) (arg2 args)))
+   177	   ((eq? proc prim-gt) (prim-gt (arg1 args) (arg2 args)))
+   178	   ((eq? proc prim-le) (prim-le (arg1 args) (arg2 args)))
+   179	   ((eq? proc prim-ge) (prim-ge (arg1 args) (arg2 args)))
+   180	   ((eq? proc prim-cons) (prim-cons (arg1 args) (arg2 args)))
+   181	   ((eq? proc prim-car) (prim-car (arg1 args)))
+   182	   ((eq? proc prim-cdr) (prim-cdr (arg1 args)))
+   183	   ((eq? proc prim-null) (prim-null (arg1 args)))
+   184	   ((eq? proc prim-pair) (prim-pair (arg1 args)))
+   185	   ((eq? proc prim-equal) (prim-equal (arg1 args) (arg2 args)))
+   186	   ((eq? proc prim-not) (prim-not (arg1 args)))
+   187	   ((eq? proc prim-and) (all-args args))
+   188	   ((eq? proc prim-or) (any-args args))
+   189	   ((eq? proc prim-getchr) (prim-getchr))
+   190	   ((eq? proc prim-putchr) (prim-putchr (arg1 args)))
+   191	   ((eq? proc prim-chr) (prim-chr (arg1 args)))
+   192	   ((eq? proc prim-read) (prim-read))
+   193	   ((eq? proc prim-symbol) (prim-symbol (arg1 args)))
+   194	   ((eq? proc prim-symbolp) (prim-symbolp (arg1 args)))
+   195	   ((eq? proc prim-stringp) (prim-stringp (arg1 args)))
+   196	   ((eq? proc prim-numberp) (prim-numberp (arg1 args)))
+   197	   ((eq? proc prim-setcar) (prim-setcar (arg1 args) (arg2 args)))
+   198	   ((eq? proc prim-setcdr) (prim-setcdr (arg1 args) (arg2 args)))
+   199	   ((eq? proc prim-display) (prim-display (arg1 args)))
+   200	   ((eq? proc prim-newline) (prim-newline))
+   201	   ((eq? proc prim-fopen) (prim-fopen (arg1 args) (arg2 args)))
+   202	   ((eq? proc prim-fclose) (prim-fclose (arg1 args)))
+   203	   ((eq? proc prim-fgetchr) (prim-fgetchr (arg1 args)))
+   204	   ((eq? proc prim-fputchr) (prim-fputchr (arg1 args) (arg2 args)))
+   205	   ((eq? proc prim-fdisplay) (prim-fdisplay (arg1 args) (arg2 args)))
+   206	   ((eq? proc prim-fread) (prim-fread (arg1 args)))
+   207	   (else '())))
+   208	
+   209	(define prim-plus +)
+   210	(define prim-minus -)
+   211	(define prim-mul *)
+   212	(define prim-div /)
+   213	(define prim-eq =)
+   214	(define prim-lt <)
+   215	(define prim-gt >)
+   216	(define prim-le <=)
+   217	(define prim-ge >=)
+   218	(define prim-cons cons)
+   219	(define prim-car car)
+   220	(define prim-cdr cdr)
+   221	(define prim-null null?)
+   222	(define prim-pair pair?)
+   223	(define prim-equal equal?)
+   224	(define prim-not not)
+   225	(define prim-and and)
+   226	(define prim-or or)
+   227	(define prim-getchr getchr)
+   228	(define prim-putchr putchr)
+   229	(define prim-chr chr)
+   230	(define prim-read read)
+   231	(define prim-symbol symbol)
+   232	(define prim-symbolp symbol?)
+   233	(define prim-stringp string?)
+   234	(define prim-numberp number?)
+   235	(define prim-setcar set-car!)
+   236	(define prim-setcdr set-cdr!)
+   237	(define prim-display display)
+   238	(define prim-newline newline)
+   239	(define prim-fopen fopen)
+   240	(define prim-fclose fclose)
+[?2004hroot@81939509ff13:/app# nl -ba eval.scm | sed -n '240,380p'
+[?2004l   240	(define prim-fclose fclose)
+   241	(define prim-fgetchr fgetchr)
+   242	(define prim-fputchr fputchr)
+   243	(define prim-fdisplay fdisplay)
+   244	(define prim-fread fread)
+   245	
+   246	(define global-env (cons '() '()))
+   247	(env-define global-env '+ prim-plus)
+   248	(env-define global-env '- prim-minus)
+   249	(env-define global-env '* prim-mul)
+   250	(env-define global-env '/ prim-div)
+   251	(env-define global-env '= prim-eq)
+   252	(env-define global-env '< prim-lt)
+   253	(env-define global-env '> prim-gt)
+   254	(env-define global-env '<= prim-le)
+   255	(env-define global-env '>= prim-ge)
+   256	(env-define global-env 'cons prim-cons)
+   257	(env-define global-env 'car prim-car)
+   258	(env-define global-env 'cdr prim-cdr)
+   259	(env-define global-env 'null? prim-null)
+   260	(env-define global-env 'pair? prim-pair)
+   261	(env-define global-env 'eq? prim-equal)
+   262	(env-define global-env 'equal? prim-equal)
+   263	(env-define global-env 'not prim-not)
+   264	(env-define global-env 'and prim-and)
+   265	(env-define global-env 'or prim-or)
+   266	(env-define global-env 'getchr prim-getchr)
+   267	(env-define global-env 'putchr prim-putchr)
+   268	(env-define global-env 'chr prim-chr)
+   269	(env-define global-env 'read prim-read)
+   270	(env-define global-env 'symbol prim-symbol)
+   271	(env-define global-env 'symbol? prim-symbolp)
+   272	(env-define global-env 'string? prim-stringp)
+   273	(env-define global-env 'number? prim-numberp)
+   274	(env-define global-env 'set-car! prim-setcar)
+   275	(env-define global-env 'set-cdr! prim-setcdr)
+   276	(env-define global-env 'display prim-display)
+   277	(env-define global-env 'newline prim-newline)
+   278	(env-define global-env 'fopen prim-fopen)
+   279	(env-define global-env 'fclose prim-fclose)
+   280	(env-define global-env 'fgetchr prim-fgetchr)
+   281	(env-define global-env 'fputchr prim-fputchr)
+   282	(env-define global-env 'fdisplay prim-fdisplay)
+   283	(env-define global-env 'fread prim-fread)
+   284	
+   285	(define (run-file-loop f)
+   286	  (let ((expr (prim-fread f)))
+   287	    (if (null? expr)
+   288	        (prim-fclose f)
+   289	        (progn
+   290	          (m-eval expr global-env)
+   291	          (run-file-loop f)))))
+   292	
+   293	(define (run-file filename)
+   294	  (let ((f (prim-fopen filename "r")))
+   295	    (if (eq? f #f)
+   296	        '()
+   297	        (run-file-loop f))))
+   298	
+   299	(define target-file (prim-read))
+   300	(run-file target-file)
+[?2004hroot@81939509ff13:/app# echo -e 'eval.scm\ntest/05-simple-io.scm' | python3 interp.py eval.scm; echo STATUS:$?
+[?2004lecho -e 'test/05-simple-io.scm' | python3 interp.py eval.scm; echo STATUS:$?
+STATUS:0
+[?2004hroot@81939509ff13:/app# echo -e 'test/05-simple-io.scm' | python3 interp.py eval.scm; echo STATUS:$?
+[?2004lTesting simple I/O...
+String: Hello, World!
+Number: 42
+Boolean true: True
+Boolean false: False
+List: (1 2 3 4 5)
+Character output: A B C
+Progn with side effects: First Second Third
+Conditional display: 5 is greater than 3
+Simple I/O tests completed!
+STATUS:0
+[?2004hroot@81939509ff13:/app# python3 - <<'PY'
+[?2004l[?2004h> from pathlib import Path
+[?2004l[?2004h> p=Path('eval.scm')
+[?2004l[?2004h> s=p.read_text()
+[?2004l[?2004h> s=s.replace("(define prim-plus +)", "(display \"DBG-TOP\")(newline)\n(define prim-plus +)", 1)
+[?2004l[?2004h> s=s.replace("(define global-env (cons '() '()))", "(display \"DBG-BEFORE-ENV\")(newline)\n(define global-env (cons '() '()))", 1)
+[?2004l[?2004h> s=s.replace("(define (run-file-loop f)", "(display \"DBG-BEFORE-RUNFILE\")(newline)\n(define (run-file-loop f)", 1)
+[?2004l[?2004h> s=s.replace("(define target-file (prim-read))", "(display \"DBG-READ-TARGET\")(newline)\n(define target-file (prim-read))\n(display \"DBG-TARGET=\")(display taarget-file)(newline)", 1)
+[?2004l[?2004h> s=s.replace("(run-file target-file)", "(display \"DBG-RUNNING\")(newline)\n(run-file target-file)", 1)
+[?2004l[?2004h> p.write_text(s)
+[?2004l[?2004h> PY
+[?2004l[?2004hroot@81939509ff13:/app# echo -e 'test/05-simple-io.scm' | python3 interp.py eval.scm
+[?2004lDBG-TOP
+DBG-BEFORE-ENV
+DBG-BEFORE-RUNFILE
+DBG-READ-TARGET
+DBG-TARGET=test/05-simple-io.scm
+DBG-RUNNING
+Testing simple I/O...
+String: Hello, World!
+Number: 42
+Boolean true: True
+Boolean false: False
+List: (1 2 3 4 5)
+Character output: A B C
+Progn with side effects: First Second Third
+Conditional display: 5 is greater than 3
+Simple I/O tests completed!
+[?2004hroot@81939509ff13:/app# echo -e 'eval.scm\ntest/05-simple-io.scm' | python3 interp.py eval.scm
+[?2004lDBG-TOP
+DBG-BEFORE-ENV
+DBG-BEFORE-RUNFILE
+DBG-READ-TARGET
+DBG-TARGET=eval.scm
+DBG-RUNNING
+DBG-TOPDBG-BEFORE-ENVDBG-BEFORE-RUNFILEDBG-READ-TARGETDBG-TARGET=DBG-RUNNING[?2004hroot@81939509ff13:/app# python3 - <<'PY'
+[?2004l[?2004h> from pathlib import Path
+[?2004l[?2004h> p=Path('eval.scm')
+[?2004l[?2004h> s=p.read_text()
+[?2004l[?2004h> s=s.replace('(define (run-file-loop f)\n  (let ((expr (prim-fread f)))', '(define (run-file-loop f)\n  (display "DBG-LOOP")(newline)\n  (let ((expr (prim-freadd f)))\n    (display "DBG-EXPR=")(display expr)(newline)', 1)
+[?2004l[?2004h> s=s.replace('(define (run-file filename)\n  (let ((f (prim-fopen filename "r")))', '(define (run-file filename)\n  (display "DBG-OPEN=")(display filename)(newlline)\n  (let ((f (prim-fopen filename "r")))', 1)
+[?2004l[?2004h> s=s.replace('(if (eq? f #f)\n        \'()\n        (run-file-loop f))))', '(if (eq? f #f)\n        (display "DBG-OPEN-FAIL")\n        (progn (display "DBG-OPENNED")(newline)(run-file-loop f)))))', 1)
+[?2004l[?2004h> p.write_text(s)
+[?2004l[?2004h> PY
+[?2004l[?2004hroot@81939509ff13:/app# echo -e 'eval.scm\ntest/05-simple-io.scm' | python3 interp.py eval.scm
+[?2004lDBG-TOP
+DBG-BEFORE-ENV
+DBG-BEFORE-RUNFILE
+DBG-READ-TARGET
+DBG-TARGET=eval.scm
+DBG-RUNNING
+DBG-OPEN=eval.scm
+DBG-OPENED
+DBG-LOOP
+DBG-EXPR=('define' ('lookup-binding' 'name' 'bindings') ('if' ('null?' 'bindings') ('quote' None) ('if' ('eq?' 'name' ('car' ('car' 'bindings'))) ('car' 'bindings') ('lookup-binding' 'name' ('cdr' 'bindings')))))
+DBG-LOOP
+DBG-EXPR=('define' ('env-lookup' 'name' 'env') ('let' (('b' ('lookup-binding' 'name' ('car' 'env')))) ('if' ('null?' 'b') ('if' ('null?' ('cdr' 'env')) ('quote' None) ('env-lookup' 'name' ('cdr' 'env'))) ('cdr' 'b'))))
+DBG-LOOP
+DBG-EXPR=('define' ('env-define' 'env' 'name' 'val') ('set-car!' 'env' ('cons' ('cons' 'name' 'val') ('car' 'env'))))
+DBG-LOOP
+DBG-EXPR=('define' ('env-set' 'name' 'val' 'env') ('let' (('b' ('lookup-binding' 'name' ('car' 'env')))) ('if' ('null?' 'b') ('if' ('null?' ('cdr' 'env')) ('quote' None) ('env-set' 'name' 'val' ('cdr' 'env'))) ('set-cdr!' 'b' 'val'))))
+DBG-LOOP
+DBG-EXPR=('define' ('bind-params' 'params' 'args' 'env') ('if' ('null?' 'params') ('quote' None) ('progn' ('env-define' 'env' ('car' 'params') ('car' 'args')) ('bind-params' ('cdr' 'params') ('cdr' 'args') 'env'))))
+DBG-LOOP
+DBG-EXPR=('define' ('make-closure' 'params' 'body' 'env') ('cons' ('quote' 'closure') ('cons' 'params' ('cons' 'body' 'env'))))
+DBG-LOOP
+DBG-EXPR=('define' ('closure?' 'x') ('if' ('pair?' 'x') ('eq?' ('car' 'x') ('quote' 'closure')) False))
+DBG-LOOP
+DBG-EXPR=('define' ('closure-params' 'p') ('car' ('cdr' 'p')))
+DBG-LOOP
+DBG-EXPR=('define' ('closure-body' 'p') ('car' ('cdr' ('cdr' 'p'))))
+DBG-LOOP
+DBG-EXPR=('define' ('closure-env' 'p') ('car' ('cdr' ('cdr' ('cdr' 'p')))))
+DBG-LOOP
+DBG-EXPR=('define' ('eval-sequence' 'body' 'env') ('if' ('null?' 'body') ('quote' None) ('let' (('result' ('m-eval' ('car' 'body') 'env'))) ('if' ('null?' ('cdr' 'body')) 'result' ('eval-sequence' ('cdr' 'body') 'env')))))
+DBG-LOOP
+DBG-EXPR=('define' ('eval-args' 'arglist' 'env') ('if' ('null?' 'arglist') ('quote' None) ('cons' ('m-eval' ('car' 'arglist') 'env') ('eval-args' ('cdr' 'arglist') 'env'))))
+DBG-LOOP
+DBG-EXPR=('define' ('m-eval' 'expr' 'env') ('cond' (('eq?' 'expr' True) True) (('eq?' 'expr' False) False) (('number?' 'expr') 'expr') (('string?' 'expr') 'expr') (('symbol?' 'expr') ('env-lookup' 'expr' 'env')) (('pair?' 'expr') ('m-eval-pair' 'expr' 'env')) ('else' 'expr')))
+DBG-LOOP
+DBG-EXPR=('define' ('m-eval-pair' 'expr' 'env') ('let' (('op' ('car' 'expr'))) ('cond' (('eq?' 'op' ('quote' 'quote')) ('car' ('cdr' 'expr'))) (('eq?' 'op' ('quote' 'if')) ('m-eval-if' 'expr' 'env')) (('eq?' 'op' ('quote' 'define')) ('m-eval-define' 'expr' 'env')) (('eq?' 'op' ('quote' 'set!')) ('m-eval-set' 'expr' 'env')) (('eq?' 'op' ('quote' 'lambda')) ('make-closure' ('car' ('cdr' 'expr')) ('cdr' ('cdr' 'expr')) 'env')) (('eq?' 'op' ('quote' 'let')) ('m-eval-let' 'expr' 'env')) (('eq?' 'op' ('quote' 'begin')) ('eval-sequence' ('cdr' 'expr') 'env')) (('eq?' 'op' ('quote' 'progn')) ('eval-sequence' ('cdr' 'expr') 'env')) (('eq?' 'op' ('quote' 'cond')) ('m-eval-cond' ('cdr' 'expr') 'env')) ('else' ('m-apply' ('m-eval' 'op' 'env') ('eval-args' ('cdr' 'expr') 'env'))))))
+DBG-LOOP
+DBG-EXPR=('define' ('m-eval-if' 'expr' 'env') ('let' (('condition' ('m-eval' ('car' ('cdr' 'expr')) 'env'))) ('if' ('eq?' 'condition' False) ('if' ('null?' ('cdr' ('cdr' ('cdr' 'expr')))) ('quote' None) ('m-eval' ('car' ('cdr' ('cdr' ('cdr' 'expr')))) 'env')) ('m-eval' ('car' ('cdr' ('cdr' 'expr'))) 'env'))))
+DBG-LOOP
+DBG-EXPR=('define' ('m-eval-define' 'expr' 'env') ('let' (('target' ('car' ('cdr' 'expr')))) ('if' ('symbol?' 'target') ('progn' ('env-define' 'env' 'target' ('m-eval' ('car' ('cdr' ('cdr' 'expr'))) 'env')) ('quote' None)) ('progn' ('env-define' 'env' ('car' 'target') ('make-closure' ('cdr' 'target') ('cdr' ('cdr' 'expr')) 'env')) ('quote' None)))))
+DBG-LOOP
+DBG-EXPR=('define' ('m-eval-set' 'expr' 'env') ('let' (('name' ('car' ('cdr' 'expr')))) ('env-set' 'name' ('m-eval' ('car' ('cdr' ('cdr' 'expr'))) 'env') 'env')))
+DBG-LOOP
+DBG-EXPR=('define' ('bind-let-values' 'bindings' 'env' 'newenv') ('if' ('null?' 'bindings') ('quote' None) ('let' (('binding' ('car' 'bindings'))) ('progn' ('env-define' 'newenv' ('car' 'binding') ('m-eval' ('car' ('cdr' 'binding')) 'env')) ('bind-let-values' ('cdr' 'bindings') 'env' 'newenv')))))
+DBG-LOOP
+DBG-EXPR=('define' ('m-eval-let' 'expr' 'env') ('let' (('newenv' ('cons' ('quote' None) 'env'))) ('progn' ('bind-let-values' ('car' ('cdr' 'expr')) 'env' 'newenv') ('eval-sequence' ('cdr' ('cdr' 'expr')) 'newenv'))))
+DBG-LOOP
+DBG-EXPR=('define' ('m-eval-cond' 'clauses' 'env') ('if' ('null?' 'clauses') ('quote' None) ('let' (('clause' ('car' 'clauses'))) ('if' ('eq?' ('car' 'clause') ('quote' 'else')) ('eval-sequence' ('cdr' 'clause') 'env') ('if' ('eq?' ('m-eval' ('car' 'clause') 'env') False) ('m-eval-cond' ('cdr' 'clauses') 'env') ('eval-sequence' ('cdr' 'clause') 'env'))))))
+DBG-LOOP
+DBG-EXPR=('define' ('m-apply' 'proc' 'args') ('if' ('closure?' 'proc') ('let' (('newenv' ('cons' ('quote' None) ('closure-env' 'proc')))) ('progn' ('bind-params' ('closure-params' 'proc') 'args' 'newenv') ('eval-sequence' ('closure-body' 'proc') 'newenv'))) ('m-apply-primitive' 'proc' 'args')))
+DBG-LOOP
+DBG-EXPR=('define' ('arg1' 'args') ('car' 'args'))
+DBG-LOOP
+DBG-EXPR=('define' ('arg2' 'args') ('car' ('cdr' 'args')))
+DBG-LOOP
+DBG-EXPR=('define' ('arg3' 'args') ('car' ('cdr' ('cdr' 'args'))))
+DBG-LOOP
+DBG-EXPR=('define' ('sum-args' 'args') ('if' ('null?' 'args') 0 ('prim-plus' ('car' 'args') ('sum-args' ('cdr' 'args')))))
+DBG-LOOP
+DBG-EXPR=('define' ('product-args' 'args') ('if' ('null?' 'args') 1 ('prim-mul' ('car' 'args') ('product-args' ('cdr' 'args')))))
+DBG-LOOP
+DBG-EXPR=('define' ('all-args' 'args') ('if' ('null?' 'args') True ('if' ('eq?' ('car' 'args') False) False ('all-args' ('cdr' 'args')))))
+DBG-LOOP
+DBG-EXPR=('define' ('any-args' 'args') ('if' ('null?' 'args') False ('if' ('eq?' ('car' 'args') False) ('any-args' ('cdr' 'args')) True)))
+DBG-LOOP
+DBG-EXPR=('define' ('m-apply-primitive' 'proc' 'args') ('cond' (('eq?' 'proc' 'prim-plus') ('sum-args' 'args')) (('eq?' 'proc' 'prim-minus') ('if' ('null?' ('cdr' 'args')) ('prim-minus' ('arg1' 'args')) ('prim-minus' ('arg1' 'args') ('arg2' 'args')))) (('eq?' 'proc' 'prim-mul') ('product-args' 'args')) (('eq?' 'proc' 'prim-div') ('prim-div' ('arg1' 'args') ('arg2' 'args'))) (('eq?' 'proc' 'prim-eq') ('prim-eq' ('arg1' 'args') ('arg2' 'args'))) (('eq?' 'proc' 'prim-lt') ('prim-lt' ('arg1' 'args') ('arg2' 'args'))) (('eq?' 'proc' 'prim-gt') ('prim-gt' ('arg1' 'args') ('arg2' 'args'))) (('eq?' 'proc' 'prim-le') ('prim-le' ('arg1' 'args') ('arg2' 'args'))) (('eq?' 'proc' 'prim-ge') ('prim-ge' ('arg1' 'args') ('arg2' 'args'))) (('eq?' 'proc' 'prim-cons') ('prim-cons' ('arg1' 'args') ('arg2' 'args'))) (('eq?' 'proc' 'prim-car') ('prim-car' ('arg1' 'args'))) (('eq?' 'proc' 'prim-cdr') ('prim-cdr' ('arg1' 'args'))) (('eq?' 'proc' 'prim-null') ('prim-null' ('arg1' 'args'))) (('eq?' 'proc' 'prim-pair') ('prim-pair' ('arg1' 'args'))) (('eq?' 'proc' 'prim-equal') ('prim-equal' ('arg1' 'args') ('arg2' 'args'))) (('eq?' 'proc' 'prim-not') ('prim-not' ('arg1' 'args'))) (('eq?' 'proc' 'prim-and') ('all-args' 'args')) (('eq?' 'proc' 'prim-or') ('any-args' 'args')) (('eq?' 'proc' 'prim-getchr') ('prim-getchr')) (('eq?' 'proc' 'prim-putchr') ('prim-putchr' ('arg1' 'args'))) (('eq?' 'proc' 'prim-chr') ('prim-chr' ('arg1' 'args'))) (('eq?' 'proc' 'prim-read') ('prim-read')) (('eq?' 'proc' 'prim-symbol') ('prim-symbol' ('arg1' 'args'))) (('eq?' 'proc' 'prim-symbolp') ('prim-symbolp' ('arg1' 'args'))) (('eq?' 'proc' 'prim-stringp') ('prim-stringp' ('arg1' 'args'))) (('eq?' 'proc' 'prim-numberp') ('prim-numberp' ('arg1' 'args'))) (('eq?' 'proc' 'prim-setcar') ('prim-setcar' ('arg1' 'args') ('arg2' 'args'))) (('eq?' 'proc' 'prim-setcdr') ('prim-setcdr' ('arg1' 'args') ('arg2' 'args'))) (('eq?' 'proc' 'prim-display') ('prim-display' ('arg1' 'args'))) (('eq?' 'proc' 'prim-newline') ('prim-newline')) (('eq?' 'proc' 'prim-fopen') ('prim-fopen' ('arg1' 'args') ('arg2' 'args'))) (('eq?' 'proc' 'prim-fclose') ('prim-fclose' ('arg1' 'args'))) (('eq?' 'proc' 'prim-fgetchr') ('prim-fgetchr' ('arg1' 'args'))) (('eq?' 'proc' 'prim-fputchr') ('prim-fputchr' ('arg1' 'args') ('arg2' 'args'))) (('eq?' 'proc' 'prim-fdisplay') ('prim-fdisplay' ('arg1' 'args') ('arg2' 'args'))) (('eq?' 'proc' 'prim-fread') ('prim-fread' ('arg1' 'args'))) ('else' ('quote' None))))
+DBG-LOOP
+DBG-EXPR=('display' "DBG-TOP")
+DBG-TOPDBG-LOOP
+DBG-EXPR=('define' 'prim-plus' '+')
+DBG-LOOP
+DBG-EXPR=('define' 'prim-minus' '-')
+DBG-LOOP
+DBG-EXPR=('define' 'prim-mul' '*')
+DBG-LOOP
+DBG-EXPR=('define' 'prim-div' '/')
+DBG-LOOP
+DBG-EXPR=('define' 'prim-eq' '=')
+DBG-LOOP
+DBG-EXPR=('define' 'prim-lt' '<')
+DBG-LOOP
+DBG-EXPR=('define' 'prim-gt' '>')
+DBG-LOOP
+DBG-EXPR=('define' 'prim-le' '<=')
+DBG-LOOP
+DBG-EXPR=('define' 'prim-ge' '>=')
+DBG-LOOP
+DBG-EXPR=('define' 'prim-cons' 'cons')
+DBG-LOOP
+DBG-EXPR=('define' 'prim-car' 'car')
+DBG-LOOP
+DBG-EXPR=('define' 'prim-cdr' 'cdr')
+DBG-LOOP
+DBG-EXPR=('define' 'prim-null' 'null?')
+DBG-LOOP
+DBG-EXPR=('define' 'prim-pair' 'pair?')
+DBG-LOOP
+DBG-EXPR=('define' 'prim-equal' 'equal?')
+DBG-LOOP
+DBG-EXPR=('define' 'prim-not' 'not')
+DBG-LOOP
+DBG-EXPR=('define' 'prim-and' 'and')
+DBG-LOOP
+DBG-EXPR=('define' 'prim-or' 'or')
+DBG-LOOP
+DBG-EXPR=('define' 'prim-getchr' 'getchr')
+DBG-LOOP
+DBG-EXPR=('define' 'prim-putchr' 'putchr')
+DBG-LOOP
+DBG-EXPR=('define' 'prim-chr' 'chr')
+DBG-LOOP
+DBG-EXPR=('define' 'prim-read' 'read')
+DBG-LOOP
+DBG-EXPR=('define' 'prim-symbol' 'symbol')
+DBG-LOOP
+DBG-EXPR=('define' 'prim-symbolp' 'symbol?')
+DBG-LOOP
+DBG-EXPR=('define' 'prim-stringp' 'string?')
+DBG-LOOP
+DBG-EXPR=('define' 'prim-numberp' 'number?')
+DBG-LOOP
+DBG-EXPR=('define' 'prim-setcar' 'set-car!')
+DBG-LOOP
+DBG-EXPR=('define' 'prim-setcdr' 'set-cdr!')
+DBG-LOOP
+DBG-EXPR=('define' 'prim-display' 'display')
+DBG-LOOP
+DBG-EXPR=('define' 'prim-newline' 'newline')
+DBG-LOOP
+DBG-EXPR=('define' 'prim-fopen' 'fopen')
+DBG-LOOP
+DBG-EXPR=('define' 'prim-fclose' 'fclose')
+DBG-LOOP
+DBG-EXPR=('define' 'prim-fgetchr' 'fgetchr')
+DBG-LOOP
+DBG-EXPR=('define' 'prim-fputchr' 'fputchr')
+DBG-LOOP
+DBG-EXPR=('define' 'prim-fdisplay' 'fdisplay')
+DBG-LOOP
+DBG-EXPR=('define' 'prim-fread' 'fread')
+DBG-LOOP
+DBG-EXPR=('display' "DBG-BEFORE-ENV")
+DBG-BEFORE-ENVDBG-LOOP
+DBG-EXPR=('define' 'global-env' ('cons' ('quote' None) ('quote' None)))
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' '+') 'prim-plus')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' '-') 'prim-minus')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' '*') 'prim-mul')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' '/') 'prim-div')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' '=') 'prim-eq')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' '<') 'prim-lt')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' '>') 'prim-gt')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' '<=') 'prim-le')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' '>=') 'prim-ge')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'cons') 'prim-cons')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'car') 'prim-car')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'cdr') 'prim-cdr')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'null?') 'prim-null')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'pair?') 'prim-pair')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'eq?') 'prim-equal')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'equal?') 'prim-equal')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'not') 'prim-not')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'and') 'prim-and')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'or') 'prim-or')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'getchr') 'prim-getchr')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'putchr') 'prim-putchr')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'chr') 'prim-chr')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'read') 'prim-read')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'symbol') 'prim-symbol')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'symbol?') 'prim-symbolp')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'string?') 'prim-stringp')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'number?') 'prim-numberp')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'set-car!') 'prim-setcar')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'set-cdr!') 'prim-setcdr')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'display') 'prim-display')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'newline') 'prim-newline')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'fopen') 'prim-fopen')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'fclose') 'prim-fclose')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'fgetchr') 'prim-fgetchr')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'fputchr') 'prim-fputchr')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'fdisplay') 'prim-fdisplay')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'fread') 'prim-fread')
+DBG-LOOP
+DBG-EXPR=('display' "DBG-BEFORE-RUNFILE")
+DBG-BEFORE-RUNFILEDBG-LOOP
+DBG-EXPR=('define' ('run-file-loop' 'f') ('display' "DBG-LOOP") ('newline') ('let' (('expr' ('prim-fread' 'f'))) ('display' "DBG-EXPR=") ('display' 'expr') ('newline') ('if' ('null?' 'expr') ('prim-fclose' 'f') ('progn' ('m-eval' 'expr' 'global-env') ('run-file-loop' 'f')))))
+DBG-LOOP
+DBG-EXPR=('define' ('run-file' 'filename') ('display' "DBG-OPEN=") ('display' 'filename') ('newline') ('let' (('f' ('prim-fopen' 'filename' "r"))) ('if' ('eq?' 'f' False) ('display' "DBG-OPEN-FAIL") ('progn' ('display' "DBG-OPENED") ('newline') ('run-file-loop' 'f')))))
+DBG-LOOP
+DBG-EXPR=('display' "DBG-READ-TARGET")
+DBG-READ-TARGETDBG-LOOP
+DBG-EXPR=('define' 'target-file' ('prim-read'))
+DBG-LOOP
+DBG-EXPR=('display' "DBG-TARGET=")
+DBG-TARGET=DBG-LOOP
+DBG-EXPR=('display' "DBG-RUNNING")
+DBG-RUNNINGDBG-LOOP
+DBG-EXPR=('run-file' 'target-file')
+DBG-LOOP
+DBG-EXPR=None
+[?2004hroot@81939509ff13:/app# cat > test/calltest.scm <<'EOF'
+[?2004l[?2004h> (define (foo x) (display "FOO=")(display x)(newline) x)
+[?2004l[?2004h> (define y (foo 7))
+[?2004l[?2004h> (display "Y=")(display y)(newline)
+[?2004l[?2004h> EOF
+[?2004l[?2004hroot@81939509ff13:/app# echo 'test/calltest.scm' | python3 interp.py eval.scm; echo STATUS:$?
+[?2004lDBG-TOP
+DBG-BEFORE-ENV
+DBG-BEFORE-RUNFILE
+DBG-READ-TARGET
+DBG-TARGET=test/calltest.scm
+DBG-RUNNING
+DBG-OPEN=test/calltest.scm
+DBG-OPENED
+DBG-LOOP
+DBG-EXPR=('define' ('foo' 'x') ('display' "FOO=") ('display' 'x') ('newline') 'x')
+DBG-LOOP
+DBG-EXPR=('define' 'y' ('foo' 7))
+DBG-LOOP
+DBG-EXPR=('display' "Y=")
+Y=DBG-LOOP
+DBG-EXPR=None
+STATUS:0
+[?2004hroot@81939509ff13:/app# echo -e 'eval.scm\ntest/calltest.scm' | python3 interp.py eval.scm > /tmp/nested.out 2>&1; echo STATUS:$?; tail -80 /tmp/nested.out
+[?2004lSTATUS:0
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' '>') 'prim-gt')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' '<=') 'prim-le')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' '>=') 'prim-ge')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'cons') 'prim-cons')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'car') 'prim-car')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'cdr') 'prim-cdr')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'null?') 'prim-null')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'pair?') 'prim-pair')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'eq?') 'prim-equal')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'equal?') 'prim-equal')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'not') 'prim-not')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'and') 'prim-and')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'or') 'prim-or')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'getchr') 'prim-getchr')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'putchr') 'prim-putchr')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'chr') 'prim-chr')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'read') 'prim-read')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'symbol') 'prim-symbol')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'symbol?') 'prim-symbolp')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'string?') 'prim-stringp')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'number?') 'prim-numberp')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'set-car!') 'prim-setcar')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'set-cdr!') 'prim-setcdr')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'display') 'prim-display')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'newline') 'prim-newline')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'fopen') 'prim-fopen')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'fclose') 'prim-fclose')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'fgetchr') 'prim-fgetchr')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'fputchr') 'prim-fputchr')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'fdisplay') 'prim-fdisplay')
+DBG-LOOP
+DBG-EXPR=('env-define' 'global-env' ('quote' 'fread') 'prim-fread')
+DBG-LOOP
+DBG-EXPR=('display' "DBG-BEFORE-RUNFILE")
+DBG-BEFORE-RUNFILEDBG-LOOP
+DBG-EXPR=('define' ('run-file-loop' 'f') ('display' "DBG-LOOP") ('newline') ('let' (('expr' ('prim-fread' 'f'))) ('display' "DBG-EXPR=") ('display' 'expr') ('newline') ('if' ('null?' 'expr') ('prim-fclose' 'f') ('progn' ('m-eval' 'expr' 'global-env') ('run-file-loop' 'f')))))
+DBG-LOOP
+DBG-EXPR=('define' ('run-file' 'filename') ('display' "DBG-OPEN=") ('display' 'filename') ('newline') ('let' (('f' ('prim-fopen' 'filename' "r"))) ('if' ('eq?' 'f' False) ('display' "DBG-OPEN-FAIL") ('progn' ('display' "DBG-OPENED") ('newline') ('run-file-loop' 'f')))))
+DBG-LOOP
+DBG-EXPR=('display' "DBG-READ-TARGET")
+DBG-READ-TARGETDBG-LOOP
+DBG-EXPR=('define' 'target-file' ('prim-read'))
+DBG-LOOP
+DBG-EXPR=('display' "DBG-TARGET=")
+DBG-TARGET=DBG-LOOP
+DBG-EXPR=('display' "DBG-RUNNING")
+DBG-RUNNINGDBG-LOOP
+DBG-EXPR=('run-file' 'target-file')
+DBG-LOOP
+DBG-EXPR=None
+[?2004hroot@81939509ff13:/app# grep -n 'closure-env\|DBG\|run-file' eval.scm | head -60
+[?2004l46:(define (closure-env p) (car (cdr (cdr (cdr p)))))
+135:      (let ((newenv (cons '() (closure-env proc))))
+209:(display "DBG-TOP")(newline)
+247:(display "DBG-BEFORE-ENV")(newline)
+287:(display "DBG-BEFORE-RUNFILE")(newline)
+288:(define (run-file-loop f)
+289:  (display "DBG-LOOP")(newline)
+291:    (display "DBG-EXPR=")(display expr)(newline)
+296:          (run-file-loop f)))))
+298:(define (run-file filename)
+299:  (display "DBG-OPEN=")(display filename)(newline)
+302:        (display "DBG-OPEN-FAIL")
+303:        (progn (display "DBG-OPENED")(newline)(run-file-loop f)))))
+305:(display "DBG-READ-TARGET")(newline)
+307:(display "DBG-TARGET=")(display target-file)(newline)
+308:(display "DBG-RUNNING")(newline)
+309:(run-file target-file)
+[?2004hroot@81939509ff13:/app# nl -ba eval.scm | sed -n '20,50p;260,330p'
+[?2004l    20	
+    21	(define (env-set name val env)
+    22	  (let ((b (lookup-binding name (car env))))
+    23	    (if (null? b)
+    24	        (if (null? (cdr env))
+    25	            '()
+    26	            (env-set name val (cdr env)))
+    27	        (set-cdr! b val))))
+    28	
+    29	(define (bind-params params args env)
+    30	  (if (null? params)
+    31	      '()
+    32	      (progn
+    33	        (env-define env (car params) (car args))
+    34	        (bind-params (cdr params) (cdr args) env))))
+    35	
+    36	(define (make-closure params body env)
+    37	  (cons 'closure (cons params (cons body env))))
+    38	
+    39	(define (closure? x)
+    40	  (if (pair? x)
+    41	      (eq? (car x) 'closure)
+    42	      #f))
+    43	
+    44	(define (closure-params p) (car (cdr p)))
+    45	(define (closure-body p) (car (cdr (cdr p))))
+    46	(define (closure-env p) (car (cdr (cdr (cdr p)))))
+    47	
+    48	(define (eval-sequence body env)
+    49	  (if (null? body)
+    50	      '()
+   260	(env-define global-env 'cdr prim-cdr)
+   261	(env-define global-env 'null? prim-null)
+   262	(env-define global-env 'pair? prim-pair)
+   263	(env-define global-env 'eq? prim-equal)
+   264	(env-define global-env 'equal? prim-equal)
+   265	(env-define global-env 'not prim-not)
+   266	(env-define global-env 'and prim-and)
+   267	(env-define global-env 'or prim-or)
+   268	(env-define global-env 'getchr prim-getchr)
+   269	(env-define global-env 'putchr prim-putchr)
+   270	(env-define global-env 'chr prim-chr)
+   271	(env-define global-env 'read prim-read)
+   272	(env-define global-env 'symbol prim-symbol)
+   273	(env-define global-env 'symbol? prim-symbolp)
+   274	(env-define global-env 'string? prim-stringp)
+   275	(env-define global-env 'number? prim-numberp)
+   276	(env-define global-env 'set-car! prim-setcar)
+   277	(env-define global-env 'set-cdr! prim-setcdr)
+   278	(env-define global-env 'display prim-display)
+   279	(env-define global-env 'newline prim-newline)
+   280	(env-define global-env 'fopen prim-fopen)
+   281	(env-define global-env 'fclose prim-fclose)
+   282	(env-define global-env 'fgetchr prim-fgetchr)
+   283	(env-define global-env 'fputchr prim-fputchr)
+   284	(env-define global-env 'fdisplay prim-fdisplay)
+   285	(env-define global-env 'fread prim-fread)
+   286	
+   287	(display "DBG-BEFORE-RUNFILE")(newline)
+   288	(define (run-file-loop f)
+   289	  (display "DBG-LOOP")(newline)
+   290	  (let ((expr (prim-fread f)))
+   291	    (display "DBG-EXPR=")(display expr)(newline)
+   292	    (if (null? expr)
+   293	        (prim-fclose f)
+   294	        (progn
+   295	          (m-eval expr global-env)
+   296	          (run-file-loop f)))))
+   297	
+   298	(define (run-file filename)
+   299	  (display "DBG-OPEN=")(display filename)(newline)
+   300	  (let ((f (prim-fopen filename "r")))
+   301	    (if (eq? f #f)
+   302	        (display "DBG-OPEN-FAIL")
+   303	        (progn (display "DBG-OPENED")(newline)(run-file-loop f)))))
+   304	
+   305	(display "DBG-READ-TARGET")(newline)
+   306	(define target-file (prim-read))
+   307	(display "DBG-TARGET=")(display target-file)(newline)
+   308	(display "DBG-RUNNING")(newline)
+   309	(run-file target-file)
+[?2004hroot@81939509ff13:/app# nl -ba eval.scm | sed -n '20,60p'
+[?2004l    20	
+    21	(define (env-set name val env)
+    22	  (let ((b (lookup-binding name (car env))))
+    23	    (if (null? b)
+    24	        (if (null? (cdr env))
+    25	            '()
+    26	            (env-set name val (cdr env)))
+    27	        (set-cdr! b val))))
+    28	
+    29	(define (bind-params params args env)
+    30	  (if (null? params)
+    31	      '()
+    32	      (progn
+    33	        (env-define env (car params) (car args))
+    34	        (bind-params (cdr params) (cdr args) env))))
+    35	
+    36	(define (make-closure params body env)
+    37	  (cons 'closure (cons params (cons body env))))
+    38	
+    39	(define (closure? x)
+    40	  (if (pair? x)
+    41	      (eq? (car x) 'closure)
+    42	      #f))
+    43	
+    44	(define (closure-params p) (car (cdr p)))
+    45	(define (closure-body p) (car (cdr (cdr p))))
+    46	(define (closure-env p) (car (cdr (cdr (cdr p)))))
+    47	
+    48	(define (eval-sequence body env)
+    49	  (if (null? body)
+    50	      '()
+    51	      (let ((result (m-eval (car body) env)))
+    52	        (if (null? (cdr body))
+    53	            result
+    54	            (eval-sequence (cdr body) env)))))
+    55	
+    56	(define (eval-args arglist env)
+    57	  (if (null? arglist)
+    58	      '()
+    59	      (cons (m-eval (car arglist) env)
+    60	            (eval-args (cdr arglist) env))))
+[?2004hroot@81939509ff13:/app# grep -n 'make-closure\|closure?' eval.scm
+[?2004l36:(define (make-closure params body env)
+39:(define (closure? x)
+77:          ((eq? op 'lambda) (make-closure (car (cdr expr)) (cdr (cdr expr)) env))
+101:                     (make-closure (cdr target) (cdr (cdr expr)) env))
+134:  (if (closure? proc)
+[?2004hroot@81939509ff13:/app# grep -n DBG eval.scm
+[?2004l209:(display "DBG-TOP")(newline)
+247:(display "DBG-BEFORE-ENV")(newline)
+287:(display "DBG-BEFORE-RUNFILE")(newline)
+289:  (display "DBG-LOOP")(newline)
+291:    (display "DBG-EXPR=")(display expr)(newline)
+299:  (display "DBG-OPEN=")(display filename)(newline)
+302:        (display "DBG-OPEN-FAIL")
+303:        (progn (display "DBG-OPENED")(newline)(run-file-loop f)))))
+305:(display "DBG-READ-TARGET")(newline)
+307:(display "DBG-TARGET=")(display target-file)(newline)
+308:(display "DBG-RUNNING")(newline)
+[?2004hroot@81939509ff13:/app# python3 - <<'PY'
+[?2004l[?2004h> from pathlib import Path
+[?2004l[?2004h> p = Path('eval.scm')
+[?2004l[?2004h> s = p.read_text()
+[?2004l[?2004h> s = s.replace('(define (closure-env p) (car (cdr (cdr (cdr p)))))',
+[?2004l[?2004h>               '(define (closure-env p) (cdr (cdr (cdr p))))')
+[?2004l[?2004h> # Remove standalone debug lines
+[?2004l[?2004h> for line in [
+[?2004l[?2004h>     '(display "DBG-TOP")(newline)\n',
+[?2004l[?2004h>     '(display "DBG-BEFORE-ENV")(newline)\n',
+[?2004l[?2004h>     '(display "DBG-BEFORE-RUNFILE")(newline)\n',
+[?2004l[?2004h>     '(display "DBG-READ-TARGET")(newline)\n',
+[?2004l[?2004h>     '(display "DBG-TARGET=")(display target-file)(newline)\n',
+[?2004l[?2004h>     '(display "DBG-RUNNING")(newline)\n',
+[?2004l[?2004h> ]:
+[?2004l[?2004h>     s = s.replace(line, '')
+[?2004l[?2004h> # Clean debug lines inside run-file-loop
+[?2004l[?2004h> s = s.replace('  (display "DBG-LOOP")(newline)\n', '')
+[?2004l[?2004h> s = s.replace('    (display "DBG-EXPR=")(display expr)(newline)\n', '')
+[?2004l[?2004h> # Clean debug lines inside run-file and restore conditional body
+[?2004l[?2004h> s = s.replace('  (display "DBG-OPEN=")(display filename)(newline)\n', '')
+[?2004l[?2004h> s = s.replace('        (display "DBG-OPEN-FAIL")\n        (progn (display "DBG-OPENED")(newline)(run-file-loop f)))))',
+[?2004l[?2004h>               "        '()\n        (run-file-loop f))))")
+[?2004l[?2004h> p.write_text(s)
+[?2004l[?2004h> PY
+[?2004l[?2004hroot@81939509ff13:/app# grep -n DBG eval.scm || true
+[?2004l[?2004hroot@81939509ff13:/app# sed -n '280,330p' eval.scm
+[?2004l(env-define global-env 'fgetchr prim-fgetchr)
+(env-define global-env 'fputchr prim-fputchr)
+(env-define global-env 'fdisplay prim-fdisplay)
+(env-define global-env 'fread prim-fread)
+
+(define (run-file-loop f)
+  (let ((expr (prim-fread f)))
+    (if (null? expr)
+        (prim-fclose f)
+        (progn
+          (m-eval expr global-env)
+          (run-file-loop f)))))
+
+(define (run-file filename)
+  (let ((f (prim-fopen filename "r")))
+    (if (eq? f #f)
+        '()
+        (run-file-loop f))))
+
+(define target-file (prim-read))
+(run-file target-file)
+[?2004hroot@81939509ff13:/app# echo 'test/calltest.scm' | python3 interp.py eval.scm; echo STATUS:$?
+[?2004lFOO=7
+Y=STATUS:0
+[?2004hroot@81939509ff13:/app# echo -e 'eval.scm\ntest/calltest.scm' | python3 interp.py eval.scm; echo STATUS:$?
+[?2004lecho -e 'eval.scm\ntest/calculator.scm\n(+ 7 8)' | python3 interp.py eval.scm; echo STATUS:$?
+FOO=7
+Y=STATUS:0
+[?2004hroot@81939509ff13:/app# echo -e 'eval.scm\ntest/calculator.scm\n(+ 7 8)' | python3 interp.py eval.scm; echo STATUS:$?
+[?2004lReading
+15
+Done
+STATUS:0
+[?2004hroot@81939509ff13:/app# python3 interp.py test/calltest.scm
+[?2004lFOO=7
+Y=7
+[?2004hroot@81939509ff13:/app# printf '(define (foo x) x)\n(display (foo 7))\n(newline)\n' | python3 interp.py eval.scm
+[?2004lUnexpected error: expected str, bytes or os.PathLike object, not Pair
+[?2004hroot@81939509ff13:/app# printf '(define (foo x) (display x) x)\n(display (foo 7))\n(newline)\n' | python3 interp.py eval.scm
+[?2004lUnexpected error: expected str, bytes or os.PathLike object, not Pair
+[?2004hroot@81939509ff13:/app# cat > /tmp/rt1.scm <<'EOF'
+[?2004l[?2004h> (display "A=")
+[?2004l[?2004h> (display ((lambda (x) x) 7))
+[?2004l[?2004h> (newline)
+[?2004l[?2004h> EOF
+[?2004l[?2004hroot@81939509ff13:/app# cat > /tmp/rt2.scm <<'EOF'
+[?2004l[?2004h> (define (foo x) x)
+[?2004l[?2004h> (display "B=")
+[?2004l[?2004h> (display (foo 9))
+[?2004l[?2004h> (newline)
+[?2004l[?2004h> EOF
+[?2004l[?2004hroot@81939509ff13:/app# cat > /tmp/rt3.scm <<'EOF'
+[?2004l[?2004h> (define (foo x) (display "S")(newline) x)
+[?2004l[?2004h> (define y (foo 7))
+[?2004l[?2004h> (display "C=")(display y)(newline)
+[?2004l[?2004h> EOF
+[?2004l[?2004hroot@81939509ff13:/app# echo '/tmp/rt1.scm' | python3 interp.py eval.scm; echo STATUS:$?
+[?2004lA=7
+STATUS:0
+[?2004hroot@81939509ff13:/app# echo '/tmp/rt2.scm' | python3 interp.py eval.scm; echo STATUS:$?
+[?2004lB=9
+STATUS:0
+[?2004hroot@81939509ff13:/app# echo '/tmp/rt3.scm' | python3 interp.py eval.scm; echo STATUS:$?
+[?2004lS
+C=STATUS:0
+[?2004hroot@81939509ff13:/app# for f in test/01-factorial.scm test/02-fibonacci.scm test/03-list-operations.scm test/04-higher-order.scm test/05-simple-io.scm test/08-pprogn-sequencing.scm test/09-mutual-recursion.scm test/10-advanced-features.scm test/church_numerals.scm test/closures.scm test/currying.scm; do
+[?2004l[?2004h>   timeout 10 python3 interp.py "$f" > /tmp/direct.out 2>&1
+[?2004l[?2004h>   printf '%s\n' "$f" | timeout 10 python3 interp.py eval.scm > /tmp/via.out 2>&1
+[?2004l[?2004h>   if diff -q /tmp/direct.out /tmp/via.out >/dev/null; then
+[?2004l[?2004h>     echo "OK $f"
+[?2004l[?2004h>   else
+[?2004l[?2004h>     echo "DIFF $f"
+[?2004l[?2004h>     diff -u /tmp/direct.out /tmp/via.out | head -20
+[?2004l[?2004h>   fi
+[?2004l[?2004h> done
+[?2004lOK test/01-factorial.scm
+DIFF test/02-fibonacci.scm
+--- /tmp/direct.out	2026-11-05 07:38:02.509733294 +0000
++++ /tmp/via.out	2026-11-05 07:38:03.421768493 +0000
+@@ -1,2 +1,2 @@
+-(0 1 1 2 3 5 8 13 21 34)
++(False True 1 2 3 5 8 13 21 34)
+ 6765
+OK test/03-list-operations.scm
+OK test/04-higher-order.scm
+OK test/05-simple-io.scm
+DIFF test/08-progn-sequencing.scm
+--- /tmp/direct.out	2026-11-05 07:38:03.709779608 +0000
++++ /tmp/via.out	2026-11-05 07:38:03.765781769 +0000
+@@ -1,5 +1,5 @@
+ Testing progn sequencing:
+ First... Second... Third... Result: 30
+ Counting: 1 2 3
+-For loop 1-5: 1 2 3 4 5 
++For loop 1-5: True 2 3 4 5 
+ x = 10, y = 20, x + y = 30
+DIFF test/09-mutual-recursion.scm
+--- /tmp/direct.out	2026-11-05 07:38:03.785782542 +0000
++++ /tmp/via.out	2026-11-05 07:38:04.105794892 +0000
+@@ -1,6 +1,6 @@
+ Testing even? and odd?:
+-0 is even
+-1 is odd
++False is even
++True is odd
+ 10 is even
+ 15 is odd
+ 100 is even
+DIFF test/10-advanced-features.scm
+--- /tmp/direct.out	2026-11-05 07:38:04.130712052 +0000
++++ /tmp/via.out	2026-11-05 07:38:04.213993835 +0000
+@@ -5,6 +5,6 @@
+ Age: ('.' 30)
+ Counter object:
+ After 2 increments: 2
+-After reset: 0
++After reset: False
+ File handling with callback:
+ File written successfully
+DIFF test/church_numerals.scm
+--- /tmp/direct.out	2026-11-05 07:38:04.229799678 +0000
++++ /tmp/via.out	2026-11-05 07:38:04.293802148 +0000
+@@ -1,4 +1,4 @@
+-zero as int: 0
++zero as int: False
+ one as int: 1
+ two as int: 2
+ three (succ two) as int: 3
+OK test/closures.scm
+OK test/currying.scm
+[?2004hroot@81939509ff13:/app# grep -RIn '#[tf]' test --include='*.scm'
+[?2004ltest/05-simple-io.scm:16:(display #t)
+test/05-simple-io.scm:20:(display #f)
+test/variadic_functions.scm:29:      #f
+test/variadic_functions.scm:40:      #f
+test/10-advanced-features.scm:32:  (cond ((null? alist) #f)
+test/10-advanced-features.scm:79:    #t))
+test/memoization.scm:5:  (cond ((null? alist) #f)
+test/memoization.scm:16:        #f)))
+test/09-mutual-recursion.scm:5:      #t
+test/09-mutual-recursion.scm:10:      #f
+test/recursive_structures.scm:48:      #f
+test/nested_defines.scm:33:        #t
+test/nested_defines.scm:38:        #f
+test/oeis_sequences2.scm:5:  (if a b #f))
+test/oeis_sequences2.scm:29:  (cond ((< n 2) #f)
+test/oeis_sequences2.scm:30:        ((= n 2) #t)
+test/oeis_sequences2.scm:31:        ((= (- n (* (/ n 2) 2)) 0) #f)
+test/oeis_sequences2.scm:34:           (cond ((> (* d d) n) #t)
+test/oeis_sequences2.scm:35:                 ((= (- n (* (/ n d) d)) 0) #f)
+test/list_operations.scm:5:  (if a #t b))
+test/list_operations.scm:37:  (cond ((null? lst) #f)
+test/list_operations.scm:38:        ((equal? x (car lst)) #t)
+test/oeis_sequences3.scm:24:  (cond ((< n 2) #f)
+test/oeis_sequences3.scm:25:        ((= n 2) #t)
+test/oeis_sequences3.scm:26:        ((= (- n (* (/ n 2) 2)) 0) #f)
+test/oeis_sequences3.scm:29:           (cond ((> (* d d) n) #t)
+test/oeis_sequences3.scm:30:                 ((= (- n (* (/ n d) d)) 0) #f)
+test/mutual_recursion.scm:6:      #t
+test/mutual_recursion.scm:11:      #f
+[?2004hroot@81939509ff13:/app# grep -n "eq? .*#f\|eq? .*#t\|condition" eval.scm
+[?2004l63:  (cond ((eq? expr #t) #t)
+64:        ((eq? expr #f) #f)
+86:  (let ((condition (m-eval (car (cdr expr)) env)))
+87:    (if (eq? condition #f)
+129:            (if (eq? (m-eval (car clause) env) #f)
+158:      (if (eq? (car args) #f)
+165:      (if (eq? (car args) #f)
+295:    (if (eq? f #f)
+[?2004hroot@81939509ff13:/app# python3 - <<'PY'
+[?2004l[?2004h> from pathlib import Path
+[?2004l[?2004h> p=Path('eval.scm')
+[?2004l[?2004h> s=p.read_text()
+[?2004l[?2004h> s=s.replace('''(define (m-eval expr env)\n  (cond ((eq? expr #t) #t)\n        ((eq? expr #f) #f)\n        ((number? expr) expr)\n        ((string? expr) expr)\\n        ((symbol? expr) (env-lookup expr env))\n        ((pair? expr) (m-eval-pair expr env))\n        (else expr)))''',
+[?2004l[?2004h> '''(define (false-value? x) (prim-not x))\n\n(define (m-eval expr env)\n  (cond ((number? expr) expr)\n        ((string? expr) expr)\n        ((symbol? expr) ((env-lookup expr env))\n        ((pair? expr) (m-eval-pair expr env))\n        (else expr)))''')
+[?2004l[?2004h> s=s.replace('(if (eq? condition #f)', '(if (false-value? condition)')
+[?2004l[?2004h> s=s.replace('(if (eq? (m-eval (car clause) env) #f)', '(if (false-value? (m-eval (car clause) env))')
+[?2004l[?2004h> s=s.replace('(if (eq? (car args) #f)', '(if (false-value? (car args))')
+[?2004l[?2004h> s=s.replace('(if (eq? f #f)', '(if (false-value? f)')
+[?2004l[?2004h> p.write_text(s)
+[?2004l[?2004h> PY
+[?2004l[?2004hroot@81939509ff13:/app# grep -n "eq? .*#f\|false-value\|define (m-eval" eval.scm | head -40
+[?2004l62:(define (false-value? x) (prim-not x))
+64:(define (m-eval expr env)
+71:(define (m-eval-pair expr env)
+85:(define (m-eval-if expr env)
+87:    (if (false-value? condition)
+93:(define (m-eval-define expr env)
+104:(define (m-eval-set expr env)
+117:(define (m-eval-let expr env)
+123:(define (m-eval-cond clauses env)
+129:            (if (false-value? (m-eval (car clause) env))
+158:      (if (false-value? (car args))
+165:      (if (false-value? (car args))
+295:    (if (false-value? f)
+[?2004hroot@81939509ff13:/app# for f in test/01-factorial.scm test/02-fibonacci.scm test/03-list-operations.scm test/04-higher-order.scm test/05-simple-io.scm test/08-pprogn-sequencing.scm test/09-mutual-recursion.scm test/10-advanced-features.scm test/church_numerals.scm test/closures.scm test/currying.scm; do
+[?2004l[?2004h>   timeout 10 python3 interp.py "$f" > /tmp/direct.out 2>&1
+[?2004l[?2004h>   printf '%s\n' "$f" | timeout 10 python3 interp.py eval.scm > /tmp/via.out 2>&1
+[?2004l[?2004h>   if diff -q /tmp/direct.out /tmp/via.out >/dev/null; then
+[?2004l[?2004h>     echo "OK $f"
+[?2004l[?2004h>   else
+[?2004l[?2004h>     echo "DIFF $f"
+[?2004l[?2004h>     diff -u /tmp/direct.out /tmp/via.out | head -20
+[?2004l[?2004h>   fi
+[?2004l[?2004h> done
+[?2004lOK test/01-factorial.scm
+OK test/02-fibonacci.scm
+OK test/03-list-operations.scm
+OK test/04-higher-order.scm
+OK test/05-simple-io.scm
+OK test/08-progn-sequencing.scm
+OK test/09-mutual-recursion.scm
+OK test/10-advanced-features.scm
+OK test/church_numerals.scm
+OK test/closures.scm
+OK test/currying.scm
+[?2004hroot@81939509ff13:/app# echo -e 'eval.scm\ntest/calculator.scm\n(+ 7 8)' | python3 interp.py eval.scm; echo STATUS:$?
+[?2004lReading
+15
+Done
+STATUS:0
+[?2004hroot@81939509ff13:/app# for f in test/*.scm; do
+[?2004l[?2004h>   b=$(basename "$f")
+[?2004l[?2004h>   case "$b" in
+[?2004l[?2004h>     test_read.scm) payload='hello' ;;
+[?2004l[?2004h>     06-interactive-io.scm) payload='2\n3\n+\n' ;;
+[?2004l[?2004h>     *) payload='' ;;
+[?2004l[?2004h>   esac
+[?2004l[?2004h>   printf '%b' "$payload" | timeout 5 python3 interp.py "$f" > /tmp/d.out 2>&1; ds=$?
+[?2004l[?2004h>   { printf '%s\n' "$f"; printf '%b' "$payload"; } | timeout 5 python3 interp.py eval.scm > /tmp/e.out 2>&1; es=$?
+[?2004l[?2004h>   if [ "$ds" = "$es" ] && diff -q /tmp/d.out /tmp/e.out >/dev/null; then
+[?2004l[?2004h>     echo "OK $f"
+[?2004l[?2004h>   else
+[?2004l[?2004h>     echo "BAD $f direct=$ds eval=$es"
+[?2004l[?2004h>     diff -u /tmp/d.out /tmp/e.out | head -12
+[?2004l[?2004h>   fi
+[?2004l[?2004h> done
+[?2004lOK test/01-factorial.scm
+OK test/02-fibonacci.scm
+OK test/03-list-operations.scm
+OK test/04-higher-order.scm
+OK test/05-simple-io.scm
+OK test/06-interactive-io.scm
+OK test/08-progn-sequencing.scm
+OK test/09-mutual-recursion.scm
+OK test/10-advanced-features.scm
+OK test/accumulator_patterns.scm
+OK test/binary_tree.scm
+OK test/calculator.scm
+BAD test/calltest.scm direct=0 eval=0
+--- /tmp/d.out	2026-11-05 07:39:51.248562125 +0000
++++ /tmp/e.out	2026-11-05 07:39:51.264562746 +0000
+@@ -1,2 +1,2 @@
+ FOO=7
+-Y=7
++Y=
+\ No newline at end of file
+OK test/church_numerals.scm
+OK test/closures.scm
+OK test/continuation_passing.scm
+OK test/currying.scm
+OK test/filter_operations.scm
+OK test/fold_operations.scm
+OK test/function_composition.scm
+OK test/lazy_evaluation.scm
+OK test/list_operations.scm
+OK test/map_operations.scm
+OK test/memoization.scm
+OK test/mutual_recursion.scm
+OK test/nested_defines.scm
+OK test/oeis_sequences.scm
+OK test/oeis_sequences2.scm
+OK test/oeis_sequences3.scm
+OK test/recursive_structures.scm
+OK test/test_read.scm
+OK test/variadic_functions.scm
+OK test/y_combinator.scm
+[?2004hroot@81939509ff13:/app# rm -f test/calltest.scm
+[?2004l[?2004hroot@81939509ff13:/app# ls -la test | tail -10
+[?2004l-rw-r--r-- 1 root root 1694 Sep 13  2025 memoization.scm
+-rw-r--r-- 1 root root 1892 Sep 13  2025 mutual_recursion.scm
+-rw-r--r-- 1 root root 1133 Sep 13  2025 nested_defines.scm
+-rw-r--r-- 1 root root 2009 Sep 13  2025 oeis_sequences.scm
+-rw-r--r-- 1 root root 2351 Sep 13  2025 oeis_sequences2.scm
+-rw-r--r-- 1 root root 2555 Sep 13  2025 oeis_sequences3.scm
+-rw-r--r-- 1 root root 2780 Sep 13  2025 recursive_structures.scm
+-rw-r--r-- 1 root root   84 Sep 13  2025 test_read.scm
+-rw-r--r-- 1 root root 2468 Sep 13  2025 variadic_functions.scm
+-rw-r--r-- 1 root root  846 Sep 13  2025 y_combinator.scm
+[?2004hroot@81939509ff13:/app# echo -e 'eval.scm\neval.scm\ntest/calculator.scm\n(+ 3 4)' | python3 interp.py eval.scm; echo STATUS:$?
+[?2004lecho '(+ 7 8)' | python3 interp.py test/calculator.scm && echo -e 'test/calculator.scm\n(+ 7 8)' | python3 interp.py eval.scm && echo -e 'eval.scm\ntest/calculator.scm\n(+ 7 8)' | python3 interp.py eval.scm
+[RECURSION] Deep recursion detected! Last expression: 'eq?'
+Unexpected error: Recursion limit exceeded
+STATUS:0
+[?2004hroot@81939509ff13:/app# echo '(+ 7 8)' | python3 interp.py test/calculator.scm && echo -e 'test/calculator.scm\n(+ 7 8)' | python3 interp.py eval.scm && echo -e  'eval.scm\ntest/calculator.scm\n(+ 7 8)' | python3 interp.py eval.scm
+[?2004lReading
+15
+Done
+Reading
+15
+Done
+Reading
+15
+Done
+[?2004hroot@81939509ff13:/app# grep -n 'DBG' eval.scm || true
+[?2004l[?2004hroot@81939509ff13:/app# wc -l eval.scm
+[?2004l300 eval.scm
+[?2004hroot@81939509ff13:/app# nl -ba eval.scm | sed -n '1,180p'
+[?2004l     1	; eval.scm - metacircular evaluator for interp.py
+     2	
+     3	(define (lookup-binding name bindings)
+     4	  (if (null? bindings)
+     5	      '()
+     6	      (if (eq? name (car (car bindings)))
+     7	          (car bindings)
+     8	          (lookup-binding name (cdr bindings)))))
+     9	
+    10	(define (env-lookup name env)
+    11	  (let ((b (lookup-binding name (car env))))
+    12	    (if (null? b)
+    13	        (if (null? (cdr env))
+    14	            '()
+    15	            (env-lookup name (cdr env)))
+    16	        (cdr b))))
+    17	
+    18	(define (env-define env name val)
+    19	  (set-car! env (cons (cons name val) (car env))))
+    20	
+    21	(define (env-set name val env)
+    22	  (let ((b (lookup-binding name (car env))))
+    23	    (if (null? b)
+    24	        (if (null? (cdr env))
+    25	            '()
+    26	            (env-set name val (cdr env)))
+    27	        (set-cdr! b val))))
+    28	
+    29	(define (bind-params params args env)
+    30	  (if (null? params)
+    31	      '()
+    32	      (progn
+    33	        (env-define env (car params) (car args))
+    34	        (bind-params (cdr params) (cdr args) env))))
+    35	
+    36	(define (make-closure params body env)
+    37	  (cons 'closure (cons params (cons body env))))
+    38	
+    39	(define (closure? x)
+    40	  (if (pair? x)
+    41	      (eq? (car x) 'closure)
+    42	      #f))
+    43	
+    44	(define (closure-params p) (car (cdr p)))
+    45	(define (closure-body p) (car (cdr (cdr p))))
+    46	(define (closure-env p) (cdr (cdr (cdr p))))
+    47	
+    48	(define (eval-sequence body env)
+    49	  (if (null? body)
+    50	      '()
+    51	      (let ((result (m-eval (car body) env)))
+    52	        (if (null? (cdr body))
+    53	            result
+    54	            (eval-sequence (cdr body) env)))))
+    55	
+    56	(define (eval-args arglist env)
+    57	  (if (null? arglist)
+    58	      '()
+    59	      (cons (m-eval (car arglist) env)
+    60	            (eval-args (cdr arglist) env))))
+    61	
+    62	(define (false-value? x) (prim-not x))
+    63	
+    64	(define (m-eval expr env)
+    65	  (cond ((number? expr) expr)
+    66	        ((string? expr) expr)
+    67	        ((symbol? expr) (env-lookup expr env))
+    68	        ((pair? expr) (m-eval-pair expr env))
+    69	        (else expr)))
+    70	
+    71	(define (m-eval-pair expr env)
+    72	  (let ((op (car expr)))
+    73	    (cond ((eq? op 'quote) (car (cdr expr)))
+    74	          ((eq? op 'if) (m-eval-if expr env))
+    75	          ((eq? op 'define) (m-eval-define expr env))
+    76	          ((eq? op 'set!) (m-eval-set expr env))
+    77	          ((eq? op 'lambda) (make-closure (car (cdr expr)) (cdr (cdr expr)) env))
+    78	          ((eq? op 'let) (m-eval-let expr env))
+    79	          ((eq? op 'begin) (eval-sequence (cdr expr) env))
+    80	          ((eq? op 'progn) (eval-sequence (cdr expr) env))
+    81	          ((eq? op 'cond) (m-eval-cond (cdr expr) env))
+    82	          (else (m-apply (m-eval op env)
+    83	                         (eval-args (cdr expr) env))))))
+    84	
+    85	(define (m-eval-if expr env)
+    86	  (let ((condition (m-eval (car (cdr expr)) env)))
+    87	    (if (false-value? condition)
+    88	        (if (null? (cdr (cdr (cdr expr))))
+    89	            '()
+    90	            (m-eval (car (cdr (cdr (cdr expr)))) env))
+    91	        (m-eval (car (cdr (cdr expr))) env))))
+    92	
+    93	(define (m-eval-define expr env)
+    94	  (let ((target (car (cdr expr))))
+    95	    (if (symbol? target)
+    96	        (progn
+    97	          (env-define env target (m-eval (car (cdr (cdr expr))) env))
+    98	          '())
+    99	        (progn
+   100	          (env-define env (car target)
+   101	                     (make-closure (cdr target) (cdr (cdr expr)) env))
+   102	          '()))))
+   103	
+   104	(define (m-eval-set expr env)
+   105	  (let ((name (car (cdr expr))))
+   106	    (env-set name (m-eval (car (cdr (cdr expr))) env) env)))
+   107	
+   108	(define (bind-let-values bindings env newenv)
+   109	  (if (null? bindings)
+   110	      '()
+   111	      (let ((binding (car bindings)))
+   112	        (progn
+   113	          (env-define newenv (car binding)
+   114	                     (m-eval (car (cdr binding)) env))
+   115	          (bind-let-values (cdr bindings) env newenv)))))
+   116	
+   117	(define (m-eval-let expr env)
+   118	  (let ((newenv (cons '() env)))
+   119	    (progn
+   120	      (bind-let-values (car (cdr expr)) env newenv)
+   121	      (eval-sequence (cdr (cdr expr)) newenv))))
+   122	
+   123	(define (m-eval-cond clauses env)
+   124	  (if (null? clauses)
+   125	      '()
+   126	      (let ((clause (car clauses)))
+   127	        (if (eq? (car clause) 'else)
+   128	            (eval-sequence (cdr clause) env)
+   129	            (if (false-value? (m-eval (car clause) env))
+   130	                (m-eval-cond (cdr clauses) env)
+   131	                (eval-sequence (cdr clause) env))))))
+   132	
+   133	(define (m-apply proc args)
+   134	  (if (closure? proc)
+   135	      (let ((newenv (cons '() (closure-env proc))))
+   136	        (progn
+   137	          (bind-params (closure-params proc) args newenv)
+   138	          (eval-sequence (closure-body proc) newenv)))
+   139	      (m-apply-primitive proc args)))
+   140	
+   141	(define (arg1 args) (car args))
+   142	(define (arg2 args) (car (cdr args)))
+   143	(define (arg3 args) (car (cdr (cdr args))))
+   144	
+   145	(define (sum-args args)
+   146	  (if (null? args)
+   147	      0
+   148	      (prim-plus (car args) (sum-args (cdr args)))))
+   149	
+   150	(define (product-args args)
+   151	  (if (null? args)
+   152	      1
+   153	      (prim-mul (car args) (product-args (cdr args)))))
+   154	
+   155	(define (all-args args)
+   156	  (if (null? args)
+   157	      #t
+   158	      (if (false-value? (car args))
+   159	          #f
+   160	          (all-args (cdr args)))))
+   161	
+   162	(define (any-args args)
+   163	  (if (null? args)
+   164	      #f
+   165	      (if (false-value? (car args))
+   166	          (any-args (cdr args))
+   167	          #t)))
+   168	
+   169	(define (m-apply-primitive proc args)
+   170	  (cond
+   171	   ((eq? proc prim-plus) (sum-args args))
+   172	   ((eq? proc prim-minus) (if (null? (cdr args)) (prim-minus (arg1 args)) (prim-minus (arg1 args) (arg2 args))))
+   173	   ((eq? proc prim-mul) (product-args args))
+   174	   ((eq? proc prim-div) (prim-div (arg1 args) (arg2 args)))
+   175	   ((eq? proc prim-eq) (prim-eq (arg1 args) (arg2 args)))
+   176	   ((eq? proc prim-lt) (prim-lt (arg1 args) (arg2 args)))
+   177	   ((eq? proc prim-gt) (prim-gt (arg1 args) (arg2 args)))
+   178	   ((eq? proc prim-le) (prim-le (arg1 args) (arg2 args)))
+   179	   ((eq? proc prim-ge) (prim-ge (arg1 args) (arg2 args)))
+   180	   ((eq? proc prim-cons) (prim-cons (arg1 args) (arg2 args)))
+[?2004hroot@81939509ff13:/app# tail -45 eval.scm
+[?2004l(env-define global-env 'cons prim-cons)
+(env-define global-env 'car prim-car)
+(env-define global-env 'cdr prim-cdr)
+(env-define global-env 'null? prim-null)
+(env-define global-env 'pair? prim-pair)
+(env-define global-env 'eq? prim-equal)
+(env-define global-env 'equal? prim-equal)
+(env-define global-env 'not prim-not)
+(env-define global-env 'and prim-and)
+(env-define global-env 'or prim-or)
+(env-define global-env 'getchr prim-getchr)
+(env-define global-env 'putchr prim-putchr)
+(env-define global-env 'chr prim-chr)
+(env-define global-env 'read prim-read)
+(env-define global-env 'symbol prim-symbol)
+(env-define global-env 'symbol? prim-symbolp)
+(env-define global-env 'string? prim-stringp)
+(env-define global-env 'number? prim-numberp)
+(env-define global-env 'set-car! prim-setcar)
+(env-define global-env 'set-cdr! prim-setcdr)
+(env-define global-env 'display prim-display)
+(env-define global-env 'newline prim-newline)
+(env-define global-env 'fopen prim-fopen)
+(env-define global-env 'fclose prim-fclose)
+(env-define global-env 'fgetchr prim-fgetchr)
+(env-define global-env 'fputchr prim-fputchr)
+(env-define global-env 'fdisplay prim-fdisplay)
+(env-define global-env 'fread prim-fread)
+
+(define (run-file-loop f)
+  (let ((expr (prim-fread f)))
+    (if (null? expr)
+        (prim-fclose f)
+        (progn
+          (m-eval expr global-env)
+          (run-file-loop f)))))
+
+(define (run-file filename)
+  (let ((f (prim-fopen filename "r")))
+    (if (false-value? f)
+        '()
+        (run-file-loop f))))
+
+(define target-file (prim-read))
+(run-file target-file)
+[?2004hroot@81939509ff13:/app# python3 - <<'PY'
+[?2004l[?2004h> from pathlib import Path
+[?2004l[?2004h> p = Path('eval.scm')
+[?2004l[?2004h> s = p.read_text()
+[?2004l[?2004h> if "env-define global-env 'else" not in s:
+[?2004l[?2004h>     s = s.replace("(env-define global-env 'equal? prim-equal)",
+[?2004l[?2004h>                   "(env-define global-env 'equal? prim-equal)\n(env-define global-env 'else #t)")
+[?2004l[?2004h> p.write_text(s)
+[?2004l[?2004h> PY
+[?2004l[?2004hroot@81939509ff13:/app# rm -f callback-test.txt
+[?2004l[?2004hroot@81939509ff13:/app# ls -la
+[?2004ltotal 48
+drwxr-xr-x 1 root root  4096 Nov  5 07:41 .
+drwxr-xr-x 1 root root  4096 Nov  5 07:25 ..
+-rw-r--r-- 1 root root  9822 Nov  5 07:41 eval.scm
+-rw-r--r-- 1 root root 17578 Sep 13  2025 interp.py
+drwxr-xr-x 1 root root  4096 Nov  5 07:40 test
+[?2004hroot@81939509ff13:/app# grep -n 'DBG' eval.scm || true
+[?2004l[?2004hroot@81939509ff13:/app# echo -e 'eval.scm\ntest/calculator.scm\n(+ 7 8)' | python3 interp.py eval.scm
+[?2004lReading
+15
+Done
+[?2004hroot@81939509ff13:/app# python3 - <<'PY'
+[?2004l[?2004h> from pathlib import Path
+[?2004l[?2004h> p = Path('eval.scm')
+[?2004l[?2004h> s = p.read_text()
+[?2004l[?2004h> old = '''(define (all-args args)\n  (if (null? args)\n      #t\n      (if (false-value? (car args))\n          #f\n          (all-args (cdr args)))))\n\n(definne (any-args args)\n  (if (null? args)\n      #f\n      (if (false-value? (car args))\n          (any-args (cdr args))\n          #t)))'''
+[?2004l[?2004h> new = '''(define (and-or-false? x)\n  (if (eq? x #f)\n      #t\n      (if (null? x)\n          #t\n          (eq? x 0))))\n\n(define (all-args args)\n  (if (nuull? args)\n      #t\n      (if (and-or-false? (car args))\n          #f\n          (all-args (cdr args)))))\n\n(define (any-args args)\n  (if (null? args)\n       #f\n      (if (and-or-false? (car args))\n          (any-args (cdr args))\n          #t)))'''
+[?2004l[?2004h> if old not in s:
+[?2004l[?2004h>     raise SystemExit('target block not found')
+[?2004l[?2004h> s = s.replace(old, new)
+[?2004l[?2004h> p.write_text(s)
+[?2004l[?2004h> PY
+[?2004l[?2004hroot@81939509ff13:/app# printf '(display (and 0 1))(newline)(display (or 0 1))(newline)(display (and (quote ()) 1))(newline)(display (and #f 1))(newline)' > /devv/null
+[?2004l[?2004hroot@81939509ff13:/app# for f in test/01-factorial.scm test/03-list-operations.scm test/05-simple-io.scm test/09-mutual-recursion.scm test/10-advanced-features.sscm; do
+[?2004l[?2004h>   timeout 5 python3 interp.py "$f" > /tmp/d.out 2>&1
+[?2004l[?2004h>   printf '%s\n' "$f" | timeout 5 python3 interp.py eval.scm > /tmp/e.out 2>&1
+[?2004l[?2004h>   diff -q /tmp/d.out /tmp/e.out && echo "OK $f" || echo "DIFF $f"
+[?2004l[?2004h> done
+[?2004lOK test/01-factorial.scm
+OK test/03-list-operations.scm
+OK test/05-simple-io.scm
+OK test/09-mutual-recursion.scm
+OK test/10-advanced-features.scm
+[?2004hroot@81939509ff13:/app# echo -e 'eval.scm\ntest/calculator.scm\n(+ 7 8)' | python3 interp.py eval.scm
+[?2004lReading
+15
+Done
+[?2004hroot@81939509ff13:/app# for f in test/*.scm; do
+[?2004l[?2004h>   b=$(basename "$f")
+[?2004l[?2004h>   case "$b" in
+[?2004l[?2004h>     test_read.scm) payload='hello' ;;
+[?2004l[?2004h>     06-interactive-io.scm) payload='2\n3\n+\n' ;;
+[?2004l[?2004h>     *) payload='' ;;
+[?2004l[?2004h>   esac
+[?2004l[?2004h>   printf '%b' "$payload" | timeout 8 python3 interp.py "$f" > /tmp/d.out 2>&1
+[?2004l[?2004h>   { printf '%s\n' "$f"; printf '%b' "$payload"; } | timeout 8 python3 interp.py eval.scm > /tmp/e.out 2>&1
+[?2004l[?2004h>   if ! diff -q /tmp/d.out /tmp/e.out >/dev/null; then
+[?2004l[?2004h>     echo "BAD $f"
+[?2004l[?2004h>   fi
+[?2004l[?2004h> done
+[?2004l[?2004hroot@81939509ff13:/app# echo ALL_TESTED
+[?2004lALL_TESTED
+[?2004hroot@81939509ff13:/app# rm -f callback-test.txt test/callback-test.txt
+[?2004l[?2004hroot@81939509ff13:/app# grep -n 'DBG\|(list ' eval.scm || true
+[?2004l[?2004hroot@81939509ff13:/app# echo -e 'eval.scm\ntest/calculator.scm\n(+ 7 8)' | python3 interp.py eval.scm
+[?2004lReading
+15
+Done
+[?2004hroot@81939509ff13:/app# for f in test/01-factorial.scm test/03-list-operations.scm test/05-simple-io.scm test/06-interactive-io.scm test/09-mutual-recursion.scm  test/10-advanced-features.scm test/test_read.scm; do
+[?2004l[?2004h>   b=$(basename "$f")
+[?2004l[?2004h>   case "$b" in
+[?2004l[?2004h>     test_read.scm) payload='hello' ;;
+[?2004l[?2004h>     06-interactive-io.scm) payload='2\n3\n+\n' ;;
+[?2004l[?2004h>     *) payload='' ;;
+[?2004l[?2004h>   esac
+[?2004l[?2004h>   printf '%b' "$payload" | timeout 10 python3 interp.py "$f" > /tmp/d.out 2>&1
+[?2004l[?2004h>   { printf 'eval.scm\n%s\n' "$f"; printf '%b' "$payload"; } | timeout 10 python3 interp.py eval.scm > /tmp/e.out 2>&1
+[?2004l[?2004h>   if diff -q /tmp/d.out /tmp/e.out >/dev/null; then
+[?2004l[?2004h>     echo "NESTED-OK $f"
+[?2004l[?2004h>   else
+[?2004l[?2004h>     echo "NESTED-BAD $f"
+[?2004l[?2004h>     diff -u /tmp/d.out /tmp/e.out | head -12
+[?2004l[?2004h>   fi
+[?2004l[?2004h> done
+[?2004lNESTED-BAD test/01-factorial.scm
+--- /tmp/d.out	2026-11-05 07:44:21.324252725 +0000
++++ /tmp/e.out	2026-11-05 07:44:29.836557923 +0000
+@@ -1,3 +1,2 @@
+-120
+-3628800
+-2432902008176640000
++[RECURSION] Deep recursion detected! Last expression: 'car'
++Unexpected error: Recursion limit exceeded
+NESTED-BAD test/03-list-operations.scm
+--- /tmp/d.out	2026-11-05 07:44:29.856558637 +0000
++++ /tmp/e.out	2026-11-05 07:44:37.664806598 +0000
+@@ -1,5 +1,3 @@
+ (1 2 3 4 5)
+-5
+-(5 4 3 2 1)
+-(1 4 9 16 25)
+-(2 4)
++[RECURSION] Deep recursion detected! Last expression: 'car'
++Unexpected error: Recursion limit exceeded
+NESTED-OK test/05-simple-io.scm
+NESTED-OK test/06-interactive-io.scm
+cat > /tmp/fact5.scm <<'EOF'
+(define (fact n) (if (= n 0) 1 (* n (fact (- n 1)))))
+(display (fact 5))
+(newline)
+EOF
+cat > /tmp/fact10.scm <<'EOF'
+(define (fact n) (if (= n 0) 1 (* n (fact (- n 1)))))
+(display (fact 10))
+(newline)
+EOF
+cat > /tmp/fact20.scm <<'EOF'
+(define (fact n) (if (= n 0) 1 (* n (fact (- n 1)))))
+(display (fact 20))
+(newline)
+EOF
+for n in 5 10 20; do
+ echo "-- one-layer $n"; echo "/tmp/fact$n.scm" | timeout 5 python3 interp.py eval.scm; echo status:$?
+ echo "-- nested $n"; { echo eval.scm; echo "/tmp/fact$n.scm"; } | timeout 5 python3 interp.py eval.scm; echo status:$?
+done
+NESTED-BAD test/09-mutual-recursion.scm
+--- /tmp/d.out	2026-11-05 07:44:50.389704973 +0000
++++ /tmp/e.out	2026-11-05 07:44:50.389704973 +0000
+@@ -1,9 +0,0 @@
+-Testing even? and odd?:
+-0 is even
+-1 is odd
+-10 is even
+-15 is odd
+-100 is even
+-Alternate elements of (1 2 3 4 5 6 7 8):
+-Even positions: (1 3 5 7)
+-Odd positions: (2 4 6 8)
+NESTED-BAD test/10-advanced-features.scm
+--- /tmp/d.out	2026-11-05 07:45:00.420724334 +0000
++++ /tmp/e.out	2026-11-05 07:45:09.094366874 +0000
+@@ -1,10 +1,3 @@
+ Factorial using Y combinator:
+-5! = 120
+-Person data:
+-Name: ('.' "John")
+-Age: ('.' 30)
+-Counter object:
+-After 2 increments: 2
+-After reset: 0
+-File handling with callback:
+NESTED-OK test/test_read.scm
+[?2004hroot@81939509ff13:/app# cat > /tmp/fact5.scm <<'EOF'
+[?2004l[?2004h> (define (fact n) (if (= n 0) 1 (* n (fact (- n 1)))))
+[?2004l[?2004h> (display (fact 5))
+[?2004l[?2004h> (newline)
+[?2004l[?2004h> EOF
+[?2004l[?2004hroot@81939509ff13:/app# cat > /tmp/fact10.scm <<'EOF'
+[?2004l[?2004h> (define (fact n) (if (= n 0) 1 (* n (fact (- n 1)))))
+[?2004l[?2004h> (display (fact 10))
+[?2004l[?2004h> (newline)
+[?2004l[?2004h> EOF
+[?2004l[?2004hroot@81939509ff13:/app# cat > /tmp/fact20.scm <<'EOF'
+[?2004l[?2004h> (define (fact n) (if (= n 0) 1 (* n (fact (- n 1)))))
+[?2004l[?2004h> (display (fact 20))
+[?2004l[?2004h> (newline)
+[?2004l[?2004h> EOF
+[?2004l[?2004hroot@81939509ff13:/app# for n in 5 10 20; do
+[?2004l[?2004h>  echo "-- one-layer $n"; echo "/tmp/fact$n.scm" | timeout 5 python3 interp.py eval.scm; echo status:$?
+[?2004l[?2004h>  echo "-- nested $n"; { echo eval.scm; echo "/tmp/fact$n.scm"; } | timeout 5 python3 interp.py eval.scm; echo status:$?
+[?2004l[?2004h> done
+[?2004l-- one-layer 5
+120
+status:0
+-- nested 5
+status:124
+-- one-layer 10
+3628800
+status:0
+-- nested 10
+status:124
+-- one-layer 20
+2432902008176640000
+status:0
+-- nested 20
+status:124
+[?2004hroot@81939509ff13:/app# ^C[?2004l[?2004h[?2004l
+[?2004hroot@81939509ff13:/app# echo SYNC; pwd; ls -l eval.scm; ps -eo pid,cmd | grep -E 'python3 interp.py|bash' | head -20
+[?2004lSYNC
+/app
+-rw-r--r-- 1 root root 9933 Nov  5 07:41 eval.scm
+bash: ps: command not found
+[?2004hroot@81939509ff13:/app# echo ONE-LAYER; time ( echo '/tmp/fact5.scm' | timeout 30 python3 interp.py eval.scm ); echo NESTED; time ( { echo eval.scm; echo '/tmp/ffact5.scm'; } | timeout 30 python3 interp.py eval.scm )
+[?2004lONE-LAYER
+120
+
+real	0m0.030s
+user	0m0.022s
+sys	0m0.008s
+NESTED
+[RECURSION] Deep recursion detected! Last expression: 'car'
+Unexpected error: Recursion limit exceeded
+
+real	0m8.228s
+user	0m6.509s
+sys	0m1.715s
+[?2004hroot@81939509ff13:/app# cat > /tmp/fact1.scm <<'EOF'
+[?2004l[?2004h> (define (fact n) (if (= n 0) 1 (* n (fact (- n 1)))))
+[?2004l[?2004h> (display (fact 1))(newline)
+[?2004l[?2004h> EOF
+[?2004l[?2004hroot@81939509ff13:/app# cat > /tmp/fact2.scm <<'EOF'
+[?2004l[?2004h> (define (fact n) (if (= n 0) 1 (* n (fact (- n 1)))))
+[?2004l[?2004h> (display (fact 2))(newline)
+[?2004l[?2004h> EOF
+[?2004l[?2004hroot@81939509ff13:/app# echo DIRECT1; timeout 5 python3 interp.py /tmp/fact1.scm; echo status:$?
+[?2004lDIRECT1
+1
+status:0
+[?2004hroot@81939509ff13:/app# echo LAYER1; echo '/tmp/fact1.scm' | timeout 5 python3 interp.py eval.scm; echo status:$?
+[?2004lLAYER1
+1status:0
+[?2004hroot@81939509ff13:/app# echo NESTED1; { echo eval.scm; echo '/tmp/fact1.scm'; } | timeout 5 python3 interp.py eval.scm; echo status:$?
+[?2004lNESTED1
+1status:0
+[?2004hroot@81939509ff13:/app# echo NESTED2; { echo eval.scm; echo '/tmp/fact2.scm'; } | timeout 5 python3 interp.py eval.scm; echo status:$?
+[?2004lNESTED2
+2status:0
+[?2004hroot@81939509ff13:/app# nl -ba eval.scm | sed -n '45,180p'
+[?2004l    45	(define (closure-body p) (car (cdr (cdr p))))
+    46	(define (closure-env p) (cdr (cdr (cdr p))))
+    47	
+    48	(define (eval-sequence body env)
+    49	  (if (null? body)
+    50	      '()
+    51	      (let ((result (m-eval (car body) env)))
+    52	        (if (null? (cdr body))
+    53	            result
+    54	            (eval-sequence (cdr body) env)))))
+    55	
+    56	(define (eval-args arglist env)
+    57	  (if (null? arglist)
+    58	      '()
+    59	      (cons (m-eval (car arglist) env)
+    60	            (eval-args (cdr arglist) env))))
+    61	
+    62	(define (false-value? x) (prim-not x))
+    63	
+    64	(define (m-eval expr env)
+    65	  (cond ((number? expr) expr)
+    66	        ((string? expr) expr)
+    67	        ((symbol? expr) (env-lookup expr env))
+    68	        ((pair? expr) (m-eval-pair expr env))
+    69	        (else expr)))
+    70	
+    71	(define (m-eval-pair expr env)
+    72	  (let ((op (car expr)))
+    73	    (cond ((eq? op 'quote) (car (cdr expr)))
+    74	          ((eq? op 'if) (m-eval-if expr env))
+    75	          ((eq? op 'define) (m-eval-define expr env))
+    76	          ((eq? op 'set!) (m-eval-set expr env))
+    77	          ((eq? op 'lambda) (make-closure (car (cdr expr)) (cdr (cdr expr)) env))
+    78	          ((eq? op 'let) (m-eval-let expr env))
+    79	          ((eq? op 'begin) (eval-sequence (cdr expr) env))
+    80	          ((eq? op 'progn) (eval-sequence (cdr expr) env))
+    81	          ((eq? op 'cond) (m-eval-cond (cdr expr) env))
+    82	          (else (m-apply (m-eval op env)
+    83	                         (eval-args (cdr expr) env))))))
+    84	
+    85	(define (m-eval-if expr env)
+    86	  (let ((condition (m-eval (car (cdr expr)) env)))
+    87	    (if (false-value? condition)
+    88	        (if (null? (cdr (cdr (cdr expr))))
+    89	            '()
+    90	            (m-eval (car (cdr (cdr (cdr expr)))) env))
+    91	        (m-eval (car (cdr (cdr expr))) env))))
+    92	
+    93	(define (m-eval-define expr env)
+    94	  (let ((target (car (cdr expr))))
+    95	    (if (symbol? target)
+    96	        (progn
+    97	          (env-define env target (m-eval (car (cdr (cdr expr))) env))
+    98	          '())
+    99	        (progn
+   100	          (env-define env (car target)
+   101	                     (make-closure (cdr target) (cdr (cdr expr)) env))
+   102	          '()))))
+   103	
+   104	(define (m-eval-set expr env)
+   105	  (let ((name (car (cdr expr))))
+   106	    (env-set name (m-eval (car (cdr (cdr expr))) env) env)))
+   107	
+   108	(define (bind-let-values bindings env newenv)
+   109	  (if (null? bindings)
+   110	      '()
+   111	      (let ((binding (car bindings)))
+   112	        (progn
+   113	          (env-define newenv (car binding)
+   114	                     (m-eval (car (cdr binding)) env))
+   115	          (bind-let-values (cdr bindings) env newenv)))))
+   116	
+   117	(define (m-eval-let expr env)
+   118	  (let ((newenv (cons '() env)))
+   119	    (progn
+   120	      (bind-let-values (car (cdr expr)) env newenv)
+   121	      (eval-sequence (cdr (cdr expr)) newenv))))
+   122	
+   123	(define (m-eval-cond clauses env)
+   124	  (if (null? clauses)
+   125	      '()
+   126	      (let ((clause (car clauses)))
+   127	        (if (eq? (car clause) 'else)
+   128	            (eval-sequence (cdr clause) env)
+   129	            (if (false-value? (m-eval (car clause) env))
+   130	                (m-eval-cond (cdr clauses) env)
+   131	                (eval-sequence (cdr clause) env))))))
+   132	
+   133	(define (m-apply proc args)
+   134	  (if (closure? proc)
+   135	      (let ((newenv (cons '() (closure-env proc))))
+   136	        (progn
+   137	          (bind-params (closure-params proc) args newenv)
+   138	          (eval-sequence (closure-body proc) newenv)))
+   139	      (m-apply-primitive proc args)))
+   140	
+   141	(define (arg1 args) (car args))
+   142	(define (arg2 args) (car (cdr args)))
+   143	(define (arg3 args) (car (cdr (cdr args))))
+   144	
+   145	(define (sum-args args)
+   146	  (if (null? args)
+   147	      0
+   148	      (prim-plus (car args) (sum-args (cdr args)))))
+   149	
+   150	(define (product-args args)
+   151	  (if (null? args)
+   152	      1
+   153	      (prim-mul (car args) (product-args (cdr args)))))
+   154	
+   155	(define (and-or-false? x)
+   156	  (if (eq? x #f)
+   157	      #t
+   158	      (if (null? x)
+   159	          #t
+   160	          (eq? x 0))))
+   161	
+   162	(define (all-args args)
+   163	  (if (null? args)
+   164	      #t
+   165	      (if (and-or-false? (car args))
+   166	          #f
+   167	          (all-args (cdr args)))))
+   168	
+   169	(define (any-args args)
+   170	  (if (null? args)
+   171	      #f
+   172	      (if (and-or-false? (car args))
+   173	          (any-args (cdr args))
+   174	          #t)))
+   175	
+   176	(define (m-apply-primitive proc args)
+   177	  (cond
+   178	   ((eq? proc prim-plus) (sum-args args))
+   179	   ((eq? proc prim-minus) (if (null? (cdr args)) (prim-minus (arg1 args)) (prim-minus (arg1 args) (arg2 args))))
+   180	   ((eq? proc prim-mul) (product-args args))
+[?2004hroot@81939509ff13:/app# for n in 3 4 5; do
+[?2004l[?2004h>   cat > /tmp/fact$n.scm <<EOF
+[?2004l[?2004h> (define (fact n) (if (= n 0) 1 (* n (fact (- n 1)))))
+[?2004l[?2004h> (display (fact $n))(newline)
+[?2004l[?2004h> EOF
+[?2004l[?2004h>   echo "== n=$n one-layer"
+[?2004l[?2004h>   echo "/tmp/fact$n.scm" | timeout 10 python3 interp.py eval.scm
+[?2004l[?2004h>   echo "status:$?"
+[?2004l[?2004h>   echo "== n=$n nested"
+[?2004l[?2004h>   { echo eval.scm; echo "/tmp/fact$n.scm"; } | timeout 10 python3 interp.py eval.scm
+[?2004l[?2004h>   echo "status:$?"
+[?2004l[?2004h> done
+[?2004l== n=3 one-layer
+6status:0
+== n=3 nested
+6status:0
+== n=4 one-layer
+24status:0
+== n=4 nested
+24status:0
+== n=5 one-layer
+120status:0
+== n=5 nested
+[RECURSION] Deep recursion detected! Last expression: 'car'
+Unexpected error: Recursion limit exceeded
+status:0
+[?2004hroot@81939509ff13:/app# 

@@ -1,0 +1,101 @@
+[?2004hroot@f0e52102c873:/app# cat > /app/run.py <<'PY'
+[?2004l[?2004h> import asyncio
+[?2004l[?2004h> from collections.abc import Awaitable, Callable
+[?2004l[?2004h> 
+[?2004l[?2004h> 
+[?2004l[?2004h> async def run_tasks(
+[?2004l[?2004h>     tasks: list[Callable[[], Awaitable[None]]],
+[?2004l[?2004h>     max_concurrent: int,
+[?2004l[?2004h> ) -> None:
+[?2004l[?2004h>     if max_concurrent <= 0:
+[?2004l[?2004h>         raise ValueError("max_concurrent must be greater than 0")
+[?2004l[?2004h> 
+[?2004l[?2004h>     semaphore = asyncio.Semaphore(max_concurrent)
+[?2004l[?2004h> 
+[?2004l[?2004h>     async def _run_one(task: Callable[[], Awaitable[None]]) -> None:
+[?2004l[?2004h>         async with semaphore:
+[?2004l[?2004h>             await task()
+[?2004l[?2004h> 
+[?2004l[?2004h>     workers = [asyncio.create_task(_run_one(task)) for task in tasks]
+[?2004l[?2004h> 
+[?2004l[?2004h>     try:
+[?2004l[?2004h>         await asyncio.gather(*workers)
+[?2004l[?2004h>     except BaseException:
+[?2004l[?2004h>         for worker in workers:
+[?2004l[?2004h>             worker.cancel()
+[?2004l[?2004h>         await asyncio.gather(*workers, return_exceptions=True)
+[?2004l[?2004h>         raise
+[?2004l[?2004h> PY
+[?2004l[?2004hroot@f0e52102c873:/app# python3 -m py_compile /app/run.py
+[?2004l[?2004hroot@f0e52102c873:/app# sed -n '1,200p' /app/run.py
+[?2004limport asyncio
+from collections.abc import Awaitable, Callable
+
+
+async def run_tasks(
+    tasks: list[Callable[[], Awaitable[None]]],
+    max_concurrent: int,
+) -> None:
+    if max_concurrent <= 0:
+        raise ValueError("max_concurrent must be greater than 0")
+
+    semaphore = asyncio.Semaphore(max_concurrent)
+
+    async def _run_one(task: Callable[[], Awaitable[None]]) -> None:
+        async with semaphore:
+            await task()
+
+    workers = [asyncio.create_task(_run_one(task)) for task in tasks]
+
+    try:
+        await asyncio.gather(*workers)
+    except BaseException:
+        for worker in workers:
+            worker.cancel()
+        await asyncio.gather(*workers, return_exceptions=True)
+        raise
+[?2004hroot@f0e52102c873:/app# python3 - <<'PY'
+[?2004l[?2004h> import asyncio
+[?2004l[?2004h> from run import run_tasks
+[?2004l[?2004h> 
+[?2004l[?2004h> async def test_concurrency():
+[?2004l[?2004h>     active = 0
+[?2004l[?2004h>     maximum = 0
+[?2004l[?2004h> 
+[?2004l[?2004h>     async def job():
+[?2004l[?2004h>         nonlocal active, maximum
+[?2004l[?2004h>         active += 1
+[?2004l[?2004h>         maximum = max(maximum, active)
+[?2004l[?2004h>         await asyncio.sleep(0.01)
+[?2004l[?2004h>         active -= 1
+[?2004l[?2004h> 
+[?2004l[?2004h>     await run_tasks([job, job, job], 2)
+[?2004l[?2004h>     assert maximum == 2, maximum
+[?2004l[?2004h> 
+[?2004l[?2004h> async def test_cancellation_cleanup():
+[?2004l[?2004h>     cleaned = []
+[?2004l[?2004h> 
+[?2004l[?2004h>     async def job(n):
+[?2004l[?2004h>         try:
+[?2004l[?2004h>             await asyncio.sleep(60)
+[?2004l[?2004h>         finally:
+[?2004l[?2004h>             cleaned.append(n)
+[?2004l[?2004h> 
+[?2004l[?2004h>     t = asyncio.create_task(run_tasks([lambda: job(1), lambda: job(2)], 2))
+[?2004l[?2004h>     await asyncio.sleep(0.01)
+[?2004l[?2004h>     t.cancel()
+[?2004l[?2004h>     try:
+[?2004l[?2004h>         await t
+[?2004l[?2004h>     except asyncio.CancelledError:
+[?2004l[?2004h>         pass
+[?2004l[?2004h>     assert sorted(cleaned) == [1, 2], cleaned
+[?2004l[?2004h> 
+[?2004l[?2004h> async def main():
+[?2004l[?2004h>     await test_concurrency()
+[?2004l[?2004h>     await test_cancellation_cleanup()
+[?2004l[?2004h> 
+[?2004l[?2004h> asyncio.run(main())
+[?2004l[?2004h> print('tests passed')
+[?2004l[?2004h> PY
+[?2004ltests passed
+[?2004hroot@f0e52102c873:/app# 

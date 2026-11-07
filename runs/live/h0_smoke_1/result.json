@@ -1,0 +1,55 @@
+{
+    "id": "3ff1992b-a3d5-442f-84b9-b4e7f6bac2f6",
+    "started_at": "2026-11-04T16:09:35.590660",
+    "updated_at": "2026-11-04T16:48:19.711397",
+    "finished_at": "2026-11-04T16:48:19.711397",
+    "n_total_trials": 6,
+    "stats": {
+        "n_completed_trials": 6,
+        "n_errored_trials": 3,
+        "n_running_trials": 0,
+        "n_pending_trials": 0,
+        "n_cancelled_trials": 0,
+        "n_retries": 0,
+        "evals": {
+            "rrsi-terminus2__deepseek-v4-flash__terminal-bench/terminal-bench-2-1": {
+                "n_trials": 5,
+                "n_errors": 3,
+                "metrics": [
+                    {
+                        "mean": 0.16666666666666666
+                    }
+                ],
+                "pass_at_k": {
+                    "2": 0.33333333333333337
+                },
+                "reward_stats": {
+                    "reward": {
+                        "0.0": [
+                            "cancel-async-tasks__xYKGhD2",
+                            "chess-best-move__EyxMeKb",
+                            "cancel-async-tasks__rWST7NN",
+                            "chess-best-move__GMM5tgj"
+                        ],
+                        "1.0": [
+                            "cancel-async-tasks__NKWvhos"
+                        ]
+                    }
+                },
+                "exception_stats": {
+                    "EnvironmentStartTimeoutError": [
+                        "chess-best-move__xWjijEb"
+                    ],
+                    "AgentTimeoutError": [
+                        "chess-best-move__EyxMeKb",
+                        "chess-best-move__GMM5tgj"
+                    ]
+                }
+            }
+        },
+        "n_input_tokens": 2330709,
+        "n_cache_tokens": 2223232,
+        "n_output_tokens": 258097,
+        "cost_usd": 0.355298892
+    }
+}

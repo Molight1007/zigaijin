@@ -1,0 +1,48 @@
+{
+    "job_name": "coverage-smoke",
+    "jobs_dir": "D:\\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\\runs\\live\\h0_coverage_smoke\\jobs",
+    "agent_setup_timeout_multiplier": 2.0,
+    "n_concurrent_trials": 1,
+    "environment": {
+        "type": "docker",
+        "mounts": [
+            {
+                "type": "bind",
+                "source": "D:/面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究/.tmp/tmux-bundle",
+                "target": "/opt/evo-tmux",
+                "read_only": true
+            },
+            {
+                "type": "bind",
+                "source": "D:/面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究/.tmp/tmux-bundle/tmux",
+                "target": "/usr/bin/tmux",
+                "read_only": true
+            }
+        ]
+    },
+    "verifier": {
+        "env": {
+            "UV_INSTALLER_GITHUB_BASE_URL": "http://host.docker.internal:8765"
+        }
+    },
+    "agents": [
+        {
+            "name": "evo.adapters.traced_terminus2:TracedAgentHarness",
+            "model_name": "deepseek-v4-flash",
+            "base_url": "https://api.deepseek.com/v1",
+            "model_api_key_name": "DEEPSEEK_API_KEY",
+            "kwargs": {
+                "record_terminal_session": false
+            }
+        }
+    ],
+    "datasets": [
+        {
+            "name": "terminal-bench/terminal-bench-2-1",
+            "ref": "sha256:7d7bdc1cbedad549fc1140404bd4dc45e5fd0ea7c4186773687d177ad3a0699a",
+            "task_names": [
+                "terminal-bench/cancel-async-tasks"
+            ]
+        }
+    ]
+}

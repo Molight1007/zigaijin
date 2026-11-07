@@ -1,0 +1,462 @@
+{
+  "job": "D:\\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\\runs\\live\\h0_evolution\\jobs\\h0-evolution",
+  "stats_before_resume": {
+    "n_completed_trials": 46,
+    "n_errored_trials": 31,
+    "n_running_trials": 2,
+    "n_pending_trials": 132,
+    "n_cancelled_trials": 0,
+    "n_retries": 0,
+    "evals": {
+      "rrsi-terminus2__deepseek-v4-flash__terminal-bench/terminal-bench-2-1": {
+        "n_trials": 16,
+        "n_errors": 31,
+        "metrics": [
+          {
+            "mean": 0.021739130434782608
+          }
+        ],
+        "pass_at_k": {},
+        "reward_stats": {
+          "reward": {
+            "0.0": [
+              "torch-tensor-parallelism__8WR3WHc",
+              "write-compressor__PiZg53m",
+              "openssl-selfsigned-cert__2HnrpSb",
+              "schemelike-metacircular-eval__bfBPauj",
+              "regex-chess__f5vkFxA",
+              "llm-inference-batching-scheduler__3JSncVS",
+              "merge-diff-arc-agi-task__SwuVmyA",
+              "mcmc-sampling-stan__JqjBsvT",
+              "vulnerable-secret__TTfRT4e",
+              "configure-git-webserver__jxL8Eek",
+              "password-recovery__rFNWRu5",
+              "sqlite-db-truncate__o2quj5V",
+              "query-optimize__iLsvQxF",
+              "count-dataset-tokens__nVLx3Ez",
+              "extract-moves-from-video__ahpmSNV"
+            ],
+            "1.0": [
+              "largest-eigenval__c7dgHq5"
+            ]
+          }
+        },
+        "exception_stats": {
+          "RuntimeError": [
+            "dna-assembly__bvSabGA",
+            "torch-pipeline-parallelism__o54qXQY",
+            "adaptive-rejection-sampler__5nChJfZ",
+            "train-fasttext__bWTaBHe",
+            "fix-ocaml-gc__EWHuRWW",
+            "gcode-to-text__jfo2mj5",
+            "dna-insert__yTMmQyF",
+            "raman-fitting__iUgb7Bx",
+            "overfull-hbox__JH3CqVr",
+            "video-processing__pSaYKLC",
+            "sanitize-git-repo__zRzDtku",
+            "feal-differential-cryptanalysis__MDrjCS8",
+            "prove-plus-comm__VoaXm6s",
+            "multi-source-data-merger__SXrLhX7",
+            "sqlite-with-gcov__oJwcYsC",
+            "feal-linear-cryptanalysis__W6jobyy"
+          ],
+          "EnvironmentStartTimeoutError": [
+            "model-extraction-relu-logits__F9PCuDQ",
+            "path-tracing__Jxo89L5",
+            "caffe-cifar-10__sN8VeNJ",
+            "mteb-leaderboard__dqGTEDP",
+            "pytorch-model-recovery__AnvvPnv",
+            "cobol-modernization__oijHxf3",
+            "gpt2-codegolf__7eTZMR9",
+            "filter-js-from-html__fretnvz",
+            "make-doom-for-mips__XiMt3pv",
+            "build-cython-ext__MqMm4Zf",
+            "reshard-c4-data__WkSE4s9",
+            "install-windows-3.11__cmTyaek",
+            "polyglot-c-py__gD9wkgu",
+            "break-filter-js-from-html__QyCouGR"
+          ],
+          "AgentTimeoutError": [
+            "extract-moves-from-video__ahpmSNV"
+          ]
+        }
+      }
+    },
+    "n_input_tokens": 16766310,
+    "n_cache_tokens": 16249088,
+    "n_output_tokens": 1090981,
+    "cost_usd": 1.4614416959999996
+  },
+  "recorded_trials": [
+    {
+      "trial": "adaptive-rejection-sampler__5nChJfZ",
+      "task": "terminal-bench/adaptive-rejection-sampler",
+      "exception": "RuntimeError",
+      "reward": null,
+      "started_at": "2026-11-05T09:10:23.643322Z",
+      "finished_at": "2026-11-05T09:11:00.305043Z"
+    },
+    {
+      "trial": "break-filter-js-from-html__QyCouGR",
+      "task": "terminal-bench/break-filter-js-from-html",
+      "exception": "EnvironmentStartTimeoutError",
+      "reward": null,
+      "started_at": "2026-11-05T10:00:59.039767Z",
+      "finished_at": "2026-11-05T10:10:59.981942Z"
+    },
+    {
+      "trial": "build-cython-ext__MqMm4Zf",
+      "task": "terminal-bench/build-cython-ext",
+      "exception": "EnvironmentStartTimeoutError",
+      "reward": null,
+      "started_at": "2026-11-05T09:27:39.851114Z",
+      "finished_at": "2026-11-05T09:37:40.806755Z"
+    },
+    {
+      "trial": "caffe-cifar-10__sN8VeNJ",
+      "task": "terminal-bench/caffe-cifar-10",
+      "exception": "EnvironmentStartTimeoutError",
+      "reward": null,
+      "started_at": "2026-11-05T08:09:21.834117Z",
+      "finished_at": "2026-11-05T08:19:22.678478Z"
+    },
+    {
+      "trial": "cobol-modernization__oijHxf3",
+      "task": "terminal-bench/cobol-modernization",
+      "exception": "EnvironmentStartTimeoutError",
+      "reward": null,
+      "started_at": "2026-11-05T08:50:21.114750Z",
+      "finished_at": "2026-11-05T09:00:22.085976Z"
+    },
+    {
+      "trial": "configure-git-webserver__jxL8Eek",
+      "task": "terminal-bench/configure-git-webserver",
+      "exception": null,
+      "reward": 0.0,
+      "started_at": "2026-11-05T09:22:32.767786Z",
+      "finished_at": "2026-11-05T09:27:39.822178Z"
+    },
+    {
+      "trial": "count-dataset-tokens__nVLx3Ez",
+      "task": "terminal-bench/count-dataset-tokens",
+      "exception": null,
+      "reward": 0.0,
+      "started_at": "2026-11-05T10:04:40.264213Z",
+      "finished_at": "2026-11-05T10:15:46.277797Z"
+    },
+    {
+      "trial": "dna-assembly__bvSabGA",
+      "task": "terminal-bench/dna-assembly",
+      "exception": "RuntimeError",
+      "reward": null,
+      "started_at": "2026-11-05T07:35:18.977109Z",
+      "finished_at": "2026-11-05T07:35:58.328195Z"
+    },
+    {
+      "trial": "dna-insert__yTMmQyF",
+      "task": "terminal-bench/dna-insert",
+      "exception": "RuntimeError",
+      "reward": null,
+      "started_at": "2026-11-05T09:32:38.216684Z",
+      "finished_at": "2026-11-05T09:33:17.431214Z"
+    },
+    {
+      "trial": "extract-moves-from-video__ahpmSNV",
+      "task": "terminal-bench/extract-moves-from-video",
+      "exception": "AgentTimeoutError",
+      "reward": 0.0,
+      "started_at": "2026-11-05T10:11:00.031021Z",
+      "finished_at": "2026-11-05T10:43:11.159429Z"
+    },
+    {
+      "trial": "feal-differential-cryptanalysis__MDrjCS8",
+      "task": "terminal-bench/feal-differential-cryptanalysis",
+      "exception": "RuntimeError",
+      "reward": null,
+      "started_at": "2026-11-05T09:37:40.841644Z",
+      "finished_at": "2026-11-05T09:39:01.696115Z"
+    },
+    {
+      "trial": "feal-linear-cryptanalysis__W6jobyy",
+      "task": "terminal-bench/feal-linear-cryptanalysis",
+      "exception": "RuntimeError",
+      "reward": null,
+      "started_at": "2026-11-05T10:46:32.317678Z",
+      "finished_at": "2026-11-05T10:46:35.300339Z"
+    },
+    {
+      "trial": "filter-js-from-html__fretnvz",
+      "task": "terminal-bench/filter-js-from-html",
+      "exception": "EnvironmentStartTimeoutError",
+      "reward": null,
+      "started_at": "2026-11-05T09:10:22.676619Z",
+      "finished_at": "2026-11-05T09:20:23.632548Z"
+    },
+    {
+      "trial": "fix-ocaml-gc__EWHuRWW",
+      "task": "terminal-bench/fix-ocaml-gc",
+      "exception": "RuntimeError",
+      "reward": null,
+      "started_at": "2026-11-05T09:31:19.301904Z",
+      "finished_at": "2026-11-05T09:31:58.710656Z"
+    },
+    {
+      "trial": "gcode-to-text__jfo2mj5",
+      "task": "terminal-bench/gcode-to-text",
+      "exception": "RuntimeError",
+      "reward": null,
+      "started_at": "2026-11-05T09:31:58.738610Z",
+      "finished_at": "2026-11-05T09:32:38.189995Z"
+    },
+    {
+      "trial": "gpt2-codegolf__7eTZMR9",
+      "task": "terminal-bench/gpt2-codegolf",
+      "exception": "EnvironmentStartTimeoutError",
+      "reward": null,
+      "started_at": "2026-11-05T09:00:22.115224Z",
+      "finished_at": "2026-11-05T09:10:23.613503Z"
+    },
+    {
+      "trial": "install-windows-3.11__cmTyaek",
+      "task": "terminal-bench/install-windows-3.11",
+      "exception": "EnvironmentStartTimeoutError",
+      "reward": null,
+      "started_at": "2026-11-05T09:46:14.636869Z",
+      "finished_at": "2026-11-05T09:56:15.641709Z"
+    },
+    {
+      "trial": "largest-eigenval__c7dgHq5",
+      "task": "terminal-bench/largest-eigenval",
+      "exception": null,
+      "reward": 1.0,
+      "started_at": "2026-11-05T09:56:15.670833Z",
+      "finished_at": "2026-11-05T10:00:59.007164Z"
+    },
+    {
+      "trial": "llm-inference-batching-scheduler__3JSncVS",
+      "task": "terminal-bench/llm-inference-batching-scheduler",
+      "exception": null,
+      "reward": 0.0,
+      "started_at": "2026-11-05T08:29:23.583163Z",
+      "finished_at": "2026-11-05T08:44:15.468792Z"
+    },
+    {
+      "trial": "make-doom-for-mips__XiMt3pv",
+      "task": "terminal-bench/make-doom-for-mips",
+      "exception": "EnvironmentStartTimeoutError",
+      "reward": null,
+      "started_at": "2026-11-05T09:20:23.663348Z",
+      "finished_at": "2026-11-05T09:30:24.552240Z"
+    },
+    {
+      "trial": "mcmc-sampling-stan__JqjBsvT",
+      "task": "terminal-bench/mcmc-sampling-stan",
+      "exception": null,
+      "reward": 0.0,
+      "started_at": "2026-11-05T08:50:59.580276Z",
+      "finished_at": "2026-11-05T09:10:22.636532Z"
+    },
+    {
+      "trial": "merge-diff-arc-agi-task__SwuVmyA",
+      "task": "terminal-bench/merge-diff-arc-agi-task",
+      "exception": null,
+      "reward": 0.0,
+      "started_at": "2026-11-05T08:44:15.500850Z",
+      "finished_at": "2026-11-05T08:50:59.454178Z"
+    },
+    {
+      "trial": "model-extraction-relu-logits__F9PCuDQ",
+      "task": "terminal-bench/model-extraction-relu-logits",
+      "exception": "EnvironmentStartTimeoutError",
+      "reward": null,
+      "started_at": "2026-11-05T07:49:20.068488Z",
+      "finished_at": "2026-11-05T07:59:21.001801Z"
+    },
+    {
+      "trial": "mteb-leaderboard__dqGTEDP",
+      "task": "terminal-bench/mteb-leaderboard",
+      "exception": "EnvironmentStartTimeoutError",
+      "reward": null,
+      "started_at": "2026-11-05T08:19:22.702655Z",
+      "finished_at": "2026-11-05T08:29:23.549745Z"
+    },
+    {
+      "trial": "multi-source-data-merger__SXrLhX7",
+      "task": "terminal-bench/multi-source-data-merger",
+      "exception": "RuntimeError",
+      "reward": null,
+      "started_at": "2026-11-05T10:46:23.241654Z",
+      "finished_at": "2026-11-05T10:46:29.256321Z"
+    },
+    {
+      "trial": "openssl-selfsigned-cert__2HnrpSb",
+      "task": "terminal-bench/openssl-selfsigned-cert",
+      "exception": null,
+      "reward": 0.0,
+      "started_at": "2026-11-05T07:36:38.834318Z",
+      "finished_at": "2026-11-05T07:43:44.369709Z"
+    },
+    {
+      "trial": "overfull-hbox__JH3CqVr",
+      "task": "terminal-bench/overfull-hbox",
+      "exception": "RuntimeError",
+      "reward": null,
+      "started_at": "2026-11-05T09:33:57.111819Z",
+      "finished_at": "2026-11-05T09:34:37.912793Z"
+    },
+    {
+      "trial": "password-recovery__rFNWRu5",
+      "task": "terminal-bench/password-recovery",
+      "exception": null,
+      "reward": 0.0,
+      "started_at": "2026-11-05T09:39:01.725234Z",
+      "finished_at": "2026-11-05T09:42:26.184592Z"
+    },
+    {
+      "trial": "path-tracing__Jxo89L5",
+      "task": "terminal-bench/path-tracing",
+      "exception": "EnvironmentStartTimeoutError",
+      "reward": null,
+      "started_at": "2026-11-05T07:59:21.027982Z",
+      "finished_at": "2026-11-05T08:09:21.809992Z"
+    },
+    {
+      "trial": "polyglot-c-py__gD9wkgu",
+      "task": "terminal-bench/polyglot-c-py",
+      "exception": "EnvironmentStartTimeoutError",
+      "reward": null,
+      "started_at": "2026-11-05T09:54:39.242591Z",
+      "finished_at": "2026-11-05T10:04:40.237383Z"
+    },
+    {
+      "trial": "prove-plus-comm__VoaXm6s",
+      "task": "terminal-bench/prove-plus-comm",
+      "exception": "RuntimeError",
+      "reward": null,
+      "started_at": "2026-11-05T10:43:11.192048Z",
+      "finished_at": "2026-11-05T10:46:23.207188Z"
+    },
+    {
+      "trial": "pytorch-model-recovery__AnvvPnv",
+      "task": "terminal-bench/pytorch-model-recovery",
+      "exception": "EnvironmentStartTimeoutError",
+      "reward": null,
+      "started_at": "2026-11-05T08:40:20.227142Z",
+      "finished_at": "2026-11-05T08:50:21.086798Z"
+    },
+    {
+      "trial": "query-optimize__iLsvQxF",
+      "task": "terminal-bench/query-optimize",
+      "exception": null,
+      "reward": 0.0,
+      "started_at": "2026-11-05T09:45:31.543647Z",
+      "finished_at": "2026-11-05T09:54:39.211950Z"
+    },
+    {
+      "trial": "raman-fitting__iUgb7Bx",
+      "task": "terminal-bench/raman-fitting",
+      "exception": "RuntimeError",
+      "reward": null,
+      "started_at": "2026-11-05T09:33:17.462147Z",
+      "finished_at": "2026-11-05T09:33:57.071889Z"
+    },
+    {
+      "trial": "regex-chess__f5vkFxA",
+      "task": "terminal-bench/regex-chess",
+      "exception": null,
+      "reward": 0.0,
+      "started_at": "2026-11-05T07:43:44.394990Z",
+      "finished_at": "2026-11-05T08:40:20.186051Z"
+    },
+    {
+      "trial": "reshard-c4-data__WkSE4s9",
+      "task": "terminal-bench/reshard-c4-data",
+      "exception": "EnvironmentStartTimeoutError",
+      "reward": null,
+      "started_at": "2026-11-05T09:36:13.667731Z",
+      "finished_at": "2026-11-05T09:46:14.600341Z"
+    },
+    {
+      "trial": "sanitize-git-repo__zRzDtku",
+      "task": "terminal-bench/sanitize-git-repo",
+      "exception": "RuntimeError",
+      "reward": null,
+      "started_at": "2026-11-05T09:35:17.035636Z",
+      "finished_at": "2026-11-05T09:36:13.637786Z"
+    },
+    {
+      "trial": "schemelike-metacircular-eval__bfBPauj",
+      "task": "terminal-bench/schemelike-metacircular-eval",
+      "exception": null,
+      "reward": 0.0,
+      "started_at": "2026-11-05T07:24:55.269349Z",
+      "finished_at": "2026-11-05T07:49:20.041904Z"
+    },
+    {
+      "trial": "sqlite-db-truncate__o2quj5V",
+      "task": "terminal-bench/sqlite-db-truncate",
+      "exception": null,
+      "reward": 0.0,
+      "started_at": "2026-11-05T09:42:26.214973Z",
+      "finished_at": "2026-11-05T09:45:31.513939Z"
+    },
+    {
+      "trial": "sqlite-with-gcov__oJwcYsC",
+      "task": "terminal-bench/sqlite-with-gcov",
+      "exception": "RuntimeError",
+      "reward": null,
+      "started_at": "2026-11-05T10:46:29.294227Z",
+      "finished_at": "2026-11-05T10:46:32.287382Z"
+    },
+    {
+      "trial": "torch-pipeline-parallelism__o54qXQY",
+      "task": "terminal-bench/torch-pipeline-parallelism",
+      "exception": "RuntimeError",
+      "reward": null,
+      "started_at": "2026-11-05T07:35:58.354599Z",
+      "finished_at": "2026-11-05T07:36:38.809905Z"
+    },
+    {
+      "trial": "torch-tensor-parallelism__8WR3WHc",
+      "task": "terminal-bench/torch-tensor-parallelism",
+      "exception": null,
+      "reward": 0.0,
+      "started_at": "2026-11-05T07:20:05.478533Z",
+      "finished_at": "2026-11-05T07:24:55.130245Z"
+    },
+    {
+      "trial": "train-fasttext__bWTaBHe",
+      "task": "terminal-bench/train-fasttext",
+      "exception": "RuntimeError",
+      "reward": null,
+      "started_at": "2026-11-05T09:30:24.581068Z",
+      "finished_at": "2026-11-05T09:31:19.275869Z"
+    },
+    {
+      "trial": "video-processing__pSaYKLC",
+      "task": "terminal-bench/video-processing",
+      "exception": "RuntimeError",
+      "reward": null,
+      "started_at": "2026-11-05T09:34:37.943285Z",
+      "finished_at": "2026-11-05T09:35:17.003623Z"
+    },
+    {
+      "trial": "vulnerable-secret__TTfRT4e",
+      "task": "terminal-bench/vulnerable-secret",
+      "exception": null,
+      "reward": 0.0,
+      "started_at": "2026-11-05T09:11:00.333132Z",
+      "finished_at": "2026-11-05T09:22:32.739744Z"
+    },
+    {
+      "trial": "write-compressor__PiZg53m",
+      "task": "terminal-bench/write-compressor",
+      "exception": null,
+      "reward": 0.0,
+      "started_at": "2026-11-05T07:20:05.087966Z",
+      "finished_at": "2026-11-05T07:35:18.949245Z"
+    }
+  ],
+  "valid_completed": 15,
+  "errored": 31
+}

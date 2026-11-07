@@ -1,0 +1,42 @@
+{
+    "task": {
+        "name": "terminal-bench/fix-git",
+        "ref": "sha256:16948b980df9d96de616a205f5acca1c5d395de83ff4f8ffabcafacb93226f2e",
+        "source": "terminal-bench/terminal-bench-2-1"
+    },
+    "trial_name": "fix-git__MeozSqQ",
+    "trials_dir": "runs\\live\\fast_git_3",
+    "agent_setup_timeout_multiplier": 2.0,
+    "agent": {
+        "name": "terminus2:AgentHarness",
+        "model_name": "deepseek-v4-flash",
+        "base_url": "https://api.deepseek.com/v1",
+        "model_api_key_name": "DEEPSEEK_API_KEY",
+        "kwargs": {
+            "record_terminal_session": false
+        }
+    },
+    "environment": {
+        "type": "docker",
+        "mounts": [
+            {
+                "type": "bind",
+                "source": "D:/面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究/.tmp/tmux-bundle",
+                "target": "/opt/evo-tmux",
+                "read_only": true
+            },
+            {
+                "type": "bind",
+                "source": "D:/面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究/.tmp/tmux-bundle/tmux",
+                "target": "/usr/bin/tmux",
+                "read_only": true
+            }
+        ]
+    },
+    "verifier": {
+        "env": {
+            "UV_INSTALLER_GITHUB_BASE_URL": "http://host.docker.internal:8765"
+        }
+    },
+    "job_id": "288fa673-05fb-48d6-9f06-4b0f83f6a1a2"
+}

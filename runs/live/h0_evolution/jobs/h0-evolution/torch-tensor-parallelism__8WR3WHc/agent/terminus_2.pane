@@ -1,0 +1,249 @@
+[?2004hroot@abe1377604f0:/app# ls -la
+[?2004ltotal 8
+drwxr-xr-x 2 root root 4096 Oct 22  2025 [0m[01;34m.[0m
+drwxr-xr-x 1 root root 4096 Nov  5 07:20 [01;34m..[0m
+[?2004hroot@abe1377604f0:/app# python3 - <<'PY'
+[?2004l[?2004h> import torch
+[?2004l[?2004h> print(torch.__version__)
+[?2004l[?2004h> print(torch.distributed.is_available())
+[?2004l[?2004h> PY
+[?2004lbash: python3: command not found
+[?2004hroot@abe1377604f0:/app# which python || true; which python3.11 || true; which python3.10 || true; which py || true
+[?2004l[?2004hroot@abe1377604f0:/app# echo "$PATH"
+[?2004l/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+[?2004hroot@abe1377604f0:/app# ls /usr/bin | grep -i python || true
+[?2004l[?2004hroot@abe1377604f0:/app# find /opt /usr/local /root -maxdepth 4 -type f \( -name 'python' -o -name 'python3' -o -name 'python3.*' \) 2>/dev/null | head -50
+[?2004l[?2004hroot@abe1377604f0:/app# ls -la /opt /usr/local 2>/dev/null
+[?2004l/opt:
+total 8
+drwxr-xr-x 1 root root 4096 Nov  5 07:20 [0m[01;34m.[0m
+drwxr-xr-x 1 root root 4096 Nov  5 07:20 [01;34m..[0m
+drwxrwxrwx 1 root root 4096 Nov  4 07:56 [34;42mevo-tmux[0m
+
+/usr/local:
+total 44
+drwxr-xr-x 10 root root 4096 Oct  1  2025 [01;34m.[0m
+drwxr-xr-x  1 root root 4096 Oct  1  2025 [01;34m..[0m
+drwxr-xr-x  2 root root 4096 Oct  1  2025 [01;34mbin[0m
+drwxr-xr-x  2 root root 4096 Oct  1  2025 [01;34metc[0m
+drwxr-xr-x  2 root root 4096 Oct  1  2025 [01;34mgames[0m
+drwxr-xr-x  2 root root 4096 Oct  1  2025 [01;34minclude[0m
+drwxr-xr-x  2 root root 4096 Oct  1  2025 [01;34mlib[0m
+lrwxrwxrwx  1 root root    9 Oct  1  2025 [01;36mman[0m -> [01;34mshare/man[0m
+drwxr-xr-x  2 root root 4096 Oct  1  2025 [01;34msbin[0m
+drwxr-xr-x  3 root root 4096 Oct  1  2025 [01;34mshare[0m
+drwxr-xr-x  2 root root 4096 Oct  1  2025 [01;34msrc[0m
+[?2004hroot@abe1377604f0:/app# cat > /app/parallel_linear.py <<'PY'
+[?2004l[?2004h> import torch
+[?2004l[?2004h> import torch.distributed as dist
+[?2004l[?2004h> import torch.nn.functional as F
+[?2004l[?2004h> 
+[?2004l[?2004h> 
+[?2004l[?2004h> def _get_world_size_and_rank():
+[?2004l[?2004h>     if dist.is_available() and dist.is_initialized():
+[?2004l[?2004h>         return dist.get_world_size(), dist.get_rank()
+[?2004l[?2004h>     return 1, 0
+[?2004l[?2004h> 
+[?2004l[?2004h> 
+[?2004l[?2004h> class _AllGatherLastDim(torch.autograd.Function):
+[?2004l[?2004h>     @staticmethod
+[?2004l[?2004h>     def forward(ctx, tensor):
+[?2004l[?2004h>         world_size, rank = _get_world_size_and_rank()
+[?2004l[?2004h>         ctx.world_size = world_size
+[?2004l[?2004h>         ctx.rank = rank
+[?2004l[?2004h> 
+[?2004l[?2004h>         if world_size == 1:
+[?2004l[?2004h>             return tensor
+[?2004l[?2004h> 
+[?2004l[?2004h>         tensor = tensor.contiguous()
+[?2004l[?2004h>         gathered = [torch.empty_like(tensor) for _ in range(world_size)]
+[?2004l[?2004h>         dist.all_gather(gathered, tensor)
+[?2004l[?2004h>         return torch.cat(gathered, dim=-1)
+[?2004l[?2004h> 
+[?2004l[?2004h>     @staticmethod
+[?2004l[?2004h>     def backward(ctx, grad_output):
+[?2004l[?2004h>         if ctx.world_size == 1:
+[?2004l[?2004h>             return grad_output
+[?2004l[?2004h> 
+[?2004l[?2004h>         local_size = grad_output.size(-1) // ctx.world_size
+[?2004l[?2004h>         return grad_output.narrow(-1, ctx.rank * local_size, local_size)
+[?2004l[?2004h> 
+[?2004l[?2004h> 
+[?2004l[?2004h> class _AllReduceSum(torch.autograd.Function):
+[?2004l[?2004h>     @staticmethod
+[?2004l[?2004h>     def forward(ctx, tensor):
+[?2004l[?2004h>         world_size, _ = _get_world_size_and_rank()
+[?2004l[?2004h> 
+[?2004l[?2004h>         if world_size == 1:
+[?2004l[?2004h>             return tensor
+[?2004l[?2004h> 
+[?2004l[?2004h>         reduced = tensor.clone()
+[?2004l[?2004h>         dist.all_reduce(reduced, op=dist.ReduceOp.SUM)
+[?2004l[?2004h>         return reduced
+[?2004l[?2004h> 
+[?2004l[?2004h>     @staticmethod
+[?2004l[?2004h>     def backward(ctx, grad_output):
+[?2004l[?2004h>         return grad_output
+[?2004l[?2004h> 
+[?2004l[?2004h> 
+[?2004l[?2004h> class ColumnParallelLinear(torch.nn.Module):
+[?2004l[?2004h>     def __init__(self, in_features, out_features, bias, master_weight):
+[?2004l[?2004h>         super().__init__()
+[?2004l[?2004h>         self.in_features = in_features
+[?2004l[?2004h>         self.out_features = out_features
+[?2004l[?2004h>         self.world_size, self.rank = _get_world_size_and_rank()
+[?2004l[?2004h> 
+[?2004l[?2004h>         weight_partition = torch.chunk(master_weight.detach(), self.world_size, dim=0)[self.rank].clone()
+[?2004l[?2004h>         self.weight = torch.nn.Parameter(weight_partition)
+[?2004l[?2004h> 
+[?2004l[?2004h>         if bias:
+[?2004l[?2004h>             local_out_features = weight_partition.size(0)
+[?2004l[?2004h>             self.bias = torch.nn.Parameter(
+[?2004l[?2004h>                 torch.zeros(
+[?2004l[?2004h>                     local_out_features,
+[?2004l[?2004h>                     dtype=master_weight.dtype,
+[?2004l[?2004h>                     device=master_weight.device,
+[?2004l[?2004h>                 )
+[?2004l[?2004h>             )
+[?2004l[?2004h>         else:
+[?2004l[?2004h>             self.bias = None
+[?2004l[?2004h> 
+[?2004l[?2004h>     def forward(self, input):
+[?2004l[?2004h>         output = F.linear(input, self.weight, self.bias)
+[?2004l[?2004h>         return _AllGatherLastDim.apply(output)
+[?2004l[?2004h> 
+[?2004l[?2004h> 
+[?2004l[?2004h> class RowParallelLinear(torch.nn.Module):
+[?2004l[?2004h>     def __init__(self, in_features, out_features, bias, master_weight):
+[?2004l[?2004h>         super().__init__()
+[?2004l[?2004h>         self.in_features = in_features
+[?2004l[?2004h>         self.out_features = out_features
+[?2004l[?2004h>         self.world_size, self.rank = _get_world_size_and_rank()
+[?2004l[?2004h> 
+[?2004l[?2004h>         weight_partition = torch.chunk(master_weight.detach(), self.world_size, dim=1)[self.rank].clone()
+[?2004l[?2004h>         self.weight = torch.nn.Parameter(weight_partition)
+[?2004l[?2004h> 
+[?2004l[?2004h>         if bias:
+[?2004l[?2004h>             self.bias = torch.nn.Parameter(
+[?2004l[?2004h>                 torch.zeros(
+[?2004l[?2004h>                     out_features,
+[?2004l[?2004h>                     dtype=master_weight.dtype,
+[?2004l[?2004h>                     device=master_weight.device,
+[?2004l[?2004h>                 )
+[?2004l[?2004h>             )
+[?2004l[?2004h>         else:
+[?2004l[?2004h>             self.bias = None
+[?2004l[?2004h> 
+[?2004l[?2004h>     def forward(self, input):
+[?2004l[?2004h>         output = _AllReduceSum.apply(F.linear(input, self.weight, None))
+[?2004l[?2004h>         if self.bias is not None:
+[?2004l[?2004h>             output = output + self.bias
+[?2004l[?2004h>         return output
+[?2004l[?2004h> PY
+[?2004l[?2004hroot@abe1377604f0:/app# sed -n '1,200p' /app/parallel_linear.py
+[?2004limport torch
+import torch.distributed as dist
+import torch.nn.functional as F
+
+
+def _get_world_size_and_rank():
+    if dist.is_available() and dist.is_initialized():
+        return dist.get_world_size(), dist.get_rank()
+    return 1, 0
+
+
+class _AllGatherLastDim(torch.autograd.Function):
+    @staticmethod
+    def forward(ctx, tensor):
+        world_size, rank = _get_world_size_and_rank()
+        ctx.world_size = world_size
+        ctx.rank = rank
+
+        if world_size == 1:
+            return tensor
+
+        tensor = tensor.contiguous()
+        gathered = [torch.empty_like(tensor) for _ in range(world_size)]
+        dist.all_gather(gathered, tensor)
+        return torch.cat(gathered, dim=-1)
+
+    @staticmethod
+    def backward(ctx, grad_output):
+        if ctx.world_size == 1:
+            return grad_output
+
+        local_size = grad_output.size(-1) // ctx.world_size
+        return grad_output.narrow(-1, ctx.rank * local_size, local_size)
+
+
+class _AllReduceSum(torch.autograd.Function):
+    @staticmethod
+    def forward(ctx, tensor):
+        world_size, _ = _get_world_size_and_rank()
+
+        if world_size == 1:
+            return tensor
+
+        reduced = tensor.clone()
+        dist.all_reduce(reduced, op=dist.ReduceOp.SUM)
+        return reduced
+
+    @staticmethod
+    def backward(ctx, grad_output):
+        return grad_output
+
+
+class ColumnParallelLinear(torch.nn.Module):
+    def __init__(self, in_features, out_features, bias, master_weight):
+        super().__init__()
+        self.in_features = in_features
+        self.out_features = out_features
+        self.world_size, self.rank = _get_world_size_and_rank()
+
+        weight_partition = torch.chunk(master_weight.detach(), self.world_size, dim=0)[self.rank].clone()
+        self.weight = torch.nn.Parameter(weight_partition)
+
+        if bias:
+            local_out_features = weight_partition.size(0)
+            self.bias = torch.nn.Parameter(
+                torch.zeros(
+                    local_out_features,
+                    dtype=master_weight.dtype,
+                    device=master_weight.device,
+                )
+            )
+        else:
+            self.bias = None
+
+    def forward(self, input):
+        output = F.linear(input, self.weight, self.bias)
+        return _AllGatherLastDim.apply(output)
+
+
+class RowParallelLinear(torch.nn.Module):
+    def __init__(self, in_features, out_features, bias, master_weight):
+        super().__init__()
+        self.in_features = in_features
+        self.out_features = out_features
+        self.world_size, self.rank = _get_world_size_and_rank()
+
+        weight_partition = torch.chunk(master_weight.detach(), self.world_size, dim=1)[self.rank].clone()
+        self.weight = torch.nn.Parameter(weight_partition)
+
+        if bias:
+            self.bias = torch.nn.Parameter(
+                torch.zeros(
+                    out_features,
+                    dtype=master_weight.dtype,
+                    device=master_weight.device,
+                )
+            )
+        else:
+            self.bias = None
+
+    def forward(self, input):
+        output = _AllReduceSum.apply(F.linear(input, self.weight, None))
+        if self.bias is not None:
+            output = output + self.bias
+        return output
+[?2004hroot@abe1377604f0:/app# 

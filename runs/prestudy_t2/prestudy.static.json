@@ -1,0 +1,171 @@
+{
+  "boundaries": {
+    "boundaries": [
+      {
+        "name": "agent",
+        "patterns": [
+          "terminus_2.py"
+        ]
+      },
+      {
+        "name": "parsers",
+        "patterns": [
+          "terminus_json_plain_parser.py",
+          "terminus_xml_plain_parser.py"
+        ]
+      },
+      {
+        "name": "tmux",
+        "patterns": [
+          "tmux_session.py"
+        ]
+      },
+      {
+        "name": "recording",
+        "patterns": [
+          "asciinema_handler.py"
+        ]
+      },
+      {
+        "name": "mechanisms",
+        "patterns": [
+          "mechanisms.py"
+        ]
+      },
+      {
+        "name": "package",
+        "patterns": [
+          "__init__.py"
+        ]
+      }
+    ],
+    "exclude": [
+      "**/__pycache__/**",
+      ".venv",
+      ".git",
+      ".pytest_cache"
+    ],
+    "subject": "terminus2"
+  },
+  "components": [
+    {
+      "id": "terminus2:agent",
+      "k": {
+        "k_ast": 7416,
+        "k_bytes": 85286,
+        "k_cc": 218,
+        "k_chars": 85286,
+        "k_gzip": 19200,
+        "k_lines_nb": 1457
+      },
+      "paths": [
+        "terminus_2.py"
+      ]
+    },
+    {
+      "id": "terminus2:mechanisms",
+      "k": {
+        "k_ast": 936,
+        "k_bytes": 8539,
+        "k_cc": 39,
+        "k_chars": 8521,
+        "k_gzip": 3252,
+        "k_lines_nb": 111
+      },
+      "paths": [
+        "mechanisms.py"
+      ]
+    },
+    {
+      "id": "terminus2:package",
+      "k": {
+        "k_ast": 20,
+        "k_bytes": 1613,
+        "k_cc": 2,
+        "k_chars": 1613,
+        "k_gzip": 667,
+        "k_lines_nb": 6
+      },
+      "paths": [
+        "__init__.py"
+      ]
+    },
+    {
+      "id": "terminus2:parsers",
+      "k": {
+        "k_ast": 3910,
+        "k_bytes": 36362,
+        "k_cc": 175,
+        "k_chars": 36354,
+        "k_gzip": 7234,
+        "k_lines_nb": 660
+      },
+      "paths": [
+        "terminus_json_plain_parser.py",
+        "terminus_xml_plain_parser.py"
+      ]
+    },
+    {
+      "id": "terminus2:recording",
+      "k": {
+        "k_ast": 408,
+        "k_bytes": 4288,
+        "k_cc": 16,
+        "k_chars": 4288,
+        "k_gzip": 1577,
+        "k_lines_nb": 56
+      },
+      "paths": [
+        "asciinema_handler.py"
+      ]
+    },
+    {
+      "id": "terminus2:tmux",
+      "k": {
+        "k_ast": 3609,
+        "k_bytes": 34960,
+        "k_cc": 143,
+        "k_chars": 34960,
+        "k_gzip": 8861,
+        "k_lines_nb": 603
+      },
+      "paths": [
+        "tmux_session.py"
+      ]
+    }
+  ],
+  "decision": "pending_l2_l3",
+  "l1": {
+    "applicable_count": 0,
+    "blocked_count": 0,
+    "candidate_count": 0,
+    "candidates": [],
+    "delta": {
+      "k_ast": 0,
+      "k_bytes": 0,
+      "k_cc": 0,
+      "k_chars": 0,
+      "k_gzip": 0,
+      "k_lines_nb": 0
+    },
+    "eligible_count": 0,
+    "reduction_pct": {
+      "k_ast": 0.0,
+      "k_cc": 0.0,
+      "k_chars": 0.0,
+      "k_lines_nb": 0.0
+    },
+    "selected_count": 0
+  },
+  "root": "D:\\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\\vendor\\terminus2",
+  "static_only": true,
+  "subject": "terminus2",
+  "totals": {
+    "k_ast": 16299,
+    "k_bytes": 171048,
+    "k_cc": 593,
+    "k_chars": 171022,
+    "k_gzip": 38017,
+    "k_lines_nb": 2893
+  }
+}

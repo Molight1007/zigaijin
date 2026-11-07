@@ -1,0 +1,17 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+pytest-of-*/
+.ruff_cache/
+tmp/
+.tmp/
+.env
+*.log
+
+# research assets and external infrastructure stay local
+external/
+资料文档/
+
+# generated harness checkouts and worktrees
+harness/

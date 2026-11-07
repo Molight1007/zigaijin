@@ -1,0 +1,33 @@
+{
+ "_doc": "Math domain: MathPilot 112-task bank, five-stage solve pipeline, symbolic answer matching (no LLM judge). Paper-relevant notes: (1) cost C is proxied by wall-clock seconds per trial because the result jsonl carries elapsed_sec but NOT token counts -- set cost_kind=elapsed_sec in the adapter; beta1 is therefore 'extra seconds per additional solved task', not 'extra tokens'. (2) delta is null on purpose: the noise band has never been measured for this harness, run `rrsi.py --domain math calibrate` first. (3) T=2 and k=1 on purpose: this instance exists to inspect proposal quality in rounds 0-1, not to claim a score gain.",
+ "T": 2,
+ "k": 1,
+ "m": 2,
+ "b_min": 1,
+ "b_max": 3,
+ "w": 3,
+ "m_draft": 1,
+ "delta": null,
+ "delta_z": 2.0,
+ "beta0": 0.1,
+ "beta1": 5.0,
+ "w_s": 0.0,
+ "w_c": 15.0,
+ "w_n": 0.5,
+ "n_prune": 4,
+ "repair_rounds": 3,
+ "invalid_missing_frac": 0.2,
+ "n_fail_traces": 6,
+ "n_success_traces": 2,
+ "eval_parallel": 1,
+ "policy_model": "intern/Intern-S2-Preview-397B",
+ "policy_label": "Intern-S2 Preview 397B",
+ "dataset": "mathpilot/official112",
+ "ood_dataset": null,
+ "concurrency": 1,
+ "smoke_tasks": [
+  "official112-019",
+  "official112-092"
+ ],
+ "budget_kind": "elapsed_sec"
+}

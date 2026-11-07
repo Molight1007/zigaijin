@@ -1,0 +1,65 @@
+{
+    "id": "0c6143f8-edb2-4e50-ba4f-b2a2f1297e39",
+    "started_at": "2026-11-05T15:20:04.880859",
+    "updated_at": "2026-11-05T11:57:57.709097Z",
+    "finished_at": null,
+    "n_total_trials": 180,
+    "stats": {
+        "n_completed_trials": 18,
+        "n_errored_trials": 3,
+        "n_running_trials": 2,
+        "n_pending_trials": 160,
+        "n_cancelled_trials": 0,
+        "n_retries": 0,
+        "evals": {
+            "rrsi-terminus2__deepseek-v4-flash__terminal-bench/terminal-bench-2-1": {
+                "n_trials": 17,
+                "n_errors": 3,
+                "metrics": [
+                    {
+                        "mean": 0.05555555555555555
+                    }
+                ],
+                "pass_at_k": {},
+                "reward_stats": {
+                    "reward": {
+                        "0.0": [
+                            "configure-git-webserver__jxL8Eek",
+                            "count-dataset-tokens__nVLx3Ez",
+                            "extract-moves-from-video__ahpmSNV",
+                            "llm-inference-batching-scheduler__3JSncVS",
+                            "mcmc-sampling-stan__JqjBsvT",
+                            "merge-diff-arc-agi-task__SwuVmyA",
+                            "openssl-selfsigned-cert__2HnrpSb",
+                            "password-recovery__rFNWRu5",
+                            "query-optimize__iLsvQxF",
+                            "regex-chess__f5vkFxA",
+                            "schemelike-metacircular-eval__bfBPauj",
+                            "sqlite-db-truncate__o2quj5V",
+                            "torch-tensor-parallelism__8WR3WHc",
+                            "vulnerable-secret__TTfRT4e",
+                            "write-compressor__PiZg53m",
+                            "torch-pipeline-parallelism__AmKTtDc"
+                        ],
+                        "1.0": [
+                            "largest-eigenval__c7dgHq5"
+                        ]
+                    }
+                },
+                "exception_stats": {
+                    "AgentTimeoutError": [
+                        "extract-moves-from-video__ahpmSNV",
+                        "torch-pipeline-parallelism__AmKTtDc"
+                    ],
+                    "RuntimeError": [
+                        "model-extraction-relu-logits__5jeGiD4"
+                    ]
+                }
+            }
+        },
+        "n_input_tokens": 16864281,
+        "n_cache_tokens": 16324224,
+        "n_output_tokens": 1271810,
+        "cost_usd": 1.5735897539999997
+    }
+}

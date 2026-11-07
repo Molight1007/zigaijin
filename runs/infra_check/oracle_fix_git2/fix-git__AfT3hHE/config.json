@@ -1,0 +1,10 @@
+{
+    "task": {
+        "name": "terminal-bench/fix-git",
+        "ref": "sha256:16948b980df9d96de616a205f5acca1c5d395de83ff4f8ffabcafacb93226f2e",
+        "source": "terminal-bench/terminal-bench-2-1"
+    },
+    "trial_name": "fix-git__AfT3hHE",
+    "trials_dir": "runs\\infra_check\\oracle_fix_git2",
+    "job_id": "b922486b-df14-4752-85de-2e362c32deb5"
+}

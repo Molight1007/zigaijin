@@ -1,0 +1,46 @@
+Traceback (most recent call last):
+  File "D:\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\external\repos\harbor\src\harbor\trial\trial.py", line 609, in run
+    await self._run()
+  File "D:\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\external\repos\harbor\src\harbor\trial\single_step.py", line 40, in _run
+    await self._run_agent()
+  File "D:\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\external\repos\harbor\src\harbor\trial\single_step.py", line 76, in _run_agent
+    await self._run_agent_phase(
+    ...<5 lines>...
+    )
+  File "D:\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\external\repos\harbor\src\harbor\trial\trial.py", line 769, in _run_agent_phase
+    await asyncio.wait_for(
+    ...<6 lines>...
+    )
+  File "D:\python\Lib\asyncio\tasks.py", line 488, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "D:\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\evo\adapters\traced_terminus2.py", line 145, in run
+    return await super().run(instruction, environment, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\vendor\terminus2\terminus_2.py", line 1703, in run
+    await self._run_agent_loop(
+    ...<3 lines>...
+    )
+  File "D:\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\vendor\terminus2\terminus_2.py", line 1495, in _run_agent_loop
+    timeout_occurred, terminal_output = await self._execute_commands(
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "D:\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\vendor\terminus2\terminus_2.py", line 1311, in _execute_commands
+    await session.send_keys(
+    ...<3 lines>...
+    )
+  File "D:\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\vendor\terminus2\tmux_session.py", line 831, in send_keys
+    await self._send_non_blocking_keys(
+    ...<2 lines>...
+    )
+  File "D:\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\vendor\terminus2\tmux_session.py", line 786, in _send_non_blocking_keys
+    await self._send_keys_to_session(keys, action="non-blocking")
+  File "D:\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\vendor\terminus2\tmux_session.py", line 759, in _send_keys_to_session
+    await _flush()
+  File "D:\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\vendor\terminus2\tmux_session.py", line 749, in _flush
+    await self._send_key_batches(batch, action)
+  File "D:\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\vendor\terminus2\tmux_session.py", line 736, in _send_key_batches
+    raise self._send_keys_error(action, command, result)
+RuntimeError: model-extraction-relu-logits__5jeGiD4__env: failed to send non-blocking keys: command='tmux send-keys -t rrsi-terminus2 -- \'python3 - <<\'"\'"\'PY\'"\'"\'\nimport numpy as np, forward\n, return_code=1, stderr=None, stdout='service "main" is not running\n'

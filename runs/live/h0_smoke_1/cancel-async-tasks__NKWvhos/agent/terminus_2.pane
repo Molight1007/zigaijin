@@ -1,0 +1,78 @@
+[?2004hroot@a4f621ae6ffb:/app# ls -la
+[?2004ltotal 8
+drwxr-xr-x 2 root root 4096 Aug 22  2025 .
+drwxr-xr-x 1 root root 4096 Nov  4 08:19 ..
+[?2004hroot@a4f621ae6ffb:/app# python3 --version
+[?2004lPython 3.13.7
+[?2004hroot@a4f621ae6ffb:/app# cat > /app/run.py <<'PY'
+[?2004l[?2004h> from __future__ import annotations
+[?2004l[?2004h> 
+[?2004l[?2004h> import asyncio
+[?2004l[?2004h> from collections.abc import Awaitable, Callable
+[?2004l[?2004h> 
+[?2004l[?2004h> 
+[?2004l[?2004h> async def run_tasks(
+[?2004l[?2004h>     tasks: list[Callable[[], Awaitable[None]]],
+[?2004l[?2004h>     max_concurrent: int,
+[?2004l[?2004h> ) -> None:
+[?2004l[?2004h>     if max_concurrent < 1:
+[?2004l[?2004h>         raise ValueError('max_concurrent must be at least 1')
+[?2004l[?2004h> 
+[?2004l[?2004h>     semaphore = asyncio.Semaphore(max_concurrent)
+[?2004l[?2004h> 
+[?2004l[?2004h>     async def run_one(task: Callable[[], Awaitable[None]]) -> None:
+[?2004l[?2004h>         async with semaphore:
+[?2004l[?2004h>             await task()
+[?2004l[?2004h> 
+[?2004l[?2004h>     async with asyncio.TaskGroup() as group:
+[?2004l[?2004h>         for task in tasks:
+[?2004l[?2004h>             group.create_task(run_one(task))
+[?2004l[?2004h> PY
+[?2004l[?2004hroot@a4f621ae6ffb:/app# python3 -m py_compile /app/run.py
+[?2004l[?2004hroot@a4f621ae6ffb:/app# python3 - <<'PY'
+[?2004l[?2004h> import asyncio
+[?2004l[?2004h> from run import run_tasks
+[?2004l[?2004h> 
+[?2004l[?2004h> async def main():
+[?2004l[?2004h>     active = 0
+[?2004l[?2004h>     max_active = 0
+[?2004l[?2004h> 
+[?2004l[?2004h>     async def worker():
+[?2004l[?2004h>         nonlocal active, max_active
+[?2004l[?2004h>         active += 1
+[?2004l[?2004h>         max_active = max(max_active, active)
+[?2004l[?2004h>         try:
+[?2004l[?2004h>             await asyncio.sleep(0.05)
+[?2004l[?2004h>         finally:
+[?2004l[?2004h>             active -= 1
+[?2004l[?2004h> 
+[?2004l[?2004h>     tasks = [worker for _ in range(5)]
+[?2004l[?2004h>     await run_tasks(tasks, 2)
+[?2004l[?2004h>     assert max_active == 2, max_active
+[?2004l[?2004h>     print('concurrency limit ok:', max_active)
+[?2004l[?2004h> 
+[?2004l[?2004h>     started = asyncio.Event()
+[?2004l[?2004h>     cleaned = asyncio.Event()
+[?2004l[?2004h> 
+[?2004l[?2004h>     async def long_task():
+[?2004l[?2004h>         started.set()
+[?2004l[?2004h>         try:
+[?2004l[?2004h>             await asyncio.sleep(3600)
+[?2004l[?2004h>         finally:
+[?2004l[?2004h>             cleaned.set()
+[?2004l[?2004h> 
+[?2004l[?2004h>     runner = asyncio.create_task(run_tasks([long_task], 1))
+[?2004l[?2004h>     await started.wait()
+[?2004l[?2004h>     runner.cancel()
+[?2004l[?2004h>     try:
+[?2004l[?2004h>         await runner
+[?2004l[?2004h>     except asyncio.CancelledError:
+[?2004l[?2004h>         pass
+[?2004l[?2004h>     assert cleaned.is_set()
+[?2004l[?2004h>     print('cancellation cleanup ok')
+[?2004l[?2004h> 
+[?2004l[?2004h> asyncio.run(main())
+[?2004l[?2004h> PY
+[?2004lconcurrency limit ok: 2
+cancellation cleanup ok
+[?2004hroot@a4f621ae6ffb:/app# 

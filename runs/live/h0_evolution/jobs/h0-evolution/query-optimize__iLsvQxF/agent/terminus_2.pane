@@ -1,0 +1,715 @@
+[?2004hroot@850f29ce8ccb:/app# cat /app/my-sql-query.sql
+[?2004lSELECT
+  w.wordid AS word_id,
+  w.word AS word,
+  total_synsets,
+  total_senses,
+  distinct_domains,
+  distinct_posids,
+  (SELECT s.synsetid FROM senses s 
+   WHERE s.wordid = w.wordid 
+   GROUP BY s.synsetid 
+   ORDER BY COUNT(*) DESC, s.synsetid ASC 
+   LIMIT 1) AS top_synsetid,
+  (SELECT COUNT(*) FROM senses s 
+   WHERE s.wordid = w.wordid 
+   AND s.synsetid = (SELECT s2.synsetid FROM senses s2 
+                     WHERE s2.wordid = w.wordid 
+                     GROUP BY s2.synsetid 
+                     ORDER BY COUNT(*) DESC, s2.synsetid ASC 
+                     LIMIT 1)) AS top_synset_sense_count
+FROM (
+  SELECT 
+    w.wordid,
+    w.word,
+    COUNT(DISTINCT s.synsetid) AS total_synsets,
+    COUNT(*) AS total_senses,
+    COUNT(DISTINCT syn.domainid) AS distinct_domains,
+    COUNT(DISTINCT syn.posid) AS distinct_posids
+  FROM words w
+  JOIN senses s ON w.wordid = s.wordid
+  JOIN synsets syn ON s.synsetid = syn.synsetid
+  GROUP BY w.wordid, w.word
+  HAVING total_synsets >= 2
+    AND distinct_domains >= 2 
+    AND total_senses >= 2
+) w
+ORDER BY
+  total_senses DESC,
+  total_synsets DESC,
+  distinct_domains DESC,
+  word_id ASC
+LIMIT 500;[?2004hroot@850f29ce8ccb:/app# sqlite3 /app/oewn.sqlite '.schema'
+[?2004lCREATE TABLE `synsets` (
+`synsetid` INT NOT NULL,
+`posid` CHARACTER (1) CHECK( `posid` IN ('n','v','a','r','s') ) NOT NULL,
+`domainid` INT NOT NULL,
+`definition` MEDIUMTEXT NOT NULL
+);
+CREATE TABLE `words` (
+`wordid` INT NOT NULL,
+`word` VARCHAR(80) NOT NULL
+);
+CREATE TABLE `casedwords` (
+`casedwordid` INT NOT NULL,
+`wordid` INT NOT NULL ,
+`casedword` VARCHAR(80) NOT NULL
+);
+CREATE TABLE `pronunciations` (
+`pronunciationid` INT NOT NULL,
+`pronunciation` VARCHAR(50) NOT NULL
+);
+CREATE TABLE `morphs` (
+`morphid` INT NOT NULL,
+`morph` VARCHAR(70) NOT NULL
+);
+CREATE TABLE `poses` (
+`posid` CHARACTER (1) CHECK( `posid` IN ('n','v','a','r','s') ) NOT NULL,
+`pos` VARCHAR(20) NOT NULL
+);
+CREATE TABLE `relations` (
+`relationid` INT NOT NULL,
+`relation` VARCHAR(50) NOT NULL,
+`recurses` TINYINT(1) NOT NULL
+);
+CREATE TABLE `domains` (
+`domainid` INT NOT NULL,
+`domain` VARCHAR(32) NOT NULL,
+`domainname` VARCHAR(32) NOT NULL,
+`posid` CHARACTER (1) CHECK( `posid` IN ('n','v','a','r','s') ) NOT NULL
+);
+CREATE TABLE `samples` (
+`sampleid` INT NOT NULL,
+`sample` MEDIUMTEXT NOT NULL,
+`source` MEDIUMTEXT NULL,
+`synsetid` INT NOT NULL,
+`luid` INT DEFAULT NULL,
+`wordid` INT DEFAULT NULL
+);
+CREATE TABLE `vframes` (
+`frameid` INT NOT NULL,
+`frame` VARCHAR(50) NOT NULL
+);
+CREATE TABLE `vtemplates` (
+`templateid` INT NOT NULL,
+`template` MEDIUMTEXT NOT NULL
+);
+CREATE TABLE `adjpositions` (
+`positionid` CHARACTER (1) CHECK( `positionid` IN ('a','p','ip') ) NOT NULL,
+`position` VARCHAR(24) NOT NULL
+);
+CREATE TABLE `lexes` (
+`luid` INT NOT NULL,
+`posid` CHARACTER (1) CHECK( `posid` IN ('n','v','a','r','s') ) NOT NULL,
+`wordid` INT NOT NULL,
+`casedwordid` INT DEFAULT NULL
+);
+CREATE TABLE `senses` (
+`senseid` INT NOT NULL,
+`sensekey` VARCHAR(100) DEFAULT NULL,
+`synsetid` INT NOT NULL,
+`luid` INT NOT NULL,
+`wordid` INT NOT NULL,
+`casedwordid` INT DEFAULT NULL,
+`lexid` INT NOT NULL,
+`sensenum` INT DEFAULT NULL,
+`tagcount` INT DEFAULT NULL
+);
+CREATE TABLE `lexes_morphs` (
+`luid` INT NOT NULL,
+`wordid` INT NOT NULL,
+`posid` CHARACTER (1) CHECK( `posid` IN ('n','v','a','r','s') ) NOT NULL,
+`morphid` INT NOT NULL
+);
+CREATE TABLE `lexes_pronunciations` (
+`luid` INT NOT NULL,
+`wordid` INT NOT NULL,
+`posid` CHARACTER (1) CHECK( `posid` IN ('n','v','a','r','s') ) NOT NULL,
+`pronunciationid` INT NOT NULL,
+`variety` VARCHAR(2) DEFAULT NULL
+);
+CREATE TABLE `senses_adjpositions` (
+`synsetid` INT NOT NULL,
+`luid` INT NOT NULL,
+`wordid` INT NOT NULL,
+`positionid` CHARACTER (1) CHECK( `positionid` IN ('a','p','ip') ) NOT NULL
+);
+CREATE TABLE `lexrelations` (
+`synset1id` INT NOT NULL,
+`lu1id` INT NOT NULL,
+`word1id` INT NOT NULL,
+`synset2id` INT NOT NULL,
+`lu2id` INT NOT NULL,
+`word2id` INT NOT NULL,
+`relationid` INT NOT NULL
+);
+CREATE TABLE `senses_vframes` (
+`synsetid` INT NOT NULL,
+`luid` INT NOT NULL,
+`wordid` INT NOT NULL,
+`frameid` INT NOT NULL
+);
+CREATE TABLE `senses_vtemplates` (
+`synsetid` INT NOT NULL,
+`luid` INT NOT NULL,
+`wordid` INT NOT NULL,
+`templateid` INT NOT NULL
+);
+CREATE TABLE `semrelations` (
+`synset1id` INT NOT NULL,
+`synset2id` INT NOT NULL,
+`relationid` INT NOT NULL
+);
+CREATE TABLE `usages` (
+`usageid` INT NOT NULL,
+`usagenote` MEDIUMTEXT NOT NULL,
+`synsetid` INT NOT NULL,
+`luid` INT DEFAULT NULL,
+`wordid` INT DEFAULT NULL
+);
+CREATE TABLE `ilis` (
+`ili` VARCHAR(7) NOT NULL,
+`synsetid` INT NOT NULL
+);
+CREATE TABLE `wikidatas` (
+`wikidata` VARCHAR(12) NOT NULL,
+`synsetid` INT NOT NULL
+);
+[?2004hroot@850f29ce8ccb:/app# sqlite3 /app/oewn.sqlite '.tables'
+[?2004ladjpositions          morphs                senses_vframes      
+casedwords            poses                 senses_vtemplates   
+domains               pronunciations        synsets             
+ilis                  relations             usages              
+lexes                 samples               vframes             
+lexes_morphs          semrelations          vtemplates          
+lexes_pronunciations  senses                wikidatas           
+lexrelations          senses_adjpositions   words               
+[?2004hroot@850f29ce8ccb:/app# sqlite3 /app/oewn.sqlite 'SELECT sqlite_version();'
+[?2004l3.45.1
+[?2004hroot@850f29ce8ccb:/app# sqlite3 /app/oewn.sqlite "SELECT 'words', COUNT(*) FROM words UNION ALL SELECT 'senses', COUNT(*) FROM senses UNION ALL SELECT 'synsets',, COUNT(*) FROM synsets;"
+[?2004lwords|152332
+senses|212508
+synsets|120569
+[?2004hroot@850f29ce8ccb:/app# for t in words senses synsets; do echo "== $t =="; sqlite3 /app/oewn.sqlite "PRAGMA index_list($t);"; done
+[?2004l== words ==
+== senses ==
+== synsets ==
+[?2004hroot@850f29ce8ccb:/app# sqlite3 /app/oewn.sqlite ".read /app/my-sql-query.sql" > /app/original.out
+[?2004lsqlite3 /app/oewn.sqlite 'EXPLAIN QUERY PLAN ' "$(cat /app/my-sql-query.sql)" '
+'
+^CRuntime error near line 1: interrupted (9)
+Program interrupted.
+[?2004hroot@850f29ce8ccb:/app# wc -l /app/original.out && head -3 /app/original.out && tail -3 /app/original.out
+[?2004l0 /app/original.out
+[?2004hroot@850f29ce8ccb:/app# sqlite3 /app/oewn.sqlite "SELECT COUNT(*) - COUNT(DISTINCT synsetid) AS dup_synsets FROM synsets; SELECT COUNT(*) - COUNT(DISTINCT wordidd) AS dup_words FROM words;"
+[?2004l0
+0
+[?2004hroot@850f29ce8ccb:/app# sqlite3 /app/oewn.sqlite "EXPLAIN QUERY PLAN $(tr '\n' ' ' < /app/my-sql-query.sql)"
+[?2004lQUERY PLAN
+|--CO-ROUTINE w
+|  |--SCAN w
+|  |--BLOOM FILTER ON s (wordid=?)
+|  |--SEARCH s USING AUTOMATIC COVERING INDEX (wordid=?)
+|  |--BLOOM FILTER ON syn (synsetid=?)
+|  |--SEARCH syn USING AUTOMATIC COVERING INDEX (synsetid=?)
+|  |--USE TEMP B-TREE FOR GROUP BY
+|  |--USE TEMP B-TREE FOR count(DISTINCT)
+|  |--USE TEMP B-TREE FOR count(DISTINCT)
+|  `--USE TEMP B-TREE FOR count(DISTINCT)
+|--SCAN w
+|--CORRELATED SCALAR SUBQUERY 1
+|  |--SCAN s
+|  |--USE TEMP B-TREE FOR GROUP BY
+|  `--USE TEMP B-TREE FOR ORDER BY
+|--CORRELATED SCALAR SUBQUERY 3
+|  |--SCAN s
+|  `--CORRELATED SCALAR SUBQUERY 2
+|     |--SCAN s2
+|     |--USE TEMP B-TREE FOR GROUP BY
+|     `--USE TEMP B-TREE FOR ORDER BY
+`--USE TEMP B-TREE FOR ORDER BY
+[?2004hroot@850f29ce8ccb:/app# sqlite3 /app/oewn.sqlite "SELECT COUNT(*) FROM senses s LEFT JOIN words w ON w.wordid=s.wordid WHERE w.wordid IS NULL; SELECT COUNT(*) FRROM words; SELECT COUNT(DISTINCT wordid) FROM words;"
+[?2004l0
+152332
+152332
+[?2004hroot@850f29ce8ccb:/app# cat > /tmp/candidate.sql <<'SQL'
+[?2004l[?2004h> WITH sense_synset_counts AS (
+[?2004l[?2004h>   SELECT wordid, synsetid, COUNT(*) AS sense_count
+[?2004l[?2004h>   FROM senses
+[?2004l[?2004h>   GROUP BY wordid, synsetid
+[?2004l[?2004h> ),
+[?2004l[?2004h> word_totals AS (
+[?2004l[?2004h>   SELECT
+[?2004l[?2004h>     ss.wordid,
+[?2004l[?2004h>     COUNT(*) AS total_synsets,
+[?2004l[?2004h>     SUM(ss.sense_count) AS total_senses,
+[?2004l[?2004h>     COUNT(DISTINCT syn.domainid) AS distinct_domains,
+[?2004l[?2004h>     COUNT(DISTINCT syn.posid) AS distinct_posids
+[?2004l[?2004h>   FROM sense_synset_counts ss
+[?2004l[?2004h>   JOIN synsets syn ON syn.synsetid = ss.synsetid
+[?2004l[?2004h>   GROUP BY ss.wordid
+[?2004l[?2004h> ),
+[?2004l[?2004h> ranked AS (
+[?2004l[?2004h>   SELECT
+[?2004l[?2004h>     wordid,
+[?2004l[?2004h>     synsetid,
+[?2004l[?2004h>     sense_count,
+[?2004l[?2004h>     ROW_NUMBER() OVER (PARTITION BY wordid ORDER BY sense_count DESC, synsetid ASC) AS rn
+[?2004l[?2004h>   FROM sense_synset_counts
+[?2004l[?2004h> )
+[?2004l[?2004h> SELECT
+[?2004l[?2004h>   w.wordid AS word_id,
+[?2004l[?2004h>   w.word AS word,
+[?2004l[?2004h>   t.total_synsets,
+[?2004l[?2004h>   t.total_senses,
+[?2004l[?2004h>   t.distinct_domains,
+[?2004l[?2004h>   t.distinct_posids,
+[?2004l[?2004h>   r.synsetid AS top_synsetid,
+[?2004l[?2004h>   r.sense_count AS top_synset_sense_count
+[?2004l[?2004h> FROM word_totals t
+[?2004l[?2004h> JOIN words w ON w.wordid = t.wordid
+[?2004l[?2004h> JOIN ranked r ON r.wordid = t.wordid AND r.rn = 1
+[?2004l[?2004h> WHERE t.total_synsets >= 2
+[?2004l[?2004h>   AND t.distinct_domains >= 2
+[?2004l[?2004h>   AND t.total_senses >= 2
+[?2004l[?2004h> ORDER BY
+[?2004l[?2004h>   t.total_senses DESC,
+[?2004l[?2004h>   t.total_synsets DESC,
+[?2004l[?2004h>   t.distinct_domains DESC,
+[?2004l[?2004h>   w.wordid ASC
+[?2004l[?2004h> LIMIT 500;
+[?2004l[?2004h> SQL
+[?2004l[?2004hroot@850f29ce8ccb:/app# /usr/bin/time -f '%e seconds' sqlite3 /app/oewn.sqlite < /tmp/candidate.sql > /app/candidate.out
+[?2004lbash: /usr/bin/time: No such file or directory
+[?2004hroot@850f29ce8ccb:/app# wc -l /app/candidate.out && head -5 /app/candidate.out && echo '---' && tail -3 /app/candidate.out
+[?2004l0 /app/candidate.out
+---
+[?2004hroot@850f29ce8ccb:/app# start=$(date +%s%N); sqlite3 /app/oewn.sqlite < /tmp/candidate.sql > /app/candidate.out; end=$(date +%s%N); echo candidate_ms=$(((end-staart)/1000000))
+[?2004lcandidate_ms=712
+[?2004hroot@850f29ce8ccb:/app# wc -l /app/candidate.out && head -5 /app/candidate.out && echo '---' && tail -3 /app/candidate.out
+[?2004l500 /app/candidate.out
+17710|break|75|75|16|2|483|1
+33833|cut|70|70|17|4|58|1
+117295|run|57|57|16|2|4046|1
+104919|play|52|52|15|2|196|1
+83700|make|51|51|13|2|179|1
+---
+112436|read|12|12|5|2|12840|1
+117189|ruffle|12|12|5|2|21768|1
+119170|save|12|12|5|2|12119|1
+[?2004hroot@850f29ce8ccb:/app# cat > /tmp/candidate2.sql <<'SQL'
+[?2004l[?2004h> WITH sense_synset_counts AS (
+[?2004l[?2004h>   SELECT wordid, synsetid, COUNT(*) AS sense_count
+[?2004l[?2004h>   FROM senses
+[?2004l[?2004h>   GROUP BY wordid, synsetid
+[?2004l[?2004h> ),
+[?2004l[?2004h> candidate_words AS (
+[?2004l[?2004h>   SELECT
+[?2004l[?2004h>     c.wordid,
+[?2004l[?2004h>     COUNT(*) AS total_synsets,
+[?2004l[?2004h>     SUM(c.sense_count) AS total_senses,
+[?2004l[?2004h>     COUNT(DISTINCT syn.domainid) AS distinct_domains,
+[?2004l[?2004h>     COUNT(DISTINCT syn.posid) AS distinct_posids
+[?2004l[?2004h>   FROM sense_synset_counts c
+[?2004l[?2004h>   JOIN synsets syn ON syn.synsetid = c.synsetid
+[?2004l[?2004h>   GROUP BY c.wordid
+[?2004l[?2004h>   HAVING total_synsets >= 2
+[?2004l[?2004h>     AND distinct_domains >= 2
+[?2004l[?2004h>     AND total_senses >= 2
+[?2004l[?2004h>   ORDER BY
+[?2004l[?2004h>     total_senses DESC,
+[?2004l[?2004h>     total_synsets DESC,
+[?2004l[?2004h>     distinct_domains DESC,
+[?2004l[?2004h>     c.wordid ASC
+[?2004l[?2004h>   LIMIT 500
+[?2004l[?2004h> )
+[?2004l[?2004h> SELECT
+[?2004l[?2004h>   cw.wordid AS word_id,
+[?2004l[?2004h>   w.word AS word,
+[?2004l[?2004h>   cw.total_synsets,
+[?2004l[?2004h>   cw.total_senses,
+[?2004l[?2004h>   cw.distinct_domains,
+[?2004l[?2004h>   cw.distinct_posids,
+[?2004l[?2004h>   (SELECT s.synsetid FROM senses s
+[?2004l[?2004h>    WHERE s.wordid = cw.wordid
+[?2004l[?2004h>    GROUP BY s.synsetid
+[?2004l[?2004h>    ORDER BY COUNT(*) DESC, s.synsetid ASC
+[?2004l[?2004h>    LIMIT 1) AS top_synsetid,
+[?2004l[?2004h>   (SELECT COUNT(*) FROM senses s
+[?2004l[?2004h>    WHERE s.wordid = cw.wordid
+[?2004l[?2004h>    AND s.synsetid = (SELECT s2.synsetid FROM senses s2
+[?2004l[?2004h>                      WHERE s2.wordid = cw.wordid
+[?2004l[?2004h>                      GROUP BY s2.synsetid
+[?2004l[?2004h>                      ORDER BY COUNT(*) DESC, s2.synsetid ASC
+[?2004l[?2004h>                      LIMIT 1)) AS top_synset_sense_count
+[?2004l[?2004h> FROM candidate_words cw
+[?2004l[?2004h> JOIN words w ON w.wordid = cw.wordid
+[?2004l[?2004h> ORDER BY
+[?2004l[?2004h>   cw.total_senses DESC,
+[?2004l[?2004h>   cw.total_synsets DESC,
+[?2004l[?2004h>   cw.distinct_domains DESC,
+[?2004l[?2004h>   cw.wordid ASC;
+[?2004l[?2004h> SQL
+[?2004l[?2004hroot@850f29ce8ccb:/app# start=$(date +%s%N); sqlite3 /app/oewn.sqlite < /tmp/candidate2.sql > /app/candidate2.out; end=$(date +%s%N); echo candidate2_ms=$(((end--start)/1000000))
+[?2004ldiff -u /app/candidate.out /app/candidate2.out | head -40; echo diff_status=${PIPESTATUS[0]}
+
+echo POLL; wc -l /app/candidate.out /app/candidate2.out; diff -u /app/candidate.out /app/candidate2.out | head -40; echo diff_status=${PIPESTATUS[0]}
+start=$(date +%s%N); timeout 60 sqlite3 /app/oewn.sqlite < /app/my-sql-query.sql > /app/original.out; rc=$?; end=$(date +%s%N); echo original_rc=$rc original_ms=$(((end-start)/1000000)); wc -l /app/original.out
+C-c
+ps -eo pid,etime,cmd | grep -E 'sqlite3|timeout' | grep -v grep; wc -l /app/candidate.out /app/candidate2.out /app/original.out 2>/dev/null; diff -u /app/candidate.out /app/candidate2.out | head -20; echo DONE
+C-c
+echo READY
+C-c
+^CRuntime error near line 1: interrupted (9)
+Program interrupted.
+candidate2_ms=94441
+[?2004hroot@850f29ce8ccb:/app# wc -l /app/candidate.out /app/candidate2.out; diff -u /app/candidate.out /app/candidate2.out | head -30; echo diff_status=${PIPESTATUS[0]]}
+[?2004l  500 /app/candidate.out
+    0 /app/candidate2.out
+  500 total
+--- /app/candidate.out	2026-11-05 09:49:51.874822620 +0000
++++ /app/candidate2.out	2026-11-05 09:49:56.691027338 +0000
+@@ -1,500 +0,0 @@
+-17710|break|75|75|16|2|483|1
+-33833|cut|70|70|17|4|58|1
+-117295|run|57|57|16|2|4046|1
+-104919|play|52|52|15|2|196|1
+-83700|make|51|51|13|2|179|1
+-80076|light|48|48|16|5|5923|1
+-40345|draw|45|45|18|2|1921|1
+-66644|hold|45|45|18|2|55|1
+-122139|set|45|45|17|3|646|1
+-26768|clear|45|45|12|5|3754|1
+-134244|take|44|44|14|2|1716|1
+-47212|fall|44|44|12|2|1303|1
+-59744|give|44|44|11|2|2190|1
+-64466|head|42|42|19|2|16765|1
+-100450|pass|42|42|15|3|1260|1
+-22115|carry|41|41|13|2|157|1
+-20230|call|41|41|10|2|1587|1
+-24116|charge|40|40|18|2|11091|1
+-105560|point|40|40|18|2|5737|1
+-22632|catch|39|39|19|2|1721|1
+-24388|check|38|38|16|2|2942|1
+-140929|turn|38|38|15|2|1788|1
+-27119|close|37|37|12|5|340|1
+-59275|get|37|37|12|2|987|1
+-115566|right|37|37|12|5|130|1
+-31989|cover|36|36|13|2|855|1
+-80444|line|36|36|13|2|4805|1
+diff_status=1
+[?2004hroot@850f29ce8ccb:/app# cat > /tmp/candidate3.sql <<'SQL'
+[?2004l[?2004h> WITH sense_synset_counts AS (
+[?2004l[?2004h>   SELECT wordid, synsetid, COUNT(*) AS sense_count
+[?2004l[?2004h>   FROM senses
+[?2004l[?2004h>   GROUP BY wordid, synsetid
+[?2004l[?2004h> ),
+[?2004l[?2004h> candidate_words AS (
+[?2004l[?2004h>   SELECT
+[?2004l[?2004h>     c.wordid,
+[?2004l[?2004h>     COUNT(*) AS total_synsets,
+[?2004l[?2004h>     SUM(c.sense_count) AS total_senses,
+[?2004l[?2004h>     COUNT(DISTINCT syn.domainid) AS distinct_domains,
+[?2004l[?2004h>     COUNT(DISTINCT syn.posid) AS distinct_posids
+[?2004l[?2004h>   FROM sense_synset_counts c
+[?2004l[?2004h>   JOIN synsets syn ON syn.synsetid = c.synsetid
+[?2004l[?2004h>   GROUP BY c.wordid
+[?2004l[?2004h>   HAVING distinct_domains >= 2
+[?2004l[?2004h>   ORDER BY
+[?2004l[?2004h>     total_senses DESC,
+[?2004l[?2004h>     total_synsets DESC,
+[?2004l[?2004h>     distinct_domains DESC,
+[?2004l[?2004h>     c.wordid ASC
+[?2004l[?2004h>   LIMIT 500
+[?2004l[?2004h> ),
+[?2004l[?2004h> ranked AS (
+[?2004l[?2004h>   SELECT
+[?2004l[?2004h>     c.wordid,
+[?2004l[?2004h>     c.synsetid,
+[?2004l[?2004h>     c.sense_count,
+[?2004l[?2004h>     ROW_NUMBER() OVER (PARTITION BY c.wordid ORDER BY c.sense_count DESC, c.synsetid ASC) AS rn
+[?2004l[?2004h>   FROM sense_synset_counts c
+[?2004l[?2004h>   JOIN candidate_words cw ON cw.wordid = c.wordid
+[?2004l[?2004h> )
+[?2004l[?2004h> SELECT
+[?2004l[?2004h>   cw.wordid AS word_id,
+[?2004l[?2004h>   w.word AS word,
+[?2004l[?2004h>   cw.total_synsets,
+[?2004l[?2004h>   cw.total_senses,
+[?2004l[?2004h>   cw.distinct_domains,
+[?2004l[?2004h>   cw.distinct_posids,
+[?2004l[?2004h>   r.synsetid AS top_synsetid,
+[?2004l[?2004h>   r.sense_count AS top_synset_sense_count
+[?2004l[?2004h> FROM candidate_words cw
+[?2004l[?2004h> JOIN words w ON w.wordid = cw.wordid
+[?2004l[?2004h> JOIN ranked r ON r.wordid = cw.wordid AND r.rn = 1
+[?2004l[?2004h> ORDER BY
+[?2004l[?2004h>   cw.total_senses DESC,
+[?2004l[?2004h>   cw.total_synsets DESC,
+[?2004l[?2004h>   cw.distinct_domains DESC,
+[?2004l[?2004h>   cw.wordid ASC;
+[?2004l[?2004h> SQL
+[?2004l[?2004hroot@850f29ce8ccb:/app# start=$(date +%s%N); sqlite3 /app/oewn.sqlite < /tmp/candidate3.sql > /app/candidate3.out; end=$(date +%s%N); echo candidate3_ms=$(((end--start)/1000000)); wc -l /app/candidate3.out; diff -u /app/candidate.out /app/candidate3.out | head -30; echo diff_status=${PIPESTATUS[0]}
+[?2004lcandidate3_ms=476
+500 /app/candidate3.out
+diff_status=0
+[?2004hroot@850f29ce8ccb:/app# sqlite3 /app/oewn.sqlite "EXPLAIN QUERY PLAN $(tr '\n' ' ' < /tmp/candidate3.sql)"
+[?2004lQUERY PLAN
+|--MATERIALIZE candidate_words
+|  |--MATERIALIZE sense_synset_counts
+|  |  |--SCAN senses
+|  |  `--USE TEMP B-TREE FOR GROUP BY
+|  |--SCAN syn
+|  |--BLOOM FILTER ON c (synsetid=?)
+|  |--SEARCH c USING AUTOMATIC COVERING INDEX (synsetid=?)
+|  |--USE TEMP B-TREE FOR GROUP BY
+|  |--USE TEMP B-TREE FOR count(DISTINCT)
+|  |--USE TEMP B-TREE FOR count(DISTINCT)
+|  `--USE TEMP B-TREE FOR ORDER BY
+|--MATERIALIZE ranked
+|  |--CO-ROUTINE (subquery-5)
+|  |  |--SCAN c
+|  |  |--BLOOM FILTER ON cw (wordid=?)
+|  |  |--SEARCH cw USING AUTOMATIC COVERING INDEX (wordid=?)
+|  |  `--USE TEMP B-TREE FOR ORDER BY
+|  `--SCAN (subquery-5)
+|--SCAN cw
+|--BLOOM FILTER ON r (wordid=? AND rn=?)
+|--SEARCH r USING AUTOMATIC PARTIAL COVERING INDEX (wordid=? AND rn=?)
+|--BLOOM FILTER ON w (wordid=?)
+|--SEARCH w USING AUTOMATIC COVERING INDEX (wordid=?)
+`--USE TEMP B-TREE FOR ORDER BY
+[?2004hroot@850f29ce8ccb:/app# sed 's/LIMIT 500;/LIMIT 10;/' /app/my-sql-query.sql > /tmp/orig10.sql
+[?2004l[?2004hroot@850f29ce8ccb:/app# start=$(date +%s%N); timeout 30 sqlite3 /app/oewn.sqlite < /tmp/orig10.sql > /app/orig10.out; rc=$?; end=$(date +%s%N); echo orig10_rc=$rrc orig10_ms=$(((end-start)/1000000)); wc -l /app/orig10.out
+[?2004lhead -10 /app/candidate3.out > /tmp/cand3_10.out; diff -u /app/orig10.out /tmp/cand3_10.out; echo diff_status=$?
+orig10_rc=0 orig10_ms=20172
+10 /app/orig10.out
+[?2004hroot@850f29ce8ccb:/app# head -10 /app/candidate3.out > /tmp/cand3_10.out; diff -u /app/orig10.out /tmp/cand3_10.out; echo diff_status=$?
+[?2004ldiff_status=0
+[?2004hroot@850f29ce8ccb:/app# ^C[?2004l[?2004h[?2004l
+[?2004hroot@850f29ce8ccb:/app# echo READY
+[?2004lREADY
+[?2004hroot@850f29ce8ccb:/app# cat > /tmp/candidate4.sql <<'SQL'
+[?2004l[?2004h> WITH candidate_words AS (
+[?2004l[?2004h>   SELECT
+[?2004l[?2004h>     s.wordid,
+[?2004l[?2004h>     COUNT(DISTINCT s.synsetid) AS total_synsets,
+[?2004l[?2004h>     COUNT(*) AS total_senses,
+[?2004l[?2004h>     COUNT(DISTINCT syn.domainid) AS distinct_domains,
+[?2004l[?2004h>     COUNT(DISTINCT syn.posid) AS distinct_posids
+[?2004l[?2004h>   FROM senses s
+[?2004l[?2004h>   JOIN synsets syn ON syn.synsetid = s.synsetid
+[?2004l[?2004h>   GROUP BY s.wordid
+[?2004l[?2004h>   HAVING total_synsets >= 2
+[?2004l[?2004h>     AND distinct_domains >= 2
+[?2004l[?2004h>     AND total_senses >= 2
+[?2004l[?2004h>   ORDER BY
+[?2004l[?2004h>     total_senses DESC,
+[?2004l[?2004h>     total_synsets DESC,
+[?2004l[?2004h>     distinct_domains DESC,
+[?2004l[?2004h>     s.wordid ASC
+[?2004l[?2004h>   LIMIT 500
+[?2004l[?2004h> ),
+[?2004l[?2004h> top_synset AS (
+[?2004l[?2004h>   SELECT
+[?2004l[?2004h>     s.wordid,
+[?2004l[?2004h>     s.synsetid,
+[?2004l[?2004h>     COUNT(*) AS sense_count,
+[?2004l[?2004h>     ROW_NUMBER() OVER (PARTITION BY s.wordid ORDER BY COUNT(*) DESC, s.synsetid ASC) AS rn
+[?2004l[?2004h>   FROM senses s
+[?2004l[?2004h>   JOIN candidate_words cw ON cw.wordid = s.wordid
+[?2004l[?2004h>   GROUP BY s.wordid, s.synsetid
+[?2004l[?2004h> )
+[?2004l[?2004h> SELECT
+[?2004l[?2004h>   cw.wordid AS word_id,
+[?2004l[?2004h>   w.word AS word,
+[?2004l[?2004h>   cw.total_synsets,
+[?2004l[?2004h>   cw.total_senses,
+[?2004l[?2004h>   cw.distinct_domains,
+[?2004l[?2004h>   cw.distinct_posids,
+[?2004l[?2004h>   ts.synsetid AS top_synsetid,
+[?2004l[?2004h>   ts.sense_count AS top_synset_sense_count
+[?2004l[?2004h> FROM candidate_words cw
+[?2004l[?2004h> JOIN words w ON w.wordid = cw.wordid
+[?2004l[?2004h> JOIN top_synset ts ON ts.wordid = cw.wordid AND ts.rn = 1
+[?2004l[?2004h> ORDER BY
+[?2004l[?2004h>   cw.total_senses DESC,
+[?2004l[?2004h>   cw.total_synsets DESC,
+[?2004l[?2004h>   cw.distinct_domains DESC,
+[?2004l[?2004h>   cw.wordid ASC;
+[?2004l[?2004h> SQL
+[?2004l[?2004hroot@850f29ce8ccb:/app# start=$(date +%s%N); sqlite3 /app/oewn.sqlite < /tmp/candidate4.sql > /app/candidate4.out; end=$(date +%s%N); echo candidate4_ms=$(((end--start)/1000000)); wc -l /app/candidate4.out; diff -u /app/candidate.out /app/candidate4.out | head -30; echo diff_status=${PIPESTATUS[0]}
+[?2004lcandidate4_ms=310
+500 /app/candidate4.out
+diff_status=0
+[?2004hroot@850f29ce8ccb:/app# sqlite3 /app/oewn.sqlite "EXPLAIN QUERY PLAN $(tr '\n' ' ' < /tmp/candidate4.sql)"
+[?2004lQUERY PLAN
+|--MATERIALIZE candidate_words
+|  |--SCAN s
+|  |--BLOOM FILTER ON syn (synsetid=?)
+|  |--SEARCH syn USING AUTOMATIC COVERING INDEX (synsetid=?)
+|  |--USE TEMP B-TREE FOR GROUP BY
+|  |--USE TEMP B-TREE FOR count(DISTINCT)
+|  |--USE TEMP B-TREE FOR count(DISTINCT)
+|  |--USE TEMP B-TREE FOR count(DISTINCT)
+|  `--USE TEMP B-TREE FOR ORDER BY
+|--MATERIALIZE top_synset
+|  |--CO-ROUTINE (subquery-4)
+|  |  |--SCAN s
+|  |  |--BLOOM FILTER ON cw (wordid=?)
+|  |  |--SEARCH cw USING AUTOMATIC COVERING INDEX (wordid=?)
+|  |  |--USE TEMP B-TREE FOR GROUP BY
+|  |  `--USE TEMP B-TREE FOR ORDER BY
+|  `--SCAN (subquery-4)
+|--SCAN ts
+|--BLOOM FILTER ON cw (wordid=?)
+|--SEARCH cw USING AUTOMATIC COVERING INDEX (wordid=?)
+|--BLOOM FILTER ON w (wordid=?)
+|--SEARCH w USING AUTOMATIC COVERING INDEX (wordid=?)
+`--USE TEMP B-TREE FOR ORDER BY
+[?2004hroot@850f29ce8ccb:/app# cat > /tmp/candidate5.sql <<'SQL'
+[?2004l[?2004h> WITH sense_synset_counts AS (
+[?2004l[?2004h>   SELECT
+[?2004l[?2004h>     s.wordid,
+[?2004l[?2004h>     s.synsetid,
+[?2004l[?2004h>     syn.domainid,
+[?2004l[?2004h>     syn.posid,
+[?2004l[?2004h>     COUNT(*) AS sense_count
+[?2004l[?2004h>   FROM senses s
+[?2004l[?2004h>   JOIN synsets syn ON syn.synsetid = s.synsetid
+[?2004l[?2004h>   GROUP BY s.wordid, s.synsetid, syn.domainid, syn.posid
+[?2004l[?2004h> ),
+[?2004l[?2004h> word_totals AS (
+[?2004l[?2004h>   SELECT
+[?2004l[?2004h>     wordid,
+[?2004l[?2004h>     COUNT(*) AS total_synsets,
+[?2004l[?2004h>     SUM(sense_count) AS total_senses,
+[?2004l[?2004h>     COUNT(DISTINCT domainid) AS distinct_domains,
+[?2004l[?2004h>     COUNT(DISTINCT posid) AS distinct_posids
+[?2004l[?2004h>   FROM sense_synset_counts
+[?2004l[?2004h>   GROUP BY wordid
+[?2004l[?2004h> ),
+[?2004l[?2004h> ranked AS (
+[?2004l[?2004h>   SELECT
+[?2004l[?2004h>     wordid,
+[?2004l[?2004h>     synsetid,
+[?2004l[?2004h>     sense_count,
+[?2004l[?2004h>     ROW_NUMBER() OVER (PARTITION BY wordid ORDER BY sense_count DESC, synsetid ASC) AS rn
+[?2004l[?2004h>   FROM sense_synset_counts
+[?2004l[?2004h> ),
+[?2004l[?2004h> candidate_words AS (
+[?2004l[?2004h>   SELECT *
+[?2004l[?2004h>   FROM word_totals
+[?2004l[?2004h>   WHERE total_synsets >= 2
+[?2004l[?2004h>     AND distinct_domains >= 2
+[?2004l[?2004h>     AND total_senses >= 2
+[?2004l[?2004h>   ORDER BY
+[?2004l[?2004h>     total_senses DESC,
+[?2004l[?2004h>     total_synsets DESC,
+[?2004l[?2004h>     distinct_domains DESC,
+[?2004l[?2004h>     wordid ASC
+[?2004l[?2004h>   LIMIT 500
+[?2004l[?2004h> )
+[?2004l[?2004h> SELECT
+[?2004l[?2004h>   cw.wordid AS word_id,
+[?2004l[?2004h>   w.word AS word,
+[?2004l[?2004h>   cw.total_synsets,
+[?2004l[?2004h>   cw.total_senses,
+[?2004l[?2004h>   cw.distinct_domains,
+[?2004l[?2004h>   cw.distinct_posids,
+[?2004l[?2004h>   r.synsetid AS top_synsetid,
+[?2004l[?2004h>   r.sense_count AS top_synset_sense_count
+[?2004l[?2004h> FROM candidate_words cw
+[?2004l[?2004h> JOIN words w ON w.wordid = cw.wordid
+[?2004l[?2004h> JOIN ranked r ON r.wordid = cw.wordid AND r.rn = 1
+[?2004l[?2004h> ORDER BY
+[?2004l[?2004h>   cw.total_senses DESC,
+[?2004l[?2004h>   cw.total_synsets DESC,
+[?2004l[?2004h>   cw.distinct_domains DESC,
+[?2004l[?2004h>   cw.wordid ASC;
+[?2004l[?2004h> SQL
+[?2004l[?2004hroot@850f29ce8ccb:/app# start=$(date +%s%N); sqlite3 /app/oewn.sqlite < /tmp/candidate5.sql > /app/candidate5.out; end=$(date +%s%N); echo candidate5_ms=$(((end--start)/1000000)); wc -l /app/candidate5.out; diff -u /app/candidate4.out /app/candidate5.out | head -30; echo diff_status=${PIPESTATUS[0]}
+[?2004lcandidate5_ms=690
+500 /app/candidate5.out
+diff_status=0
+[?2004hroot@850f29ce8ccb:/app# sqlite3 /app/oewn.sqlite "EXPLAIN QUERY PLAN $(tr '\n' ' ' < /tmp/candidate5.sql)"
+[?2004lQUERY PLAN
+|--CO-ROUTINE candidate_words
+|  |--CO-ROUTINE word_totals
+|  |  |--MATERIALIZE sense_synset_counts
+|  |  |  |--SCAN s
+|  |  |  |--BLOOM FILTER ON syn (synsetid=?)
+|  |  |  |--SEARCH syn USING AUTOMATIC COVERING INDEX (synsetid=?)
+|  |  |  `--USE TEMP B-TREE FOR GROUP BY
+|  |  |--SCAN sense_synset_counts
+|  |  |--USE TEMP B-TREE FOR GROUP BY
+|  |  |--USE TEMP B-TREE FOR count(DISTINCT)
+|  |  `--USE TEMP B-TREE FOR count(DISTINCT)
+|  |--SCAN word_totals
+|  `--USE TEMP B-TREE FOR ORDER BY
+|--MATERIALIZE ranked
+|  |--CO-ROUTINE (subquery-6)
+|  |  |--SCAN sense_synset_counts
+|  |  `--USE TEMP B-TREE FOR ORDER BY
+|  `--SCAN (subquery-6)
+|--SCAN cw
+|--BLOOM FILTER ON r (wordid=? AND rn=?)
+|--SEARCH r USING AUTOMATIC PARTIAL COVERING INDEX (wordid=? AND rn=?)
+|--BLOOM FILTER ON w (wordid=?)
+|--SEARCH w USING AUTOMATIC COVERING INDEX (wordid=?)
+`--USE TEMP B-TREE FOR ORDER BY
+[?2004hroot@850f29ce8ccb:/app# cp /tmp/candidate4.sql /app/sol.sql
+[?2004l[?2004hroot@850f29ce8ccb:/app# wc -l /app/sol.sql; cat /app/sol.sql
+[?2004l47 /app/sol.sql
+WITH candidate_words AS (
+  SELECT
+    s.wordid,
+    COUNT(DISTINCT s.synsetid) AS total_synsets,
+    COUNT(*) AS total_senses,
+    COUNT(DISTINCT syn.domainid) AS distinct_domains,
+    COUNT(DISTINCT syn.posid) AS distinct_posids
+  FROM senses s
+  JOIN synsets syn ON syn.synsetid = s.synsetid
+  GROUP BY s.wordid
+  HAVING total_synsets >= 2
+    AND distinct_domains >= 2
+    AND total_senses >= 2
+  ORDER BY
+    total_senses DESC,
+    total_synsets DESC,
+    distinct_domains DESC,
+    s.wordid ASC
+  LIMIT 500
+),
+top_synset AS (
+  SELECT
+    s.wordid,
+    s.synsetid,
+    COUNT(*) AS sense_count,
+    ROW_NUMBER() OVER (PARTITION BY s.wordid ORDER BY COUNT(*) DESC, s.synsetid ASC) AS rn
+  FROM senses s
+  JOIN candidate_words cw ON cw.wordid = s.wordid
+  GROUP BY s.wordid, s.synsetid
+)
+SELECT
+  cw.wordid AS word_id,
+  w.word AS word,
+  cw.total_synsets,
+  cw.total_senses,
+  cw.distinct_domains,
+  cw.distinct_posids,
+  ts.synsetid AS top_synsetid,
+  ts.sense_count AS top_synset_sense_count
+FROM candidate_words cw
+JOIN words w ON w.wordid = cw.wordid
+JOIN top_synset ts ON ts.wordid = cw.wordid AND ts.rn = 1
+ORDER BY
+  cw.total_senses DESC,
+  cw.total_synsets DESC,
+  cw.distinct_domains DESC,
+  cw.wordid ASC;
+[?2004hroot@850f29ce8ccb:/app# start=$(date +%s%N); sqlite3 /app/oewn.sqlite < /app/sol.sql > /app/sol.out; rc=$?; end=$(date +%s%N); echo sol_rc=$rc sol_ms=$(((end-staart)/1000000)); wc -l /app/sol.out; diff -u /app/candidate4.out /app/sol.out; echo diff_status=$?
+[?2004lsol_rc=0 sol_ms=337
+500 /app/sol.out
+diff_status=0
+[?2004hroot@850f29ce8ccb:/app# 

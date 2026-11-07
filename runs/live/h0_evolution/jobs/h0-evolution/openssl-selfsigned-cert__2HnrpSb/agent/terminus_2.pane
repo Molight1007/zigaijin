@@ -1,0 +1,86 @@
+[?2004hroot@f4eea0dd1592:/app# mkdir -p /app/ssl
+[?2004l[?2004hroot@f4eea0dd1592:/app# openssl genrsa -out /app/ssl/server.key 2048
+[?2004l[?2004hroot@f4eea0dd1592:/app# chmod 600 /app/ssl/server.key
+[?2004l[?2004hroot@f4eea0dd1592:/app# openssl req -new -x509 -key /app/ssl/server.key -out /app/ssl/server.crt -days 365 -subj '/O=DevOps Team/CN=dev-internal.company.local'
+[?2004l[?2004hroot@f4eea0dd1592:/app# cat /app/ssl/server.key /app/ssl/server.crt > /app/ssl/server.pem
+[?2004l[?2004hroot@f4eea0dd1592:/app# chmod 600 /app/ssl/server.pem
+[?2004l[?2004hroot@f4eea0dd1592:/app# ( echo Subject: $(openssl x509 -in /app/ssl/server.crt -noout -subject); echo Not Before: $(openssl x509 -in /app/ssl/server.crt -noout --startdate | cut -d= -f2-); echo Not After: $(openssl x509 -in /app/ssl/server.crt -noout -enddate | cut -d= -f2-); echo SHA-256 Fingerprint: $(openssl x509 -in  /app/ssl/server.crt -noout -fingerprint -sha256 | cut -d= -f2-) ) > /app/ssl/verification.txt
+[?2004l[?2004hroot@f4eea0dd1592:/app# cat > /app/check_cert.py <<'PY'
+[?2004l[?2004h> import os
+[?2004l[?2004h> import re
+[?2004l[?2004h> import ssl
+[?2004l[?2004h> import subprocess
+[?2004l[?2004h> import sys
+[?2004l[?2004h> from email.utils import parsedate_to_datetime
+[?2004l[?2004h> 
+[?2004l[?2004h> CERT_FILE = '/app/ssl/server.crt'
+[?2004l[?2004h> KEY_FILE = '/app/ssl/server.key'
+[?2004l[?2004h> 
+[?2004l[?2004h> def main():
+[?2004l[?2004h>     if not os.path.isfile(CERT_FILE):
+[?2004l[?2004h>         print('Certificate file not found', file=sys.stderr)
+[?2004l[?2004h>         return 1
+[?2004l[?2004h>     if not os.path.isfile(KEY_FILE):
+[?2004l[?2004h>         print('Private key file not found', file=sys.stderr)
+[?2004l[?2004h>         return 1
+[?2004l[?2004h>     try:
+[?2004l[?2004h>         context = ssl.create_default_context()
+[?2004l[?2004h>         context.load_cert_chain(certfile=CERT_FILE, keyfile=KEY_FILE)
+[?2004l[?2004h>         details = subprocess.check_output(
+[?2004l[?2004h>             ['openssl', 'x509', '-in', CERT_FILE, '-noout', '-subject', '-enddate', '-nameopt', 'RFC2253'],
+[?2004l[?2004h>             text=True,
+[?2004l[?2004h>             stderr=subprocess.STDOUT,
+[?2004l[?2004h>         )
+[?2004l[?2004h>     except Exception as exc:
+[?2004l[?2004h>         print(f'Certificate verification failed: {exc}', file=sys.stderr)
+[?2004l[?2004h>         return 1
+[?2004l[?2004h> 
+[?2004l[?2004h>     subject = ''
+[?2004l[?2004h>     not_after = ''
+[?2004l[?2004h>     for line in details.splitlines():
+[?2004l[?2004h>         if line.startswith('subject='):
+[?2004l[?2004h>             subject = line.split('=', 1)[1]
+[?2004l[?2004h>         elif line.startswith('notAfter='):
+[?2004l[?2004h>             not_after = line.split('=', 1)[1]
+[?2004l[?2004h> 
+[?2004l[?2004h>     match = re.search(r'(?:^|,)CN=([^,]+)', subject)
+[?2004l[?2004h>     if not match:
+[?2004l[?2004h>         print('Certificate Common Name not found', file=sys.stderr)
+[?2004l[?2004h>         return 1
+[?2004l[?2004h> 
+[?2004l[?2004h>     common_name = match.group(1)
+[?2004l[?2004h>     expiration = parsedate_to_datetime(not_after).strftime('%Y-%m-%d')
+[?2004l[?2004h>     print(f'Common Name: {common_name}')
+[?2004l[?2004h>     print(f'Expiration Date: {expiration}')
+[?2004l[?2004h>     print('Certificate verification successful')
+[?2004l[?2004h>     return 0
+[?2004l[?2004h> 
+[?2004l[?2004h> if __name__ == '__main__':
+[?2004l[?2004h>     sys.exit(main())
+[?2004l[?2004h> PY
+[?2004l[?2004hroot@f4eea0dd1592:/app# chmod +x /app/check_cert.py
+[?2004l[?2004hroot@f4eea0dd1592:/app# ls -l /app/ssl /app/check_cert.py
+[?2004l-rwxr-xr-x 1 root root 1592 Nov  5 07:37 /app/check_cert.py
+
+/app/ssl:
+total 16
+-rw-r--r-- 1 root root 1220 Nov  5 07:37 server.crt
+-rw------- 1 root root 1704 Nov  5 07:37 server.key
+-rw------- 1 root root 2924 Nov  5 07:37 server.pem
+-rw-r--r-- 1 root root  254 Nov  5 07:37 verification.txt
+[?2004hroot@f4eea0dd1592:/app# cat /app/ssl/verification.txt
+[?2004lSubject: subject=O = DevOps Team, CN = dev-internal.company.local
+Not Before: Nov 5 07:37:50 2026 GMT
+Not After: Nov 5 07:37:50 2027 GMT
+SHA-256 Fingerprint: EC:6E:5C:9A:41:57:E3:C5:96:FB:37:43:DC:6E:91:3A:E5:81:58:35:0D:62:C2:64:88:25:8A:A4:1C:48:9B:8C
+[?2004hroot@f4eea0dd1592:/app# openssl x509 -in /app/ssl/server.crt -noout -subject -issuer -dates -fingerprint -sha256
+[?2004lsubject=O = DevOps Team, CN = dev-internal.company.local
+issuer=O = DevOps Team, CN = dev-internal.company.local
+notBefore=Nov  5 07:37:50 2026 GMT
+notAfter=Nov  5 07:37:50 2027 GMT
+sha256 Fingerprint=EC:6E:5C:9A:41:57:E3:C5:96:FB:37:43:DC:6E:91:3A:E5:81:58:35:0D:62:C2:64:88:25:8A:A4:1C:48:9B:8C
+[?2004hroot@f4eea0dd1592:/app# python3 /app/check_cert.py
+[?2004lCommon Name: dev-internal.company.local
+Expiration Date: 2027-11-05
+Certificate verification successful
+[?2004hroot@f4eea0dd1592:/app# 

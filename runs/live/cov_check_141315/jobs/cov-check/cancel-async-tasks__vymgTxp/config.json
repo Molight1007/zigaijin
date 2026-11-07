@@ -1,0 +1,25 @@
+{
+    "task": {
+        "name": "terminal-bench/cancel-async-tasks",
+        "ref": "sha256:a3d048d351136e48070696cda8bb79660dfd74db1fea3b6da88559f0332699c1",
+        "source": "terminal-bench/terminal-bench-2-1"
+    },
+    "trial_name": "cancel-async-tasks__vymgTxp",
+    "trials_dir": "D:\\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\\runs\\live\\cov_check_141315\\jobs\\cov-check",
+    "agent_setup_timeout_multiplier": 2.0,
+    "agent": {
+        "name": "evo.adapters.traced_terminus2:TracedAgentHarness",
+        "model_name": "deepseek-v4-flash",
+        "base_url": "https://api.deepseek.com/v1",
+        "model_api_key_name": "DEEPSEEK_API_KEY",
+        "kwargs": {
+            "record_terminal_session": false
+        }
+    },
+    "verifier": {
+        "env": {
+            "UV_INSTALLER_GITHUB_BASE_URL": "http://host.docker.internal:8765"
+        }
+    },
+    "job_id": "63b36f0e-9952-4472-984b-539171c57309"
+}

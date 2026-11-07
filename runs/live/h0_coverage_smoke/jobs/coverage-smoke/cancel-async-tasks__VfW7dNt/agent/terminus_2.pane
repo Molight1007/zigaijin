@@ -1,0 +1,91 @@
+[?2004hroot@5086503de98e:/app# pwd && ls -la && python3 --version
+[?2004l/app
+total 8
+drwxr-xr-x 2 root root 4096 Aug 22  2025 .
+drwxr-xr-x 1 root root 4096 Nov  5 06:46 ..
+Python 3.13.7
+[?2004hroot@5086503de98e:/app# cat > /app/run.py <<'PY'
+[?2004l[?2004h> import asyncio
+[?2004l[?2004h> from collections.abc import Awaitable, Callable
+[?2004l[?2004h> 
+[?2004l[?2004h> 
+[?2004l[?2004h> async def run_tasks(
+[?2004l[?2004h>     tasks: list[Callable[[], Awaitable[None]]],
+[?2004l[?2004h>     max_concurrent: int,
+[?2004l[?2004h> ) -> None:
+[?2004l[?2004h>     if max_concurrent <= 0:
+[?2004l[?2004h>         raise ValueError('max_concurrent must be greater than 0')
+[?2004l[?2004h> 
+[?2004l[?2004h>     semaphore = asyncio.Semaphore(max_concurrent)
+[?2004l[?2004h> 
+[?2004l[?2004h>     async def run_one(task: Callable[[], Awaitable[None]]) -> None:
+[?2004l[?2004h>         async with semaphore:
+[?2004l[?2004h>             await task()
+[?2004l[?2004h> 
+[?2004l[?2004h>     runner_tasks = [asyncio.create_task(run_one(task)) for task in tasks]
+[?2004l[?2004h>     try:
+[?2004l[?2004h>         await asyncio.gather(*runner_tasks)
+[?2004l[?2004h>     except BaseException:
+[?2004l[?2004h>         for runner in runner_tasks:
+[?2004l[?2004h>             if not runner.done():
+[?2004l[?2004h>                 runner.cancel()
+[?2004l[?2004h>         await asyncio.gather(*runner_tasks, return_exceptions=True)
+[?2004l[?2004h>         raise
+[?2004l[?2004h> PY
+[?2004l[?2004hroot@5086503de98e:/app# python3 -m py_compile /app/run.py && python3 -c 'from run import run_tasks; print(run_tasks.__name__)'
+[?2004lrun_tasks
+[?2004hroot@5086503de98e:/app# python3 - <<'PY'
+[?2004l[?2004h> import asyncio
+[?2004l[?2004h> from run import run_tasks
+[?2004l[?2004h> 
+[?2004l[?2004h> async def test_concurrency_limit():
+[?2004l[?2004h>     current = 0
+[?2004l[?2004h>     max_seen = 0
+[?2004l[?2004h> 
+[?2004l[?2004h>     def make_task(delay):
+[?2004l[?2004h>         async def job():
+[?2004l[?2004h>             nonlocal current, max_seen
+[?2004l[?2004h>             current += 1
+[?2004l[?2004h>             max_seen = max(max_seen, current)
+[?2004l[?2004h>             try:
+[?2004l[?2004h>                 await asyncio.sleep(delay)
+[?2004l[?2004h>             finally:
+[?2004l[?2004h>                 current -= 1
+[?2004l[?2004h>         return job
+[?2004l[?2004h> 
+[?2004l[?2004h>     tasks = [make_task(0.03) for _ in range(10)]
+[?2004l[?2004h>     await run_tasks(tasks, 3)
+[?2004l[?2004h>     assert max_seen == 3, f'expected max concurrency 3, got {max_seen}'
+[?2004l[?2004h>     print('concurrency limit test passed:', max_seen)
+[?2004l[?2004h> 
+[?2004l[?2004h> async def test_cancellation_cleanup():
+[?2004l[?2004h>     cleaned = []
+[?2004l[?2004h> 
+[?2004l[?2004h>     async def job():
+[?2004l[?2004h>         try:
+[?2004l[?2004h>             await asyncio.sleep(10)
+[?2004l[?2004h>         finally:
+[?2004l[?2004h>             cleaned.append(True)
+[?2004l[?2004h> 
+[?2004l[?2004h>     async def main():
+[?2004l[?2004h>         runner = asyncio.create_task(run_tasks([job], 1))
+[?2004l[?2004h>         await asyncio.sleep(0.05)
+[?2004l[?2004h>         runner.cancel()
+[?2004l[?2004h>         try:
+[?2004l[?2004h>             await runner
+[?2004l[?2004h>         except asyncio.CancelledError:
+[?2004l[?2004h>             pass
+[?2004l[?2004h> 
+[?2004l[?2004h>     await main()
+[?2004l[?2004h>     assert cleaned == [True], 'task cleanup did not run on cancellation'
+[?2004l[?2004h>     print('cancellation cleanup test passed')
+[?2004l[?2004h> 
+[?2004l[?2004h> async def main():
+[?2004l[?2004h>     await test_concurrency_limit()
+[?2004l[?2004h>     await test_cancellation_cleanup()
+[?2004l[?2004h> 
+[?2004l[?2004h> asyncio.run(main())
+[?2004l[?2004h> PY
+[?2004lconcurrency limit test passed: 3
+cancellation cleanup test passed
+[?2004hroot@5086503de98e:/app# 

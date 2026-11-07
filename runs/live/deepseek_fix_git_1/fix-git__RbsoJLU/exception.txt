@@ -1,0 +1,88 @@
+Traceback (most recent call last):
+  File "D:\python\Lib\asyncio\tasks.py", line 488, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "D:\python\Lib\asyncio\subprocess.py", line 201, in communicate
+    stdin, stdout, stderr = await tasks.gather(stdin, stdout, stderr)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\Lib\asyncio\subprocess.py", line 181, in _read_stream
+    output = await stream.read()
+             ^^^^^^^^^^^^^^^^^^^
+  File "D:\python\Lib\asyncio\streams.py", line 723, in read
+    block = await self.read(self._limit)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\Lib\asyncio\streams.py", line 730, in read
+    await self._wait_for_data('read')
+  File "D:\python\Lib\asyncio\streams.py", line 539, in _wait_for_data
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\external\repos\harbor\src\harbor\environments\docker\docker.py", line 784, in _collect_buffered_output
+    stdout_bytes, stderr_bytes = await asyncio.wait_for(
+                                 ^^^^^^^^^^^^^^^^^^^^^^^
+        process.communicate(input=stdin_data), timeout=timeout_sec
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\python\Lib\asyncio\tasks.py", line 487, in wait_for
+    async with timeouts.timeout(timeout):
+               ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\python\Lib\asyncio\timeouts.py", line 114, in __aexit__
+    raise TimeoutError from exc_val
+TimeoutError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\external\repos\harbor\src\harbor\trial\trial.py", line 606, in run
+    await self._prepare()
+  File "D:\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\external\repos\harbor\src\harbor\trial\trial.py", line 652, in _prepare
+    await self._setup_agent()
+  File "D:\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\external\repos\harbor\src\harbor\trial\trial.py", line 1885, in _setup_agent
+    await asyncio.wait_for(
+    ...<2 lines>...
+    )
+  File "D:\python\Lib\asyncio\tasks.py", line 488, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "D:\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\vendor\terminus2\terminus_2.py", line 485, in setup
+    await self._session.start()
+  File "D:\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\vendor\terminus2\tmux_session.py", line 512, in start
+    await self._attempt_tmux_installation()
+  File "D:\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\vendor\terminus2\tmux_session.py", line 124, in _attempt_tmux_installation
+    await asyncio.wait_for(
+    ...<2 lines>...
+    )
+  File "D:\python\Lib\asyncio\tasks.py", line 488, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "D:\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\vendor\terminus2\tmux_session.py", line 176, in _install_recording_tools
+    result = await self.environment.exec(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "D:\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\external\repos\harbor\src\harbor\environments\docker\docker.py", line 1363, in exec
+    return await self._compose_exec(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "D:\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\external\repos\harbor\src\harbor\environments\docker\docker.py", line 1440, in _compose_exec
+    return await self._run_docker_compose_command(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "D:\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\external\repos\harbor\src\harbor\environments\docker\docker.py", line 758, in _run_docker_compose_command
+    result = await self._collect_buffered_output(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "D:\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\external\repos\harbor\src\harbor\environments\docker\docker.py", line 791, in _collect_buffered_output
+    raise RuntimeError(f"Command timed out after {timeout_sec} seconds")
+RuntimeError: Command timed out after 120 seconds

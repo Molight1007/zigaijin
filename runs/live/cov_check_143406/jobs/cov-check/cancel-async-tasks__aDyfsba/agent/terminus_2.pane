@@ -1,0 +1,80 @@
+[?2004hroot@86075e8c0e42:/app# python3 --version
+[?2004lPython 3.13.7
+[?2004hroot@86075e8c0e42:/app# ls -la /app
+[?2004ltotal 8
+drwxr-xr-x 2 root root 4096 Aug 22  2025 .
+drwxr-xr-x 1 root root 4096 Nov  5 06:34 ..
+[?2004hroot@86075e8c0e42:/app# cat > /app/run.py <<'PY'
+[?2004l[?2004h> from __future__ import annotations
+[?2004l[?2004h> 
+[?2004l[?2004h> import asyncio
+[?2004l[?2004h> from collections.abc import Awaitable, Callable
+[?2004l[?2004h> 
+[?2004l[?2004h> 
+[?2004l[?2004h> async def run_tasks(
+[?2004l[?2004h>     tasks: list[Callable[[], Awaitable[None]]],
+[?2004l[?2004h>     max_concurrent: int,
+[?2004l[?2004h> ) -> None:
+[?2004l[?2004h>     '''Run async tasks with a maximum concurrency limit.
+[?2004l[?2004h> 
+[?2004l[?2004h>     If the caller is cancelled, all running tasks are cancelled and awaited so
+[?2004l[?2004h>     their cleanup code can run before cancellation is re-raised.
+[?2004l[?2004h>     '''
+[?2004l[?2004h>     if max_concurrent < 1:
+[?2004l[?2004h>         raise ValueError('max_concurrent must be at least 1')
+[?2004l[?2004h> 
+[?2004l[?2004h>     semaphore = asyncio.Semaphore(max_concurrent)
+[?2004l[?2004h> 
+[?2004l[?2004h>     async def run_one(task: Callable[[], Awaitable[None]]) -> None:
+[?2004l[?2004h>         async with semaphore:
+[?2004l[?2004h>             await task()
+[?2004l[?2004h> 
+[?2004l[?2004h>     running = [asyncio.create_task(run_one(task)) for task in tasks]
+[?2004l[?2004h> 
+[?2004l[?2004h>     try:
+[?2004l[?2004h>         await asyncio.gather(*running)
+[?2004l[?2004h>     except BaseException:
+[?2004l[?2004h>         for task in running:
+[?2004l[?2004h>             task.cancel()
+[?2004l[?2004h>         await asyncio.gather(*running, return_exceptions=True)
+[?2004l[?2004h>         raise
+[?2004l[?2004h> PY
+[?2004l[?2004hroot@86075e8c0e42:/app# python3 -m py_compile /app/run.py
+[?2004l[?2004hroot@86075e8c0e42:/app# python3 -c 'from run import run_tasks; print(run_tasks)'
+[?2004l<function run_tasks at 0x7560a8d8ff60>
+[?2004hroot@86075e8c0e42:/app# python3 - <<'PY'
+[?2004l[?2004h> import asyncio
+[?2004l[?2004h> from run import run_tasks
+[?2004l[?2004h> 
+[?2004l[?2004h> active = 0
+[?2004l[?2004h> max_active = 0
+[?2004l[?2004h> cleanup = []
+[?2004l[?2004h> 
+[?2004l[?2004h> async def job(n: int) -> None:
+[?2004l[?2004h>     global active, max_active
+[?2004l[?2004h>     active += 1
+[?2004l[?2004h>     max_active = max(max_active, active)
+[?2004l[?2004h>     try:
+[?2004l[?2004h>         await asyncio.sleep(10)
+[?2004l[?2004h>     finally:
+[?2004l[?2004h>         active -= 1
+[?2004l[?2004h>         cleanup.append(n)
+[?2004l[?2004h> 
+[?2004l[?2004h> async def test_cancel():
+[?2004l[?2004h>     task = asyncio.create_task(
+[?2004l[?2004h>         run_tasks([lambda i=i: job(i) for i in range(5)], 2)
+[?2004l[?2004h>     )
+[?2004l[?2004h>     await asyncio.sleep(0.1)
+[?2004l[?2004h>     task.cancel()
+[?2004l[?2004h>     try:
+[?2004l[?2004h>         await task
+[?2004l[?2004h>     except asyncio.CancelledError:
+[?2004l[?2004h>         pass
+[?2004l[?2004h> 
+[?2004l[?2004h> asyncio.run(test_cancel())
+[?2004l[?2004h> assert max_active <= 2, max_active
+[?2004l[?2004h> assert sorted(cleanup) == [0, 1], cleanup
+[?2004l[?2004h> print('cancellation cleanup test passed:', cleanup)
+[?2004l[?2004h> PY
+[?2004lcancellation cleanup test passed: [0, 1]
+[?2004hroot@86075e8c0e42:/app# 

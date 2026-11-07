@@ -1,0 +1,58 @@
+{
+  "schema": 1,
+  "name": "pilot_v1",
+  "created_at": "2026-11-06",
+  "source_run": "runs/frozen/tb21-h0/run.json",
+  "purpose": "first improvement comparison; pilot only, not a paper non-inferiority claim",
+  "task_selection_basis": "H0 measured cost + observed headroom (pass / agent_error / cheap failure); pre-registered before candidate evaluation",
+  "reps": 3,
+  "arms": ["H0", "candidate"],
+  "pilot_dev": [
+    "terminal-bench/largest-eigenval",
+    "terminal-bench/model-extraction-relu-logits",
+    "terminal-bench/vulnerable-secret",
+    "terminal-bench/sqlite-db-truncate",
+    "terminal-bench/password-recovery",
+    "terminal-bench/configure-git-webserver",
+    "terminal-bench/torch-tensor-parallelism",
+    "terminal-bench/count-dataset-tokens"
+  ],
+  "pilot_validation": [
+    "terminal-bench/mcmc-sampling-stan",
+    "terminal-bench/merge-diff-arc-agi-task",
+    "terminal-bench/query-optimize"
+  ],
+  "sensitivity_smoke": [
+    "terminal-bench/cancel-async-tasks"
+  ],
+  "holdout": {
+    "pool": "holdout",
+    "size": 27,
+    "use": "final_only"
+  },
+  "ood": {
+    "available": false,
+    "reason": "TB2.1 only; pilot_validation and holdout are in-distribution disjoint guards; true OOD needs another benchmark"
+  },
+  "expected_cost_usd": 1.72,
+  "budget_cny": 20,
+  "expected_trials": {
+    "candidate": 33,
+    "h0_extra": 22,
+    "sensitivity_candidate": 3,
+    "total": 58
+  },
+  "stop_rules": {
+    "floor_guard": "if H0 and candidate are both 0 on >=7/8 pilot_dev tasks, declare not measurable and stop",
+    "dev": "stop if candidate loses any H0-passing pilot_dev task, or net task wins < 2",
+    "validation": "run only after dev signal; stop if validation net wins < 0 or >1 task regresses",
+    "holdout": "never use for tuning; final-only, separate budget",
+    "max_budget": "abort the pilot if direct API spend exceeds 20 CNY"
+  },
+  "claim_allowed": false,
+  "notes": [
+    "pilot_dev and pilot_validation are disjoint from holdout",
+    "cancel-async-tasks is smoke, used only as a sensitivity signal, not as a holdout claim",
+    "no task appears in both pilot_dev and pilot_validation"
+  ]
+}

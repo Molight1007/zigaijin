@@ -1,0 +1,25 @@
+Traceback (most recent call last):
+  File "D:\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\external\repos\harbor\src\harbor\trial\trial.py", line 609, in run
+    await self._run()
+  File "D:\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\external\repos\harbor\src\harbor\trial\single_step.py", line 51, in _run
+    await self._run_verifier()
+  File "D:\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\external\repos\harbor\src\harbor\trial\single_step.py", line 105, in _run_verifier
+    self.result.verifier_result = await self._run_shared_verifier(
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "D:\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\external\repos\harbor\src\harbor\trial\trial.py", line 1011, in _run_shared_verifier
+    return await self._verify_with_timeout(verifier, timeout_sec)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\external\repos\harbor\src\harbor\trial\trial.py", line 974, in _verify_with_timeout
+    return await asyncio.wait_for(verifier.verify(), timeout=timeout_sec)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\Lib\asyncio\tasks.py", line 488, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "D:\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\external\repos\harbor\src\harbor\verifier\verifier.py", line 304, in verify
+    raise RewardFileNotFoundError(
+    ...<3 lines>...
+    )
+harbor.verifier.verifier.RewardFileNotFoundError: No reward file found at D:\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\runs\live\h0_coverage_smoke\jobs\coverage-smoke\cancel-async-tasks__VfW7dNt\verifier\reward.txt or D:\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\runs\live\h0_coverage_smoke\jobs\coverage-smoke\cancel-async-tasks__VfW7dNt\verifier\reward.json

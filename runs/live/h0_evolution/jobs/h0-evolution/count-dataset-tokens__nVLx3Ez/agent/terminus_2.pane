@@ -1,0 +1,1274 @@
+[?2004hroot@0ccef502aeae:/app# ls -la
+[?2004ltotal 8
+drwxr-xr-x 2 root root 4096 Aug 22  2025 .
+drwxr-xr-x 1 root root 4096 Nov  5 10:04 ..
+[?2004hroot@0ccef502aeae:/app# python3 --version && python3 -c "import datasets, transformers; print('datasets', datasets.__version__); print('transformers', transformeers.__version__)"
+[?2004lPython 3.13.7
+Traceback (most recent call last):
+  File [35m"<string>"[0m, line [35m1[0m, in [35m<module>[0m
+    [1;31mimport datasets, transformers[0m; print('datasets', datasets.__version__); print('transformers', transformers.__version__)
+    [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[1;35mModuleNotFoundError[0m: [35mNo module named 'datasets'[0m
+[?2004hroot@0ccef502aeae:/app# pip list | grep -Ei 'huggingface|datasets|transformers|tokenizers|curl' || true
+[?2004lcurl -L --max-time 20 https://huggingface.co/datasets/ryanmarten/OpenThoughts-1k-sample/raw/main/README.md -o /app/README.md && sed -n '1,240p' /app/README.md
+[?2004hroot@0ccef502aeae:/app# curl -L --max-time 20 https://huggingface.co/datasets/ryanmarten/OpenThoughts-1k-sample/raw/main/README.md -o /app/README.md && sed -n '11,240p' /app/README.md
+[?2004lbash: curl: command not found
+[?2004hroot@0ccef502aeae:/app# python3 - <<'PY'
+[?2004l[?2004h> import urllib.request
+[?2004l[?2004h> url='https://huggingface.co/datasets/ryanmarten/OpenThoughts-1k-sample/raw/main/README.md'
+[?2004l[?2004h> try:
+[?2004l[?2004h>     data=urllib.request.urlopen(url, timeout=20).read().decode()
+[?2004l[?2004h>     open('/app/README.md','w').write(data)
+[?2004l[?2004h>     print(data[:20000])
+[?2004l[?2004h> except Exception as e:
+[?2004l[?2004h>     print('ERROR', repr(e))
+[?2004l[?2004h> PY
+[?2004lwhich wget || true
+^CTraceback (most recent call last):
+  File [35m"<stdin>"[0m, line [35m4[0m, in [35m<module>[0m
+  File [35m"/usr/local/lib/python3.13/urllib/request.py"[0m, line [35m189[0m, in [35murlopen[0m
+    return [31mopener.open[0m[1;31m(url, data, timeout)[0m
+           [31m~~~~~~~~~~~[0m[1;31m^^^^^^^^^^^^^^^^^^^^[0m
+  File [35m"/usr/local/lib/python3.13/urllib/request.py"[0m, line [35m489[0m, in [35mopen[0m
+    response = self._open(req, data)
+  File [35m"/usr/local/lib/python3.13/urllib/request.py"[0m, line [35m506[0m, in [35m_open[0m
+    result = self._call_chain(self.handle_open, protocol, protocol +
+                              '_open', req)
+  File [35m"/usr/local/lib/python3.13/urllib/request.py"[0m, line [35m466[0m, in [35m_call_chain[0m
+    result = func(*args)
+  File [35m"/usr/local/lib/python3.13/urllib/request.py"[0m, line [35m1367[0m, in [35mhttps_open[0m
+    return [31mself.do_open[0m[1;31m(http.client.HTTPSConnection, req,[0m
+           [31m~~~~~~~~~~~~[0m[1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+                        [1;31mcontext=self._context)[0m
+                        [1;31m^^^^^^^^^^^^^^^^^^^^^^[0m
+  File [35m"/usr/local/lib/python3.13/urllib/request.py"[0m, line [35m1319[0m, in [35mdo_open[0m
+    [31mh.request[0m[1;31m(req.get_method(), req.selector, req.data, headers,[0m
+    [31m~~~~~~~~~[0m[1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+              [1;31mencode_chunked=req.has_header('Transfer-encoding'))[0m
+              [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  File [35m"/usr/local/lib/python3.13/http/client.py"[0m, line [35m1338[0m, in [35mrequest[0m
+    [31mself._send_request[0m[1;31m(method, url, body, headers, encode_chunked)[0m
+    [31m~~~~~~~~~~~~~~~~~~[0m[1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  File [35m"/usr/local/lib/python3.13/http/client.py"[0m, line [35m1384[0m, in [35m_send_request[0m
+    [31mself.endheaders[0m[1;31m(body, encode_chunked=encode_chunked)[0m
+    [31m~~~~~~~~~~~~~~~[0m[1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  File [35m"/usr/local/lib/python3.13/http/client.py"[0m, line [35m1333[0m, in [35mendheaders[0m
+    [31mself._send_output[0m[1;31m(message_body, encode_chunked=encode_chunked)[0m
+    [31m~~~~~~~~~~~~~~~~~[0m[1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  File [35m"/usr/local/lib/python3.13/http/client.py"[0m, line [35m1093[0m, in [35m_send_output[0m
+    [31mself.send[0m[1;31m(msg)[0m
+    [31m~~~~~~~~~[0m[1;31m^^^^^[0m
+  File [35m"/usr/local/lib/python3.13/http/client.py"[0m, line [35m1037[0m, in [35msend[0m
+    [31mself.connect[0m[1;31m()[0m
+    [31m~~~~~~~~~~~~[0m[1;31m^^[0m
+  File [35m"/usr/local/lib/python3.13/http/client.py"[0m, line [35m1472[0m, in [35mconnect[0m
+    [31msuper().connect[0m[1;31m()[0m
+    [31m~~~~~~~~~~~~~~~[0m[1;31m^^[0m
+  File [35m"/usr/local/lib/python3.13/http/client.py"[0m, line [35m1003[0m, in [35mconnect[0m
+    self.sock = [31mself._create_connection[0m[1;31m([0m
+                [31m~~~~~~~~~~~~~~~~~~~~~~~[0m[1;31m^[0m
+        [1;31m(self.host,self.port), self.timeout, self.source_address)[0m
+        [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  File [35m"/usr/local/lib/python3.13/socket.py"[0m, line [35m849[0m, in [35mcreate_connection[0m
+    [31msock.connect[0m[1;31m(sa)[0m
+    [31m~~~~~~~~~~~~[0m[1;31m^^^^[0m
+[1;35mKeyboardInterrupt[0m
+
+[?2004hroot@0ccef502aeae:/app# ls -la /app && head -20 /app/README.md 2>/dev/null || true
+[?2004ltotal 8
+drwxr-xr-x 2 root root 4096 Aug 22  2025 .
+drwxr-xr-x 1 root root 4096 Nov  5 10:04 ..
+[?2004hroot@0ccef502aeae:/app# env | sort | sed -n '1,160p'
+[?2004lGPG_KEY=7169605F62C751356D054A26A821E680E5FA6305
+HOME=/root
+HOSTNAME=0ccef502aeae
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+PWD=/app
+PYTHON_SHA256=5462f9099dfd30e238def83c71d91897d8caa5ff6ebc7a50f14d4802cdaaa79a
+PYTHON_VERSION=3.13.7
+SHELL=/bin/bash
+SHLVL=1
+TERM=tmux-256color
+TERM_PROGRAM=tmux
+TERM_PROGRAM_VERSION=3.3a
+TMUX=/tmp/tmux-0/default,28,0
+TMUX_PANE=%0
+_=/usr/bin/env
+[?2004hroot@0ccef502aeae:/app# getent hosts huggingface.co || true
+[?2004l150.107.3.176   huggingface.co
+[?2004hroot@0ccef502aeae:/app# which wget || true
+[?2004l[?2004hroot@0ccef502aeae:/app# python3 - <<'PY'
+[?2004l[?2004h> import socket, urllib.request
+[?2004l[?2004h> for host in ['huggingface.co','pypi.org']:
+[?2004l[?2004h>     try:
+[?2004l[?2004h>         print(host, socket.gethostbyname(host))
+[?2004l[?2004h>     except Exception as e:
+[?2004l[?2004h>         print(host, 'DNS ERROR', repr(e))
+[?2004l[?2004h> try:
+[?2004l[?2004h>     r=urllib.request.urlopen('https://huggingface.co', timeout=5)
+[?2004l[?2004h>     print('HF status', r.status)
+[?2004l[?2004h> except Exception as e:
+[?2004l[?2004h>     print('HF ERROR', repr(e))
+[?2004l[?2004h> PY
+[?2004lhuggingface.co 150.107.3.176
+pypi.org 151.101.192.223
+HF ERROR URLError(TimeoutError('timed out'))
+[?2004hroot@0ccef502aeae:/app# pip --version && pip config list || true
+[?2004lpip 25.2 from /usr/local/lib/python3.13/site-packages/pip (python 3.13)
+[?2004hroot@0ccef502aeae:/app# find / -maxdepth 5 \( -iname '*huggingface*' -o -iname '*qwen*' -o -iname '*openthoughts*' -o -iname '*tokenizer*' \) 2>/dev/null | sed --n '1,200p'
+[?2004l[?2004hroot@0ccef502aeae:/app# python3 - <<'PY'
+[?2004l[?2004h> import urllib.request
+[?2004l[?2004h> for url in ['https://pypi.org/simple/','http://pypi.org/simple/','https://files.pythonhosted.org']:
+[?2004l[?2004h>     try:
+[?2004l[?2004h>         r=urllib.request.urlopen(url, timeout=5)
+[?2004l[?2004h>         print(url, 'OK', r.status)
+[?2004l[?2004h>     except Exception as e:
+[?2004l[?2004h>         print(url, 'ERROR', repr(e))
+[?2004l[?2004h> PY
+[?2004lhttps://pypi.org/simple/ OK 200
+http://pypi.org/simple/ ERROR <HTTPError 403: 'SSL is required'>
+https://files.pythonhosted.org ERROR <HTTPError 404: 'Not Found'>
+[?2004hroot@0ccef502aeae:/app# cat /etc/resolv.conf; echo '---'; cat /etc/hosts; echo '---'; ip route 2>/dev/null || true
+[?2004l# Generated by Docker Engine.
+# This file can be edited; Docker Engine will not make further changes once it
+# has been modified.
+
+nameserver 127.0.0.11
+options ndots:0
+
+# Based on host file: '/etc/resolv.conf' (internal resolver)
+# ExtServers: [host(192.168.65.7)]
+# Overrides: []
+# Option ndots from: internal
+---
+127.0.0.1	localhost
+::1	localhost ip6-localhost ip6-loopback
+fe00::	ip6-localnet
+ff00::	ip6-mcastprefix
+ff02::1	ip6-allnodes
+ff02::2	ip6-allrouters
+172.23.0.2	0ccef502aeae
+---
+[?2004hroot@0ccef502aeae:/app# python3 - <<'PY'
+[?2004l[?2004h> import socket, urllib.request
+[?2004l[?2004h> urls=[
+[?2004l[?2004h>  'http://huggingface.co',
+[?2004l[?2004h>  'https://hf-mirror.com',
+[?2004l[?2004h>  'https://cdn-lfs.huggingface.co',
+[?2004l[?2004h>  'https://datasets-server.huggingface.co',
+[?2004l[?2004h>  'https://raw.githubusercontent.com',
+[?2004l[?2004h>  'https://github.com',
+[?2004l[?2004h>  'https://www.modelscope.cn',
+[?2004l[?2004h>  'https://r.jina.ai/http://example.com',
+[?2004l[?2004h>  'https://pypi.org/simple/',
+[?2004l[?2004h> ]
+[?2004l[?2004h> for url in urls:
+[?2004l[?2004h>     host=url.split('//',1)[1].split('/',1)[0]
+[?2004l[?2004h>     try:
+[?2004l[?2004h>         print('DNS', host, socket.gethostbyname(host))
+[?2004l[?2004h>     except Exception as e:
+[?2004l[?2004h>         print('DNSERR', host, repr(e))
+[?2004l[?2004h> for url in urls:
+[?2004l[?2004h>     try:
+[?2004l[?2004h>         r=urllib.request.urlopen(url, timeout=6)
+[?2004l[?2004h>         print('OK ', url, r.status, r.headers.get('content-type'))
+[?2004l[?2004h>     except Exception as e:
+[?2004l[?2004h>         print('ERR', url, repr(e))
+[?2004l[?2004h> PY
+[?2004lDNS huggingface.co 150.107.3.176
+DNS hf-mirror.com 104.250.143.18
+DNS cdn-lfs.huggingface.co 108.160.162.102
+DNS datasets-server.huggingface.co 199.59.148.206
+DNS raw.githubusercontent.com 185.199.108.133
+DNS github.com 20.205.243.166
+DNS www.modelscope.cn 47.92.141.220
+DNS r.jina.ai 199.59.149.202
+DNS pypi.org 151.101.192.223
+ERR http://huggingface.co URLError(TimeoutError('timed out'))
+OK  https://hf-mirror.com 200 text/html; charset=utf-8
+ERR https://cdn-lfs.huggingface.co URLError(TimeoutError('timed out'))
+ERR https://datasets-server.huggingface.co URLError(TimeoutError('timed out'))
+ERR https://raw.githubusercontent.com URLError(TimeoutError('timed out'))
+OK  https://github.com 200 text/html; charset=utf-8
+OK  https://www.modelscope.cn 200 text/html; charset=utf-8
+ERR https://r.jina.ai/http://example.com URLError(TimeoutError('timed out'))
+OK  https://pypi.org/simple/ 200 text/html
+[?2004hroot@0ccef502aeae:/app# python3 - <<'PY'
+[?2004l[?2004h> import urllib.request
+[?2004l[?2004h> urls=[
+[?2004l[?2004h>  'https://hf-mirror.com/datasets/ryanmarten/OpenThoughts-1k-sample/raw/main/README.md',
+[?2004l[?2004h>  'https://hf-mirror.com/api/datasets/ryanmarten/OpenThoughts-1k-sample/tree/main',
+[?2004l[?2004h> ]
+[?2004l[?2004h> for url in urls:
+[?2004l[?2004h>     print('===== URL', url)
+[?2004l[?2004h>     try:
+[?2004l[?2004h>         req=urllib.request.Request(url, headers={'User-Agent':'python-urllib'})
+[?2004l[?2004h>         data=urllib.request.urlopen(req, timeout=20).read()
+[?2004l[?2004h>         name='/app/'+url.rsplit('/',2)[-2]+'_'+url.rsplit('/',1)[-1]
+[?2004l[?2004h>         if url.endswith('tree/main'):
+[?2004l[?2004h>             name='/app/tree.json'
+[?2004l[?2004h>         open(name,'wb').write(data)
+[?2004l[?2004h>         print('saved', name, len(data), 'bytes')
+[?2004l[?2004h>         print(data[:12000].decode('utf-8','replace'))
+[?2004l[?2004h>     except Exception as e:
+[?2004l[?2004h>         print('ERROR', repr(e))
+[?2004l[?2004h> PY
+[?2004l===== URL https://hf-mirror.com/datasets/ryanmarten/OpenThoughts-1k-sample/raw/main/README.md
+saved /app/main_README.md 8483 bytes
+---
+configs:
+- config_name: default
+  data_files:
+  - split: train
+    path: data/train-*
+- config_name: metadata
+  data_files:
+  - split: train
+    path: metadata/train-*
+dataset_info:
+- config_name: default
+  features:
+  - name: system
+    dtype: string
+  - name: conversations
+    list:
+    - name: from
+      dtype: string
+    - name: value
+      dtype: string
+  splits:
+  - name: train
+    num_bytes: 34160692.0
+    num_examples: 1000
+  download_size: 13994266
+  dataset_size: 34160692.0
+- config_name: metadata
+  features:
+  - name: problem
+    dtype: string
+  - name: deepseek_reasoning
+    dtype: string
+  - name: deepseek_solution
+    dtype: string
+  - name: ground_truth_solution
+    dtype: string
+  - name: domain
+    dtype: string
+  - name: source
+    dtype: string
+  - name: test_cases
+    dtype: string
+  - name: starter_code
+    dtype: string
+  splits:
+  - name: train
+    num_bytes: 43816917.80232895
+    num_examples: 1000
+  download_size: 13308003
+  dataset_size: 43816917.80232895
+---
+
+<p align="center">
+    <img src="open_thoughts.png" width="50%">
+</p>
+
+> [!NOTE]
+> We have released a paper for OpenThoughts! See our paper [here](https://arxiv.org/abs/2506.04178).
+
+<a href="https://github.com/bespokelabsai/curator/">
+ <img src="https://huggingface.co/datasets/bespokelabs/Bespoke-Stratos-17k/resolve/main/made_with_curator.png" alt="Made with Curator" width=200px>
+</a>
+
+# Open-Thoughts-1k-sample
+
+## Dataset Description
+
+- **Homepage:** https://www.open-thoughts.ai/
+- **Repository:** https://github.com/open-thoughts/open-thoughts
+- **Point of Contact:** [Open Thoughts Team](contact@open-thoughts.ai)
+
+This is a 1k sample of the [OpenThoughts-114k dataset](https://huggingface.co/datasets/open-thoughts/OpenThoughts-114k).
+
+Open synthetic reasoning dataset with high-quality examples covering math, science, code, and puzzles!
+
+Inspect the content with rich formatting with [Curator Viewer](https://curator.bespokelabs.ai/datasets/1389c194254c4ead96daaf145505c3d1).
+
+### Available Subsets
+
+**default** subset containing ready-to-train data used to finetune the [OpenThinker-7B](https://huggingface.co/open-thoughts/OpenThinker-7B) and [OpenThinker-32B](https://huggingface.co/open-thoughts/OpenThinker-32B) models:
+```
+ds = load_dataset("ryanmarten/OpenThoughts-1k-sample", split="train")
+```
+**metadata** subset containing extra columns used in dataset construction:
+- `problem`
+- `ground_truth_solution`
+- `deepseek_reasoning`
+- `deepseek_solution`
+- `domain`
+- `source`
+- `test_cases` (code only)
+- `starter_code`(code only)
+
+```
+ds = load_dataset("ryanmarten/OpenThoughts-1k-sample", "metadata", split="train")
+```
+
+# OpenThinker Models
+
+The numbers reported in the tables below are evaluated with our open-source tool [Evalchemy](https://github.com/mlfoundations/Evalchemy).
+
+|                             | AIME24   | MATH500 | GPQA-Diamond | LCBv2 Easy  | LCBv2 Medium  | LCBv2 Hard  | LCBv2 All  |
+| --------------------------- | -------- | ------- | ------------ | ----------- | ------------- | ----------- | ---------- |
+| [OpenThinker-32B](https://huggingface.co/open-thoughts/OpenThinker-32B)             | 66       | 90.6    | 61.6         | 95.1        | 70.9          | 26.8        | 68.9       |
+| [OpenThinker-7B](https://huggingface.co/open-thoughts/OpenThinker-7B)              | 31.3     | 83.0    | 42.4         | 75.3        | 28.6          | 6.5         | 39.9       |
+| Bespoke-Stratos-7B          | 22.7     | 79.6    | 38.9         | 71.4        | 25.2          | 0.8         | 35.8       |
+| DeepSeek-R1-Distill-Qwen-7B | 60       | 88.2    | 46.9         | 79.7        | 45.1          | 14.6        | 50.1       |
+| gpt-4o-0513                 | 8.7      | 75.8    | 46.5         | 87.4        | 42.7          | 8.9         | 50.5       |
+| o1-mini                     | 64       | 85.6    | 60           | 92.8        | 74.7          | 39.8        | 72.8       |
+
+We are fully open-source. Our [model weights](https://huggingface.co/open-thoughts), [datasets](https://huggingface.co/open-thoughts), [data generation code](https://github.com/open-thoughts/open-thoughts), [evaluation code](https://github.com/mlfoundations/Evalchemy), and [training code](https://github.com/hiyouga/LLaMA-Factory) are all publicly available. 
+
+|  | Open Weights | Open Data | Open Code | 
+|--|--------------|-----------| --------- |
+|OpenThinker-32B|✅|[✅](https://huggingface.co/datasets/open-thoughts/OpenThoughts-114k)|[✅](https://github.com/open-thoughts/open-thoughts) |
+|OpenThinker-7B|✅|[✅](https://huggingface.co/datasets/open-thoughts/OpenThoughts-114k)|[✅](https://github.com/open-thoughts/open-thoughts) |
+|Bespoke-Stratos-7B|✅|[✅](https://huggingface.co/datasets/bespokelabs/Bespoke-Stratos-17k)|[✅](https://github.com/bespokelabsai/curator/tree/main/examples/bespoke-stratos-data-generation)|
+|DeepSeek-R1-Distill models|✅|❌|❌|
+|OpenAI/Gemini|❌|❌|❌|❌|
+
+We are actively working towards improving the dataset, so please stay tuned!
+
+# Data Curation Recipe
+
+Code
+- [BAAI/TACO](https://huggingface.co/datasets/BAAI/TACO)
+- [codeparrot/apps](https://huggingface.co/datasets/codeparrot/apps)
+- [deepmind/code_contests](https://huggingface.co/datasets/deepmind/code_contests)
+- [MatrixStudio/Codeforces-Python-Submissions](https://huggingface.co/datasets/MatrixStudio/Codeforces-Python-Submissions)
+
+Math
+- [AI-MO/NuminaMath-CoT](https://huggingface.co/datasets/AI-MO/NuminaMath-CoT)
+
+Science
+- [camel-ai/chemistry](https://huggingface.co/datasets/camel-ai/chemistry)
+- [camel-ai/biology](https://huggingface.co/datasets/camel-ai/biology)
+- [camel-ai/physics](https://huggingface.co/datasets/camel-ai/physics)
+
+Puzzle
+- [INK-USC/riddle_sense](https://huggingface.co/datasets/INK-USC/riddle_sense)
+
+Using a curated mix of the datasets above, we generate reasoning traces from DeepSeek-R1 and verify correctness to construct the final dataset.
+
+![diagram](diagram.png)
+
+The full code for the data generation pipeline is publicly available [in our github repo](https://github.com/open-thoughts/open-thoughts).
+
+
+# Links
+- 📝 [OpenThoughts Paper](https://arxiv.org/abs/2506.04178)
+- 📊 [OpenThinker-32B Blog Post](https://www.open-thoughts.ai/blog/scale)
+- 📊 [Measuing Reasoning with Evalchemy Blog Post](https://www.open-thoughts.ai/blog/measure)
+- 📊 [Open Thoughts Launch Blog Post](https://www.open-thoughts.ai/blog/launch)
+- 💻 [Open Thoughts GitHub Repository](https://github.com/open-thoughts/open-thoughts)
+- 🧠 [OpenThoughts-114k dataset](https://huggingface.co/datasets/open-thoughts/OpenThoughts-114k) - this dataset.
+- 🤖 [OpenThinker-32B model](https://huggingface.co/open-thoughts/OpenThinker-32B)
+- 🤖 [OpenThinker-7B model](https://huggingface.co/open-thoughts/OpenThinker-7B)
+- 📊 [Bespoke-Stratos Blog Post](https://www.bespokelabs.ai/blog/bespoke-stratos-the-unreasonable-effectiveness-of-reasoning-distillation)
+- 🧠 [Bespoke-Stratos-17k dataset](https://huggingface.co/datasets/bespokelabs/Bespoke-Stratos-17k)
+- 🤖 [Bespoke-Stratos-32B model](https://huggingface.co/bespokelabs/Bespoke-Stratos-32B)
+- 🤖 [Bespoke-Stratos-7B model](https://huggingface.co/bespokelabs/Bespoke-Stratos-7B)
+- 💻 [Curator Viewer](https://curator.bespokelabs.ai/datasets/1389c194254c4ead96daaf145505c3d1)
+
+# Citation
+```
+@misc{guha2025openthoughtsdatarecipesreasoning,
+  title={OpenThoughts: Data Recipes for Reasoning Models}, 
+  author={Etash Guha and Ryan Marten and Sedrick Keh and Negin Raoof and Georgios Smyrnis and Hritik Bansal and Marianna Nezhurina and Jean Mercat and Trung Vu and Zayne Sprague and Ashima Suvarna and Benjamin Feuer and Liangyu Chen and Zaid Khan and Eric Frankel and Sachin Grover and Caroline Choi and Niklas Muennighoff and Shiye Su and Wanjia Zhao and John Yang and Shreyas Pimpalgaonkar and Kartik Sharma and Charlie Cheng-Jie Ji and Yichuan Deng and Sarah Pratt and Vivek Ramanujan and Jon Saad-Falcon and Jeffrey Li and Achal Dave and Alon Albalak and Kushal Arora and Blake Wulfe and Chinmay Hegde and Greg Durrett and Sewoong Oh and Mohit Bansal and Saadia Gabriel and Aditya Grover and Kai-Wei Chang and Vaishaal Shankar and Aaron Gokaslan and Mike A. Merrill and Tatsunori Hashimoto and Yejin Choi and Jenia Jitsev and Reinhard Heckel and Maheswaran Sathiamoorthy and Alexandros G. Dimakis and Ludwig Schmidt},
+  year={2025},
+  eprint={2506.04178},
+  archivePrefix={arXiv},
+  primaryClass={cs.LG},
+  url={https://arxiv.org/abs/2506.04178}, 
+}
+```
+===== URL https://hf-mirror.com/api/datasets/ryanmarten/OpenThoughts-1k-sample/tree/main
+saved /app/tree.json 1267 bytes
+[{"type":"directory","oid":"05c74697ba590d4a024866bb1e605cebd36bc57d","size":0,"path":"data"},{"type":"directory","oid":"8235d93f1eac18fca8a28d699409459d0d2edfda","size":0,"path":"metadata"},{"type":"file","oid":"1ef325f1b111266a6b26e0196871bd78baa8c2f3","size":2461,"path":".gitattributes"},{"type":"file","oid":"0c285fdab50801853b2ad44c326b0840a6c68d92","size":8483,"path":"README.md"},{"type":"file","oid":"02648fc8b7490f0446b9b14bcbf025ad1922f8ec","size":471611,"lfs":{"oid":"04699a3588cfb4070caa730ffbc61850d42d6e7d0e41cb315d9d6ad59866e13b","size":471611,"pointerSize":131},"xetHash":"290e1d8b4111fa84035ea89185629f2df388fe560526c8cd7cf5525bf34d5798","path":"diagram.png"},{"type":"file","oid":"4e8b2bf369de464a7a5178d69df6ba71e9424ded","size":259629,"lfs":{"oid":"274c015b29dc13347b0b3acb217d8e31f5eca32f6a06a159b739f67dc9350f78","size":259629,"pointerSize":131},"xetHash":"a01d7864d528ed3512712744735e85df71523ab4e081986ed08d42b531f730aa","path":"diagram_dark.png"},{"type":"file","oid":"dd58fa1dfafc05575e3b44da19989de5269ea7b9","size":15317,"lfs":{"oid":"36478f501f8adda7db45abd4372bd979c98cc6b05a342c37f04da3279bcc5449","size":15317,"pointerSize":130},"xetHash":"bf8a88942ab380a551001beda97a96fa37b78b98b7bf791f5f59aad261f2fe3e","path":"open_thoughts.png"}]
+[?2004hroot@0ccef502aeae:/app# python3 - <<'PY'
+[?2004l[?2004h> import urllib.request, json
+[?2004l[?2004h> base='https://hf-mirror.com/api/datasets/ryanmarten/OpenThoughts-1k-sample/tree/main/'
+[?2004l[?2004h> for d in ['metadata','data']:
+[?2004l[?2004h>     url=base+d
+[?2004l[?2004h>     print('=====', url)
+[?2004l[?2004h>     try:
+[?2004l[?2004h>         data=json.load(urllib.request.urlopen(url, timeout=30))
+[?2004l[?2004h>         print(json.dumps(data, indent=2)[:12000])
+[?2004l[?2004h>         open('/app/tree_'+d+'.json','w').write(json.dumps(data))
+[?2004l[?2004h>     except Exception as e:
+[?2004l[?2004h>         print('ERROR', repr(e))
+[?2004l[?2004h> PY
+[?2004l===== https://hf-mirror.com/api/datasets/ryanmarten/OpenThoughts-1k-sample/tree/main/metadata
+[
+  {
+    "type": "file",
+    "oid": "59b0f84a2c2c4fbcec6a4df4d5795c14c2c85078",
+    "size": 13308003,
+    "lfs": {
+      "oid": "235faa2830b56e8e8bc863c72cdefe1cc2a6a402129ec9a623360f95a7215323",
+      "size": 13308003,
+      "pointerSize": 133
+    },
+    "xetHash": "34b67fac05fc924de663a0bb77ce18813ecaf32fd21b0fee79b1e8d50fe6e298",
+    "path": "metadata/train-00000-of-00001.parquet"
+  }
+]
+===== https://hf-mirror.com/api/datasets/ryanmarten/OpenThoughts-1k-sample/tree/main/data
+[
+  {
+    "type": "file",
+    "oid": "d8902c781040d992f5d7e22b036fde00abf43ef3",
+    "size": 13994266,
+    "lfs": {
+      "oid": "32c296a2fb339f38543c7c16161c370c3f8b532c7c655fcdfe3ac031b45b41e0",
+      "size": 13994266,
+      "pointerSize": 133
+    },
+    "xetHash": "818f40c6e348a37855a220bcb9bfddf44c3ddffb85a67c927c9ec5db730ca87f",
+    "path": "data/train-00000-of-00001.parquet"
+  }
+]
+[?2004hroot@0ccef502aeae:/app# pip install -q datasets transformers
+[?2004l[33mWARNING: Retrying (Retry(total=4, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ReadTimeoutError("HTTPSConnectionPool(host='pypi.org', port=443): Read timed out. (read timeout=15)")': /simple/dill/[0m[33m
+[0m[33mWARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.[0m[33m
+[0m
+[1m[[0m[34;49mnotice[0m[1;39;49m][0m[39;49m A new release of pip is available: [0m[31;49m25.2[0m[39;49m -> [0m[32;49m26.3[0m
+[1m[[0m[34;49mnotice[0m[1;39;49m][0m[39;49m To update, run: [0m[32;49mpip install --upgrade pip[0m
+[?2004hroot@0ccef502aeae:/app# python3 - <<'PY'
+[?2004l[?2004h> import datasets, transformers, tokenizers
+[?2004l[?2004h> try:
+[?2004l[?2004h>     import pyarrow
+[?2004l[?2004h>     print('pyarrow', pyarrow.__version__)
+[?2004l[?2004h> except Exception as e:
+[?2004l[?2004h>     print('pyarrow missing', repr(e))
+[?2004l[?2004h> print('datasets', datasets.__version__)
+[?2004l[?2004h> print('transformers', transformers.__version__)
+[?2004l[?2004h> print('tokenizers', tokenizers.__version__)
+[?2004l[?2004h> PY
+[?2004lgrep -in -E 'token|deepseek|science|domain|metadata' /app/main_README.md | sed -n '1,200p'
+python3 - <<'PY'
+import urllib.request, os, time
+url='https://hf-mirror.com/datasets/ryanmarten/OpenThoughts-1k-sample/resolve/main/metadata/train-00000-of-00001.parquet?download=true'
+out='/app/metadata.parquet'
+print('downloading', url)
+req=urllib.request.Request(url, headers={'User-Agent':'python-urllib/3.13'})
+start=time.time()
+with urllib.request.urlopen(req, timeout=60) as r, open(out,'wb') as f:
+    total=0
+    while True:
+        chunk=r.read(1024*1024)
+        if not chunk: break
+        f.write(chunk); total += len(chunk)
+print('saved', out, total, 'bytes in', round(time.time()-start,1),'s')
+PY
+[transformers] PyTorch was not found. Models won't be available and only tokenizers, configuration and file/data utilities can be used.
+pyarrow 26.0.1
+datasets 5.1.0
+transformers 5.22.1
+tokenizers 0.23.3
+[?2004hroot@0ccef502aeae:/app# grep -in -E 'token|deepseek|science|domain|metadata' /app/main_README.md | sed -n '1,200p'
+[?2004l7:- config_name: metadata
+10:    path: metadata/train-*
+28:- config_name: metadata
+32:  - name: deepseek_reasoning
+34:  - name: deepseek_solution
+38:  - name: domain
+75:Open synthetic reasoning dataset with high-quality examples covering math, science, code, and puzzles!
+85:**metadata** subset containing extra columns used in dataset construction:
+88:- `deepseek_reasoning`
+89:- `deepseek_solution`
+90:- `domain`
+96:ds = load_dataset("ryanmarten/OpenThoughts-1k-sample", "metadata", split="train")
+108:| DeepSeek-R1-Distill-Qwen-7B | 60       | 88.2    | 46.9         | 79.7        | 45.1          | 14.6        | 50.1       |
+119:|DeepSeek-R1-Distill models|✅|❌|❌|
+135:Science
+143:Using a curated mix of the datasets above, we generate reasoning traces from DeepSeek-R1 and verify correctness to construct the final dataset.
+[?2004hroot@0ccef502aeae:/app# python3 - <<'PY'
+[?2004l[?2004h> import urllib.request, os, time
+[?2004l[?2004h> url='https://hf-mirror.com/datasets/ryanmarten/OpenThoughts-1k-sample/resolve/main/metadata/train-00000-of-00001.parquet?download=true'
+[?2004l[?2004h> out='/app/metadata.parquet'
+[?2004l[?2004h> print('downloading', url)
+[?2004l[?2004h> req=urllib.request.Request(url, headers={'User-Agent':'python-urllib/3.13'})
+[?2004l[?2004h> start=time.time()
+[?2004l[?2004h> with urllib.request.urlopen(req, timeout=60) as r, open(out,'wb') as f:
+[?2004l[?2004h>     total=0
+[?2004l[?2004h>     while True:
+[?2004l[?2004h>         chunk=r.read(1024*1024)
+[?2004l[?2004h>         if not chunk: break
+[?2004l[?2004h>         f.write(chunk); total += len(chunk)
+[?2004l[?2004h> print('saved', out, total, 'bytes in', round(time.time()-start,1),'s')
+[?2004l[?2004h> PY
+[?2004ldownloading https://hf-mirror.com/datasets/ryanmarten/OpenThoughts-1k-sample/resolve/main/metadata/train-00000-of-00001.parquet?download=true
+saved /app/metadata.parquet 13308003 bytes in 14.5 s
+[?2004hroot@0ccef502aeae:/app# python3 - <<'PY'
+[?2004l[?2004h> import pyarrow.parquet as pq
+[?2004l[?2004h> from collections import Counter
+[?2004l[?2004h> path='/app/metadata.parquet'
+[?2004l[?2004h> t=pq.read_table(path)
+[?2004l[?2004h> print('rows', t.num_rows)
+[?2004l[?2004h> print('columns', t.column_names)
+[?2004l[?2004h> print('schema')
+[?2004l[?2004h> print(t.schema)
+[?2004l[?2004h> domains=t.column('domain').to_pylist()
+[?2004l[?2004h> print('domain counts', Counter(domains))
+[?2004l[?2004h> for col in t.column_names:
+[?2004l[?2004h>     vals=t.column(col).to_pylist()
+[?2004l[?2004h>     print('col', col, 'nulls', sum(v is None for v in vals), 'maxchars', max((len(v) if v else 0) for v in vals))
+[?2004l[?2004h> idx=next(i for i,d in enumerate(domains) if d=='science')
+[?2004l[?2004h> print('first science index', idx)
+[?2004l[?2004h> for col in ['problem','deepseek_reasoning','deepseek_solution','ground_truth_solution','domain','source']:
+[?2004l[?2004h>     v=t.column(col)[idx].as_py()
+[?2004l[?2004h>     print('---', col, '---')
+[?2004l[?2004h>     print((v[:1000] if isinstance(v,str) else v))
+[?2004l[?2004h> PY
+[?2004lrows 1000
+columns ['problem', 'deepseek_reasoning', 'deepseek_solution', 'ground_truth_solution', 'domain', 'source', 'test_cases', 'starter_code']
+schema
+problem: string
+deepseek_reasoning: string
+deepseek_solution: string
+ground_truth_solution: string
+domain: string
+source: string
+test_cases: string
+starter_code: string
+-- schema metadata --
+huggingface: '{"info": {"features": {"problem": {"dtype": "string", "_typ' + 406
+domain counts Counter({'math': 792, 'code': 167, 'puzzle': 15, 'physics': 10, 'chemistry': 9, 'biology': 7})
+col problem nulls 0 maxchars 4659
+col deepseek_reasoning nulls 0 maxchars 100209
+col deepseek_solution nulls 0 maxchars 7748
+col ground_truth_solution nulls 193 maxchars 4612
+col domain nulls 0 maxchars 9
+col source nulls 0 maxchars 17
+col test_cases nulls 833 maxchars 1928189
+col starter_code nulls 833 maxchars 299
+Traceback (most recent call last):
+  File [35m"<stdin>"[0m, line [35m14[0m, in [35m<module>[0m
+[1;35mStopIteration[0m
+[?2004hroot@0ccef502aeae:/app# export HF_ENDPOINT=https://hf-mirror.com
+[?2004l[?2004hroot@0ccef502aeae:/app# python3 - <<'PY'
+[?2004l[?2004h> from transformers import AutoTokenizer
+[?2004l[?2004h> name='Qwen/Qwen2.5-1.5B-Instruct'
+[?2004l[?2004h> print('loading', name)
+[?2004l[?2004h> tok=AutoTokenizer.from_pretrained(name, trust_remote_code=False)
+[?2004l[?2004h> print('loaded', type(tok), tok.__class__.__name__, 'vocab', tok.vocab_size)
+[?2004l[?2004h> print(tok('Hello world')['input_ids'])
+[?2004l[?2004h> PY
+[?2004l[transformers] PyTorch was not found. Models won't be available and only tokenizers, configuration and file/data utilities can be used.
+loading Qwen/Qwen2.5-1.5B-Instruct
+config.json:   0%|                                                                                                                   | 0.00/660 [00:00<?, ?B/s]config.json: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████| 660/660 [00:00<00:00, 98.8kB/s]
+tokenizer_config.json:   0%|                                                                                                       | 0.00/7.30k [00:00<?, ?B/s]tokenizer_config.json: 100%|██████████████████████████████████████████████████████████████████████████████████████████████| 7.30k/7.30k [00:00<00:00, 29.9MB/s]
+vocab.json:   0%|                                                                                                                  | 0.00/2.78M [00:00<?, ?B/s]vocab.json: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████| 2.78M/2.78M [00:04<00:00, 645kB/s]vocab.json: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████| 2.78M/2.78M [00:04<00:00, 645kB/s]
+merges.txt:   0%|                                                                                                                  | 0.00/1.67M [00:00<?, ?B/s]merges.txt: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████| 1.67M/1.67M [00:02<00:00, 778kB/s]merges.txt: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████| 1.67M/1.67M [00:02<00:00, 778kB/s]
+tokenizer.json:   0%|                                                                                                              | 0.00/7.03M [00:00<?, ?B/s]tokenizer.json: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████| 7.03M/7.03M [00:04<00:00, 1.74MB/s]tokenizer.json: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████| 7.03M/7.03M [00:04<00:00, 1.73MB/s]
+loaded <class 'transformers.models.qwen2.tokenization_qwen2.Qwen2Tokenizer'> Qwen2Tokenizer vocab 151643
+[9707, 1879]
+[?2004hroot@0ccef502aeae:/app# python3 - <<'PY'
+[?2004l[?2004h> import pyarrow.parquet as pq
+[?2004l[?2004h> from collections import Counter
+[?2004l[?2004h> t=pq.read_table('/app/metadata.parquet')
+[?2004l[?2004h> domains=t.column('domain').to_pylist()
+[?2004l[?2004h> for i,d in enumerate(domains):
+[?2004l[?2004h>     if d not in ('math','code','puzzle'):
+[?2004l[?2004h>         row={c:t.column(c)[i].as_py() for c in t.column_names}
+[?2004l[?2004h>         print('='*40, i, row['domain'], row['source'])
+[?2004l[?2004h>         print('PROBLEM:', repr(row['problem'][:500]))
+[?2004l[?2004h>         print('DEEPSEEK_REASONING:', repr(row['deepseek_reasoning'][:700]))
+[?2004l[?2004h>         print('DEEPSEEK_SOLUTION:', repr(row['deepseek_solution'][:500]))
+[?2004l[?2004h>         print('GROUND_TRUTH:', repr(row['ground_truth_solution'][:300] if row['ground_truth_solution'] else None))
+[?2004l[?2004h> PY
+[?2004l======================================== 5 biology camelai_biology
+PROBLEM: 'What are the specific mechanisms by which exposure to lead affects the developing brain, and how can we mitigate the harmful effects of lead exposure on neurodevelopment?'
+DEEPSEEK_REASONING: "Okay, so I need to figure out the specific mechanisms by which lead exposure affects the developing brain and how to mitigate those harmful effects. Let me start by recalling what I know about lead and neurodevelopment. \n\nLead is a toxic metal, right? I remember hearing that children are especially vulnerable. But why exactly? Maybe because their brains are still developing. The developing brain is more sensitive to toxins. But what does lead actually do at a cellular or molecular level?\n\nI think lead interferes with neurotransmitters. Like, maybe it disrupts the release or uptake of certain chemicals in the brain. For example, glutamate or GABA? Or maybe dopamine? I'm not sure. Also, lead m"
+DEEPSEEK_SOLUTION: 'The harmful effects of lead exposure on the developing brain involve multiple interconnected mechanisms, each contributing to neurodevelopmental impairments. Below is a detailed breakdown of these mechanisms and evidence-based mitigation strategies:\n\n---\n\n### **Mechanisms of Lead-Induced Neurotoxicity**\n\n1. **Disruption of Calcium Signaling**:\n   - Lead (Pb²⁺) mimics calcium (Ca²⁺), entering neurons via voltage-gated calcium channels and binding to calcium-dependent proteins (e.g., calmodulin). '
+GROUND_TRUTH: None
+======================================== 95 biology camelai_biology
+PROBLEM: 'How does an increase in body weight affect the biomechanics of a vertical jump?'
+DEEPSEEK_REASONING: "Okay, so I need to figure out how an increase in body weight affects the biomechanics of a vertical jump. Let me start by recalling what a vertical jump involves biomechanically. From what I remember, a vertical jump is a movement where someone propels themselves upward against gravity. It involves several phases: the countermovement (where you dip down), the propulsion phase (pushing up), and the flight phase. \n\nNow, body weight is essentially the force exerted by gravity on the body's mass. If someone's body weight increases, either through gaining muscle mass or fat, that would mean their mass has increased. But how does that affect the jump? Well, Newton's laws come into play here. The f"
+DEEPSEEK_SOLUTION: "An increase in body weight influences the biomechanics of a vertical jump through several interconnected mechanisms, with outcomes dependent on whether the weight gain is due to muscle (active mass) or fat (passive mass). Here's a structured analysis:\n\n### 1. **Force-Mass Relationship (Newtonian Mechanics)**\n   - **Force Production**: Vertical jump height depends on the net force applied during propulsion. According to \\( F = ma \\), acceleration (\\( a \\)) decreases if mass (\\( m \\)) increases wi"
+GROUND_TRUTH: None
+======================================== 96 chemistry camelai_chemistry
+PROBLEM: 'What are the steps involved in designing a drug that specifically targets an enzyme or receptor, and how can these steps be optimized to produce a more effective drug with fewer side effects?'
+DEEPSEEK_REASONING: "Okay, so I need to figure out the steps involved in designing a drug that specifically targets an enzyme or receptor, and how to optimize those steps for better effectiveness and fewer side effects. Let me start by breaking down what I know.\n\nFirst, drug design usually starts with identifying a target, right? Like, if a disease is caused by an overactive enzyme or a malfunctioning receptor, that enzyme or receptor becomes the target. But how exactly do they identify which target to go after? Maybe through understanding the disease mechanism. For example, in hypertension, the angiotensin-converting enzyme (ACE) is a target because it's involved in blood pressure regulation. So, step one is ta"
+DEEPSEEK_SOLUTION: 'Designing a drug that specifically targets an enzyme or receptor involves a multi-step process, each requiring careful optimization to enhance efficacy and minimize side effects. Below is a structured breakdown of the steps and optimization strategies:\n\n---\n\n### **1. Target Identification and Validation**\n- **Step**: Identify a biomolecule (enzyme/receptor) central to the disease mechanism using genomics, proteomics, and disease pathway analysis.\n- **Optimization Strategies**:\n  - Use CRISPR/Cas'
+GROUND_TRUTH: None
+======================================== 103 physics camelai_physics
+PROBLEM: '"How does the presence of non-geometric backgrounds impact the predictions of string theory on the evolution and structure of the universe?"'
+DEEPSEEK_REASONING: "Okay, so I need to figure out how non-geometric backgrounds affect string theory's predictions about the universe's evolution and structure. Let me start by recalling what I know about string theory and these backgrounds.\n\nFirst, string theory proposes that fundamental particles are vibrations of tiny strings. It requires extra dimensions beyond the usual four (3 space + 1 time). These extra dimensions are compactified, meaning they're curled up into small, complex shapes called Calabi-Yau manifolds. The geometry of these manifolds affects the physical properties we observe, like particle masses and forces.\n\nNow, non-geometric backgrounds... Hmm. I think these are configurations in string th"
+DEEPSEEK_SOLUTION: "The presence of non-geometric backgrounds in string theory significantly influences predictions about the universe's evolution and structure through several interconnected mechanisms:\n\n### 1. **Moduli Stabilization and Vacua Structure**\n   - **Non-geometric Fluxes**: These fluxes (e.g., Q-flux, R-flux) provide additional tools to stabilize the moduli (shape/size of extra dimensions), which determine the effective 4D physics. Unlike geometric fluxes, they can stabilize moduli in regimes where tra"
+GROUND_TRUTH: None
+======================================== 201 biology camelai_biology
+PROBLEM: '"How does metabolic flux analysis help us understand the metabolic pathways in cells and how can it be used to optimize the production of valuable compounds in biotechnology?"'
+DEEPSEEK_REASONING: "Okay, so I need to figure out how metabolic flux analysis (MFA) helps understand metabolic pathways and how it's used in biotech to optimize producing valuable compounds. Let me start by recalling what I know about MFA. \n\nMetabolic flux analysis... I think it's a method used to determine the flow of metabolites through a metabolic network. Fluxes are the rates at which metabolites are converted through different enzymes and pathways. So, by analyzing these fluxes, researchers can understand which pathways are active under certain conditions, right? That makes sense because cells adjust their metabolism based on their environment, like when they have plenty of nutrients versus when they're st"
+DEEPSEEK_SOLUTION: '**Metabolic Flux Analysis (MFA): Understanding Pathways and Biotech Optimization**\n\n**1. Core Concept of MFA**  \nMFA quantifies the flow of metabolites through biochemical pathways, using stoichiometric models and mass balance principles. At steady-state, metabolite accumulation is zero, enabling flux calculations via linear equations. Isotope labeling (e.g., ¹³C) refines these models by tracing carbon atoms, resolving underdetermined systems and enhancing precision.\n\n**2. Insights into Metaboli'
+GROUND_TRUTH: None
+======================================== 231 physics camelai_physics
+PROBLEM: 'How can the study of string theory in the presence of D-branes be applied to investigate the properties of condensed matter systems, such as topological insulators and superconductors?'
+DEEPSEEK_REASONING: 'Okay, so I need to figure out how string theory, specifically involving D-branes, can be used to study condensed matter systems like topological insulators and superconductors. Hmm. Let me start by recalling what I know about string theory and D-branes. \n\nString theory is a framework in theoretical physics that attempts to reconcile quantum mechanics and general relativity. D-branes are a type of extended object in string theory where open strings can end. They are dynamical objects where the endpoints of open strings are fixed. D-branes have been crucial in understanding dualities in string theory and the AdS/CFT correspondence.\n\nNow, condensed matter systems, topological insulators, and su'
+DEEPSEEK_SOLUTION: "The application of string theory, particularly involving D-branes, to condensed matter systems like topological insulators and superconductors leverages several advanced theoretical frameworks and dualities. Here's a structured synthesis of the key connections and methodologies:\n\n### 1. **Holographic Principles and AdS/CFT Correspondence**\n   - **AdS/CMT Applications**: The Anti-de Sitter/Conformal Field Theory (AdS/CFT) correspondence allows modeling strongly correlated condensed matter systems"
+GROUND_TRUTH: None
+======================================== 278 physics camelai_physics
+PROBLEM: "What is the resistance force acting on a steel ball with a radius of 2 cm as it moves through a fluid with a viscosity of 0.1 Pa.s and velocity of 5 m/s in a laminar flow regime? (Assuming the fluid's density is 1 kg/m³)"
+DEEPSEEK_REASONING: "Okay, so I need to find the resistance force acting on a steel ball moving through a fluid. The given parameters are: radius of the ball is 2 cm, fluid viscosity is 0.1 Pa.s, velocity is 5 m/s, and the fluid density is 1 kg/m³. The flow is laminar. Hmm, right. \n\nFirst, resistance force in a fluid... I remember that in fluid dynamics, the drag force is the resistance force experienced by an object moving through a fluid. For a sphere moving in a laminar flow, maybe I should use Stokes' Law? Let me recall. Stokes' Law is applicable when the flow is laminar, which is the case here. \n\nStokes' Law formula is F = 6π * η * r * v, where η is the viscosity, r is the radius of the sphere, and v is the"
+DEEPSEEK_SOLUTION: "To determine the resistance force acting on the steel ball in a laminar flow regime, we first calculate the Reynolds number (Re) to assess the flow regime validity for Stokes' Law. \n\n**Given:**  \n- Radius (r) = 2 cm = 0.02 m  \n- Diameter (d) = 2r = 0.04 m  \n- Viscosity (η) = 0.1 Pa·s  \n- Velocity (v) = 5 m/s  \n- Fluid density (ρ) = 1 kg/m³  \n\n**1. Reynolds Number Calculation:**  \n\\[\n\\text{Re} = \\frac{\\rho v d}{\\eta} = \\frac{1 \\cdot 5 \\cdot 0.04}{0.1} = 2\n\\]  \nSince Re = 2 (> 1), Stokes' Law (val"
+GROUND_TRUTH: None
+======================================== 302 chemistry camelai_chemistry
+PROBLEM: 'What is the effect of surface area and temperature on the adsorption of carbon dioxide (CO2) gas on activated charcoal?'
+DEEPSEEK_REASONING: "Okay, let's try to figure out how surface area and temperature affect the adsorption of CO2 on activated charcoal. First, I remember that adsorption is when molecules stick to a surface. Activated charcoal is known for having a really large surface area because it's full of tiny pores. So maybe a larger surface area means more spots for CO2 to stick, right? That would increase adsorption. But wait, I should check if that's always the case. Maybe there's a point where increasing surface area doesn't help anymore, but I think generally, more surface area is better for adsorption.\n\nNow, about temperature. Adsorption can be exothermic or endothermic. For physical adsorption (physisorption), whic"
+DEEPSEEK_SOLUTION: "The adsorption of CO₂ on activated charcoal is influenced by **surface area** and **temperature** as follows:\n\n### 1. **Surface Area**\n   - **Direct Positive Effect**:  \n     Activated charcoal's efficacy arises from its highly porous structure, which maximizes surface area. A larger surface area provides more binding sites for CO₂ molecules, significantly enhancing adsorption capacity. This relationship is linear up to the point of surface saturation.  \n     - **Mechanism**: Physical adsorption"
+GROUND_TRUTH: None
+======================================== 351 physics camelai_physics
+PROBLEM: "How can the Grover's algorithm be applied to solve the Integer Factorization problem on a quantum computer, and what is the advantage of using quantum algorithms over classical algorithms for this problem?"
+DEEPSEEK_REASONING: "Okay, so I need to figure out how Grover's algorithm can be applied to solve the Integer Factorization problem on a quantum computer, and also understand the advantage of quantum algorithms over classical ones here. Let me start by recalling what I know about these topics.\n\nFirst, Integer Factorization is the process of breaking down a composite number into a product of smaller integers, specifically prime numbers. The difficulty of factoring large integers is the basis for the security of RSA encryption. Classical algorithms, like the General Number Field Sieve, take super-polynomial time, which makes them inefficient for very large numbers. This is why RSA is considered secure classically."
+DEEPSEEK_SOLUTION: "**Solution:**\n\n**Applying Grover's Algorithm to Integer Factorization:**\n\n1. **Problem Framing:**\n   - Integer Factorization can be framed as an unstructured search problem where the goal is to find a non-trivial divisor \\( p \\) of a composite number \\( N \\) within the range \\( [2, \\sqrt{N}] \\).\n\n2. **Oracle Design:**\n   - Construct a quantum oracle \\( O \\) that marks states corresponding to divisors of \\( N \\). For a candidate \\( k \\), the oracle checks if \\( N \\mod k = 0 \\). Mathematically:\n  "
+GROUND_TRUTH: None
+======================================== 367 chemistry camelai_chemistry
+PROBLEM: 'How can we modify existing antibiotics to overcome drug resistance in bacteria?'
+DEEPSEEK_REASONING: "Okay, so I need to figure out how to modify existing antibiotics to overcome drug resistance in bacteria. Let me start by understanding why antibiotics become ineffective. Bacteria develop resistance through various mechanisms like enzyme inactivation, target modification, efflux pumps, or reduced permeability. So, modifying existing antibiotics would involve countering these mechanisms.\n\nFirst, maybe I should look at each resistance mechanism and think of possible modifications. For example, if bacteria produce enzymes like beta-lactamases that break down penicillin, perhaps adding beta-lactamase inhibitors to the antibiotic could help. Wait, I think that's already done with drugs like amox"
+DEEPSEEK_SOLUTION: "To modify existing antibiotics and overcome bacterial drug resistance, a multifaceted approach targeting specific resistance mechanisms is essential. Here's a structured solution:\n\n### 1. **Counteract Enzymatic Inactivation**\n   - **Beta-Lactamase Inhibitors**: Integrate beta-lactamase inhibitors (e.g., clavulanic acid) into antibiotic formulations or chemically conjugate them to beta-lactam antibiotics (e.g., penicillins, cephalosporins) to protect the drug from degradation.\n   - **Structural M"
+GROUND_TRUTH: None
+======================================== 379 chemistry camelai_chemistry
+PROBLEM: 'What is the coordination number for the compound [Co(NH3)6]Cl3, and what type of isomerism can this compound exhibit?'
+DEEPSEEK_REASONING: "Okay, let's try to figure out the coordination number and possible isomerism for the compound [Co(NH3)6]Cl3. I'm a bit new to coordination chemistry, so I need to take it step by step.\n\nFirst, the coordination number. From what I remember, the coordination number is the number of ligand donor atoms attached to the central metal ion. In this complex, the formula is [Co(NH3)6]Cl3. The part inside the brackets is the coordination sphere, right? So the Co is the central metal ion, and NH3 molecules are the ligands. Each NH3 is a monodentate ligand, meaning each one donates one electron pair. Since there are 6 NH3 molecules attached to Co, that should mean the coordination number is 6. That part "
+DEEPSEEK_SOLUTION: "The compound [Co(NH3)6]Cl3 has a **coordination number of 6**. This is determined by the six ammonia (NH3) ligands directly bonded to the central cobalt ion within the coordination sphere. The chloride ions (Cl⁻) act as counterions to balance the +3 charge of the complex ion [Co(NH3)6]³⁺.\n\n**Regarding isomerism**, this compound **does not exhibit any type of isomerism**. Here's the reasoning:\n\n1. **Structural Isomerism**:  \n   - **Ionization isomerism**: Requires exchange between a ligand and a "
+GROUND_TRUTH: None
+======================================== 394 biology camelai_biology
+PROBLEM: 'How does the process of endocytosis aid in the uptake of nutrients by cells?'
+DEEPSEEK_REASONING: "Okay, let's try to figure out how endocytosis helps cells take in nutrients. I remember that endocytosis is a process where the cell membrane engulfs something to bring it into the cell. But I need to connect that to nutrient uptake specifically.\n\nFirst, what's endocytosis exactly? From what I recall, there are different types, like phagocytosis and pinocytosis. Phagocytosis is when cells take in large particles, maybe even whole microorganisms—like how immune cells eat bacteria. But how does that relate to nutrients? Maybe some cells use phagocytosis to take in big nutrient particles? But most nutrients are smaller, like glucose or amino acids. Those usually get in through transport protein"
+DEEPSEEK_SOLUTION: "Endocytosis facilitates nutrient uptake in cells through several key mechanisms, particularly for substances that cannot passively diffuse or be transported via membrane proteins. Here's a structured breakdown:\n\n1. **Types of Endocytosis Involved**:\n   - **Receptor-Mediated Endocytosis**: Enables selective uptake of specific nutrients bound to carrier proteins (e.g., cholesterol via LDL particles, iron via transferrin). Receptors on the cell surface recognize these complexes, triggering vesicle "
+GROUND_TRUTH: None
+======================================== 408 physics camelai_physics
+PROBLEM: 'What is the expected signal in the energy spectrum of a dark matter direct detection experiment that uses germanium detectors if the dark matter halo consists of WIMPs with masses ranging from 50 to 200 GeV/c² and a standard thermal relic cross section for their interaction with nucleons?'
+DEEPSEEK_REASONING: 'Okay, so I need to figure out the expected signal in the energy spectrum of a germanium detector for dark matter WIMPs with masses between 50 to 200 GeV/c² and a standard thermal relic cross section. Let me start by recalling what I know about dark matter direct detection experiments.\n\nFirst, dark matter particles, in this case WIMPs (Weakly Interacting Massive Particles), are thought to interact with nuclei in detectors like germanium. The interaction is typically a nuclear recoil from the WIMP collision. The expected signal would depend on several factors: the WIMP mass, the cross-section (which here is the standard thermal relic one), the velocity distribution of the WIMPs in the halo, an'
+DEEPSEEK_SOLUTION: 'The expected signal in the energy spectrum of a germanium-based dark matter detector for WIMPs with masses between 50–200 GeV/c² and a standard thermal relic cross-section (~1e-36 cm²) is characterized as follows:\n\n### **Key Features of the Energy Spectrum**\n1. **Recoil Energy Range**:\n   - **Low Mass (50 GeV)**: Maximum recoil energies for typical WIMP velocities (220 km/s) are ~13 keV, with the spectrum peaking at lower energies (few keV) and dropping steeply due to the velocity distribution a'
+GROUND_TRUTH: None
+======================================== 459 chemistry camelai_chemistry
+PROBLEM: 'How can we optimize the design and synthesis of potential drug candidates for the treatment of peptic ulcers, a common gastrointestinal disease, to improve their potency, selectivity, and safety?'
+DEEPSEEK_REASONING: "Okay, so I need to figure out how to optimize the design and synthesis of potential drug candidates for peptic ulcers. Let me start by recalling what peptic ulcers are. They're sores that develop in the lining of the stomach, lower esophagus, or small intestine, usually caused by factors like H. pylori infection or NSAID use. The main issue here is creating drugs that are more potent, selective, and safe. \n\nFirst, I should think about the current treatments. Common drugs include proton pump inhibitors (PPIs) like omeprazole, H2 receptor antagonists like ranitidine, antibiotics for H. pylori, and maybe antacids. But these have limitations. For example, PPIs can have side effects with long-ter"
+DEEPSEEK_SOLUTION: "To optimize the design and synthesis of drug candidates for peptic ulcers, a comprehensive strategy targeting potency, selectivity, and safety is essential. Here's a structured approach:\n\n### 1. **Target Identification and Validation**\n   - **H. pylori-Specific Targets**: Focus on virulence factors (e.g., urease, adhesion proteins) to reduce disruption of gut flora. Use structure-based drug design (e.g., crystallography) to exploit bacterial vs. human enzyme differences.\n   - **Acid Secretion**:"
+GROUND_TRUTH: None
+======================================== 505 chemistry camelai_chemistry
+PROBLEM: 'What is the concentration of copper (II) ions in a solution when a current of 0.5 A is passed through a copper (II) sulfate solution for 2 hours using a copper electrode? The mass of copper electrode is 12.5 g and the volume of the solution is 500 ml. The standard reduction potential of Cu2+ | Cu is 0.34 V.'
+DEEPSEEK_REASONING: "Okay, let's try to figure out the concentration of copper ions in the solution after electrolysis. Hmm, so the problem gives a current of 0.5 A for 2 hours, using copper electrodes in copper sulfate solution. The initial mass of the copper electrode is 12.5 g, and the solution volume is 500 mL. The standard reduction potential is given, but I wonder if that's needed here. Maybe for some side calculation, but maybe not. Let me start by recalling Faraday's laws of electrolysis because that's probably key here.\n\nFirst, when you pass current through a copper sulfate solution with copper electrodes, copper ions are deposited on the cathode and dissolved from the anode. Since both electrodes are c"
+DEEPSEEK_SOLUTION: "The concentration of copper (II) ions in the solution remains unchanged after electrolysis with copper electrodes. Here's the reasoning:\n\n1. **Electrolysis Reactions**:  \n   - **Anode (Oxidation)**: \\( \\text{Cu} \\rightarrow \\text{Cu}^{2+} + 2e^- \\)  \n   - **Cathode (Reduction)**: \\( \\text{Cu}^{2+} + 2e^- \\rightarrow \\text{Cu} \\)  \n\n   With copper electrodes, the moles of copper dissolved at the anode equal the moles deposited at the cathode. Thus, the net change in \\(\\text{Cu}^{2+}\\) concentrati"
+GROUND_TRUTH: None
+======================================== 543 chemistry camelai_chemistry
+PROBLEM: 'What is the standard enthalpy change for the following reaction, where 2 moles of solid iron (Fe) reacts with 1 mole of oxygen gas (O2) to produce 2 moles of solid iron (III) oxide (Fe2O3)? \n\n4Fe(s) + 3O2(g) -> 2Fe2O3(s)'
+DEEPSEEK_REASONING: "Okay, so I need to find the standard enthalpy change for the reaction where 2 moles of iron react with 1.5 moles of oxygen to form 1 mole of iron(III) oxide. Wait, actually the reaction given is 4Fe(s) + 3O2(g) → 2Fe2O3(s). So that's 4 moles of Fe reacting with 3 moles of O2 to produce 2 moles of Fe2O3. The question is asking for the standard enthalpy change for this reaction.\n\nHmm, standard enthalpy change of reaction, ΔH°rxn. Right, this is typically calculated using Hess's Law, where you take the sum of the standard enthalpies of formation (ΔHf°) of the products multiplied by their stoichiometric coefficients and subtract the sum of the standard enthalpies of formation of the reactants mu"
+DEEPSEEK_SOLUTION: 'The standard enthalpy change for the reaction \\(4\\text{Fe}(s) + 3\\text{O}_2(g) \\rightarrow 2\\text{Fe}_2\\text{O}_3(s)\\) is calculated using the standard enthalpies of formation (\\(\\Delta H_f^\\circ\\)) of the substances involved. \n\n**Step-by-Step Solution:**\n1. **Identify \\(\\Delta H_f^\\circ\\) values:**\n   - \\(\\Delta H_f^\\circ[\\text{Fe}_2\\text{O}_3(s)] = -824.2 \\, \\text{kJ/mol}\\) (from reference data).\n   - \\(\\Delta H_f^\\circ[\\text{Fe}(s)] = 0 \\, \\text{kJ/mol}\\) and \\(\\Delta H_f^\\circ[\\text{O}_2(g)]'
+GROUND_TRUTH: None
+======================================== 554 physics camelai_physics
+PROBLEM: 'A copper wire of 2mm radius is wrapped around a cylindrical core of radius 5cm and carries a current of 5A. Calculate the magnetic field at a distance of 10cm away from the center of the cylinder.'
+DEEPSEEK_REASONING: "Okay, so I need to calculate the magnetic field at a distance of 10 cm away from the center of a cylindrical core that has a copper wire wrapped around it. Let me start by understanding the problem step by step.\n\nFirst, the given data: the radius of the copper wire is 2 mm, the radius of the cylindrical core is 5 cm, the current through the wire is 5 A, and we need to find the magnetic field at 10 cm from the center of the cylinder. Hmm, wait, the core's radius is 5 cm, and the point where we need the field is 10 cm, which is outside the core. But the wire is wrapped around the core, so this sounds like a solenoid or a toroid maybe? Let me think.\n\nIf the wire is wrapped around a cylindrical "
+DEEPSEEK_SOLUTION: 'The magnetic field at a distance of 10 cm from the center of the cylindrical core is **0 Tesla**.\n\n**Step-by-Step Explanation:**\n\n1. **Problem Setup:**\n   - A copper wire (radius = 2 mm) is wrapped around a cylindrical core (radius = 5 cm) carrying a current \\( I = 5 \\, \\text{A} \\).\n   - Goal: Find the magnetic field at \\( r = 10 \\, \\text{cm} \\) (0.1 m) from the center of the cylinder.\n\n2. **Configuration Analysis:**\n   - The wire forms a solenoid-like structure around the core. For an ideal sol'
+GROUND_TRUTH: None
+======================================== 559 biology camelai_biology
+PROBLEM: '"How do lysosomes aid in the breakdown of macromolecules within a cell and what is the consequence of their malfunction?"'
+DEEPSEEK_REASONING: "Okay, so I need to figure out how lysosomes help break down macromolecules and what happens when they don't work right. Let me start by recalling what I know about lysosomes. From what I remember, lysosomes are organelles in cells that have enzymes to break down waste materials and cellular debris. They’re like the stomach of the cell, right? They digest things. But how exactly do they do that?\n\nFirst, the structure: lysosomes are membrane-bound sacs containing hydrolytic enzymes. These enzymes must be kept separate from the rest of the cell to prevent damage. The enzymes probably work best in an acidic environment, which the lysosome maintains. So the process might involve the lysosome fusi"
+DEEPSEEK_SOLUTION: 'Lysosomes are membrane-bound organelles essential for intracellular digestion and recycling. Their role in breaking down macromolecules involves several key mechanisms and processes:\n\n1. **Enzymatic Breakdown**:  \n   Lysosomes contain hydrolytic enzymes (e.g., proteases, lipases, nucleases, carbohydrases) that degrade proteins, lipids, nucleic acids, and carbohydrates into monomers (amino acids, fatty acids, nucleotides, sugars). These enzymes function optimally in the acidic pH (~4.5–5.0) maint'
+GROUND_TRUTH: None
+======================================== 566 physics camelai_physics
+PROBLEM: 'What is the magnetic moment of an electron in an external magnetic field of 2 tesla if its spin is parallel to the magnetic field vector?'
+DEEPSEEK_REASONING: "Okay, so I need to find the magnetic moment of an electron when its spin is parallel to an external magnetic field of 2 tesla. Let me start by recalling what I know about magnetic moments and electron spin. \n\nFirst, electrons have an intrinsic property called spin, which gives them a magnetic moment. I remember that the magnetic moment associated with the spin of an electron is called the Bohr magneton. But wait, what exactly is the Bohr magneton? Let me think. The Bohr magneton (μ_B) is a physical constant that represents the magnetic moment of an electron due to its spin or orbital angular momentum. Its value is approximately 9.274 × 10^-24 J/T (joules per tesla). \n\nBut wait, there's also "
+DEEPSEEK_SOLUTION: "The magnetic moment of an electron due to its spin is an intrinsic property and remains constant regardless of the external magnetic field strength. When the electron's spin is parallel to the magnetic field vector, the magnitude of its magnetic moment is determined by the **Bohr magneton (μ₈)**. \n\n### Key Formula:\n\\[\n\\mu = g_s \\cdot \\mu_B \\cdot m_s\n\\]\n- \\(g_s\\) (spin g-factor) ≈ 2 (dimensionless),\n- \\(\\mu_B\\) (Bohr magneton) ≈ \\(9.274 \\times 10^{-24} \\, \\text{J/T}\\),\n- \\(m_s\\) (spin magnetic qu"
+GROUND_TRUTH: None
+======================================== 663 physics camelai_physics
+PROBLEM: 'How does supersymmetry explain the existence of specific particles predicted by string theory, such as gravitinos and dilatons, and what experimental evidence supports this connection between string theory and supersymmetry?'
+DEEPSEEK_REASONING: "Okay, let's try to tackle this question about supersymmetry, string theory, and the particles like gravitinos and dilatons. Hmm, first, I need to recall what supersymmetry is. From what I remember, supersymmetry (SUSY) is a theoretical framework in particle physics that proposes a symmetry between bosons and fermions. So each particle has a superpartner with a different spin. For example, the partner of a boson would be a fermion and vice versa. That's why we hear about particles like squarks (partners of quarks) and neutralinos, which are mixtures of superpartners.\n\nNow, string theory is a bit more complex. String theory suggests that the fundamental particles are not point-like dots but ra"
+DEEPSEEK_SOLUTION: "Supersymmetry (SUSY) and string theory are deeply interconnected frameworks that predict specific particles like **gravitinos** and **dilatons**. Here's a structured explanation of their roles and the experimental landscape:\n\n### **1. Supersymmetry and String Theory's Particle Content**\n- **Gravitinos**:  \n  - **Role**: In supergravity (the low-energy limit of superstring theories), the gravitino emerges as the fermionic superpartner of the graviton (spin-2 boson mediating gravity). It has spin "
+GROUND_TRUTH: None
+======================================== 678 chemistry camelai_chemistry
+PROBLEM: 'How can the analysis of X-ray fluorescence spectra be used to identify the chemical composition and concentration of elements in a given sample, and what factors influence the accuracy and precision of this technique?'
+DEEPSEEK_REASONING: 'Okay, so I need to figure out how X-ray fluorescence (XRF) spectra analysis is used to determine the chemical composition and concentration of elements in a sample. Also, what factors affect the accuracy and precision of this method. Let me start by recalling what I know about XRF.\n\nFirst, XRF is a non-destructive analytical technique. It works by exciting a sample with X-rays, which causes the elements in the sample to emit secondary (fluorescent) X-rays. Each element has a unique set of characteristic X-rays, so by measuring the energy and intensity of these emitted X-rays, we can identify which elements are present and their concentrations.\n\nSo the basic steps would be: excitation of the '
+DEEPSEEK_SOLUTION: '**Analysis of X-ray Fluorescence (XRF) Spectra for Chemical Composition and Concentration Determination**\n\n1. **Principle of XRF**:  \n   - **Excitation**: A sample is irradiated with high-energy X-rays, causing inner-shell electrons to be ejected.  \n   - **Emission**: When outer-shell electrons fill these vacancies, characteristic fluorescent X-rays are emitted. Each element produces unique energy peaks (e.g., Fe Kα ≈ 6.4 keV, Pb Lβ ≈ 12.6 keV).  \n   - **Detection**: A detector (e.g., silicon dr'
+GROUND_TRUTH: None
+======================================== 800 physics camelai_physics
+PROBLEM: 'How can the use of superconductors in fusion reactors increase energy efficiency and reduce energy consumption?'
+DEEPSEEK_REASONING: "Okay, so I need to figure out how superconductors in fusion reactors can increase energy efficiency and reduce energy consumption. Let me start by recalling what I know about superconductors and fusion reactors. \n\nFirst, superconductors are materials that can conduct electricity without resistance when cooled below a certain temperature. That means they don't lose energy as heat, right? So using them in electrical systems should make those systems more efficient because there's less energy wasted. \n\nFusion reactors are designed to replicate the process that powers the sun, fusing atoms together to release energy. The most common approach I know is using a tokamak, which uses powerful magneti"
+DEEPSEEK_SOLUTION: "The integration of superconductors into fusion reactors enhances energy efficiency and reduces consumption through several interconnected mechanisms:\n\n1. **Elimination of Resistive Losses**:  \n   Superconductors operate with zero electrical resistance when cooled below critical temperatures. This eliminates energy dissipation as heat in the magnets, drastically reducing the power required to sustain magnetic fields. For example, ITER's superconducting magnets use 1/60th of the energy needed by r"
+GROUND_TRUTH: None
+======================================== 878 chemistry camelai_chemistry
+PROBLEM: 'A student is given a sample of an inorganic compound that contains only carbon and hydrogen. The sample has a mass of 0.500 g and, upon combustion, produces 1.442 g of carbon dioxide and 0.589 g of water. Determine the empirical formula of the compound.'
+DEEPSEEK_REASONING: "Okay, so I need to find the empirical formula of this inorganic compound that's made up only of carbon and hydrogen. The compound has a mass of 0.500 g, and when it's combusted, it produces 1.442 g of CO₂ and 0.589 g of H₂O. Hmm, right. Empirical formula is the simplest whole number ratio of the atoms in the compound. Since it's only C and H, the formula would be CxHy. \n\nFirst, I remember that when a hydrocarbon combusts, all the carbon in the compound ends up in CO₂, and all the hydrogen ends up in H₂O. So I need to find out how much carbon and hydrogen are in the original compound by looking at the masses of CO₂ and H₂O produced. \n\nLet me start with carbon. The molar mass of CO₂ is 44.01 g"
+DEEPSEEK_SOLUTION: 'The empirical formula of the compound is determined through the following steps:\n\n1. **Calculate moles of CO₂ and H₂O:**\n   - Moles of CO₂ = 1.442 g / 44.01 g/mol ≈ 0.03277 mol  \n     (Each mole of CO₂ contains 1 mole of C, so moles of C = 0.03277 mol)\n   - Moles of H₂O = 0.589 g / 18.015 g/mol ≈ 0.03269 mol  \n     (Each mole of H₂O contains 2 moles of H, so moles of H = 2 × 0.03269 ≈ 0.06538 mol)\n\n2. **Determine the molar ratio of C to H:**\n   - Divide both values by the smallest number of mole'
+GROUND_TRUTH: None
+======================================== 897 biology camelai_biology
+PROBLEM: 'How does genetic testing aid in the diagnosis and treatment of Multiple Endocrine Neoplasia (MEN) disorders in patients with a family history of the disease?'
+DEEPSEEK_REASONING: "Okay, so I need to figure out how genetic testing helps in diagnosing and treating Multiple Endocrine Neoplasia (MEN) disorders, especially in people with a family history. Let me start by recalling what MEN disorders are. I remember there are types like MEN1, MEN2A, MEN2B, maybe others? They involve tumors in endocrine glands. MEN1 has tumors in parathyroid, pituitary, pancreas. MEN2 is related to medullary thyroid carcinoma and pheochromocytoma.\n\nGenetic testing probably looks for specific mutations. For MEN1, there's the MEN1 gene, and for MEN2, it's the RET proto-oncogene. So if someone has a family history, testing them for these mutations can identify if they're at risk. But how exactl"
+DEEPSEEK_SOLUTION: 'Genetic testing plays a pivotal role in the diagnosis and treatment of Multiple Endocrine Neoplasia (MEN) disorders, particularly in individuals with a family history. Here’s a structured breakdown of its contributions:\n\n### **1. Diagnosis**  \n- **Confirmation of Clinical Suspicion**:  \n  Genetic testing identifies pathogenic variants in *MEN1* (for MEN1) or *RET* (for MEN2A/MEN2B), confirming a diagnosis in symptomatic patients or those with familial risk.  \n- **Presymptomatic Detection**:  \n  '
+GROUND_TRUTH: None
+======================================== 958 physics camelai_physics
+PROBLEM: 'What is the effect of lattice vibrations on the superconducting transition temperature (Tc) in high-temperature superconductors?'
+DEEPSEEK_REASONING: 'Okay, so I need to figure out how lattice vibrations affect the superconducting transition temperature, Tc, in high-temperature superconductors. Hmm. Let\'s start by recalling what I know about superconductivity. \n\nFrom basic superconductivity theory, conventional superconductors are explained by BCS theory, right? In BCS theory, electrons form Cooper pairs through interactions mediated by lattice vibrations, which are phonons. So in that case, lattice vibrations are essential because they provide the "glue" that holds the Cooper pairs together. The transition temperature Tc in BCS superconductors depends on the electron-phonon coupling strength. Stronger coupling would mean higher Tc, but th'
+DEEPSEEK_SOLUTION: "The effect of lattice vibrations (phonons) on the superconducting transition temperature \\( T_c \\) in high-temperature superconductors (HTS) is complex and multifaceted, involving both constructive and competing mechanisms. Here's a structured summary of the key considerations:\n\n1. **Conventional vs. Unconventional Pairing**:\n   - In conventional superconductors, phonons mediate Cooper pairing via the BCS mechanism, where stronger electron-phonon coupling typically enhances \\( T_c \\). However, i"
+GROUND_TRUTH: None
+======================================== 985 biology camelai_biology
+PROBLEM: '"How do variations in the human leukocyte antigen (HLA) region contribute to the genetic susceptibility of autoimmune diseases, and what specific autoimmune diseases have been linked to HLA gene mutations?"'
+DEEPSEEK_REASONING: "Okay, so I need to figure out how variations in the HLA region contribute to autoimmune diseases and which specific diseases are linked to HLA gene mutations. Let me start by recalling what I know about HLA. HLA stands for human leukocyte antigen, right? These are genes that code for proteins important in the immune system. They help the immune system distinguish between the body's own proteins and proteins made by foreign invaders like viruses and bacteria.\n\nNow, autoimmune diseases occur when the immune system mistakenly attacks the body's own cells. So maybe variations in HLA genes could make this distinction less accurate. But how exactly? I remember that HLA molecules present antigens t"
+DEEPSEEK_SOLUTION: 'Variations in the human leukocyte antigen (HLA) region significantly contribute to genetic susceptibility in autoimmune diseases through mechanisms involving antigen presentation, immune regulation, and molecular mimicry. Below is a structured summary of the key points and specific diseases linked to HLA gene mutations:\n\n### **Mechanisms of Contribution:**\n1. **Altered Antigen Presentation:**\n   - HLA molecules (Class I and II) present antigens to T-cells. Variants in HLA genes can alter peptide'
+GROUND_TRUTH: None
+[?2004hroot@0ccef502aeae:/app# export HF_ENDPOINT=https://hf-mirror.com
+[?2004l[?2004hroot@0ccef502aeae:/app# python3 - <<'PY'
+[?2004l[?2004h> from transformers import AutoTokenizer
+[?2004l[?2004h> import pyarrow.parquet as pq
+[?2004l[?2004h> from collections import defaultdict
+[?2004l[?2004h> 
+[?2004l[?2004h> t=pq.read_table('/app/metadata.parquet')
+[?2004l[?2004h> tok=AutoTokenizer.from_pretrained('Qwen/Qwen2.5-1.5B-Instruct')
+[?2004l[?2004h> 
+[?2004l[?2004h> def ntok(s):
+[?2004l[?2004h>     return len(tok.encode(s, add_special_tokens=False))
+[?2004l[?2004h> 
+[?2004l[?2004h> science={'physics','chemistry','biology'}
+[?2004l[?2004h> rows=t.to_pylist()
+[?2004l[?2004h> totals=defaultdict(lambda: {'n':0,'reasoning':0,'solution':0,'both_sep':0,'both_concat':0})
+[?2004l[?2004h> for r in rows:
+[?2004l[?2004h>     d=r['domain']
+[?2004l[?2004h>     if d in science:
+[?2004l[?2004h>         a=r['deepseek_reasoning'] or ''
+[?2004l[?2004h>         b=r['deepseek_solution'] or ''
+[?2004l[?2004h>         na=ntok(a); nb=ntok(b)
+[?2004l[?2004h>         x=totals[d]; x['n']+=1; x['reasoning']+=na; x['solution']+=nb
+[?2004l[?2004h>         x['both_sep']+=na+nb
+[?2004l[?2004h>         x['both_concat']+=ntok(a+'\n'+b)
+[?2004l[?2004h> print('Per domain:')
+[?2004l[?2004h> for k,v in totals.items():
+[?2004l[?2004h>     print(k, v)
+[?2004l[?2004h> allv={k:sum(v[k] for v in totals.values()) for k in ['n','reasoning','solution','both_sep','both_concat']}
+[?2004l[?2004h> print('SCIENCE TOTAL:', allv)
+[?2004l[?2004h> # also per-row top counts, maybe inspect exact
+[?2004l[?2004h> for i,r in enumerate(rows):
+[?2004l[?2004h>     if r['domain'] in science:
+[?2004l[?2004h>         print(i, r['domain'], ntok(r['deepseek_reasoning'] or ''), ntok(r['deepseek_solution'] or ''))
+[?2004l[?2004h> PY
+[?2004l[transformers] PyTorch was not found. Models won't be available and only tokenizers, configuration and file/data utilities can be used.
+Per domain:
+biology {'n': 7, 'reasoning': 7087, 'solution': 4452, 'both_sep': 11539, 'both_concat': 11539}
+chemistry {'n': 9, 'reasoning': 24333, 'solution': 5439, 'both_sep': 29772, 'both_concat': 29772}
+physics {'n': 10, 'reasoning': 32421, 'solution': 5854, 'both_sep': 38275, 'both_concat': 38275}
+SCIENCE TOTAL: {'n': 26, 'reasoning': 63841, 'solution': 15745, 'both_sep': 79586, 'both_concat': 79586}
+5 biology 994 778
+95 biology 1308 742
+96 chemistry 1267 869
+103 physics 1382 767
+201 biology 903 532
+231 physics 1563 851
+278 physics 5273 501
+302 chemistry 789 490
+351 physics 2126 607
+367 chemistry 1209 834
+379 chemistry 1942 372
+394 biology 1142 443
+408 physics 7237 582
+459 chemistry 1529 877
+505 chemistry 6401 454
+543 chemistry 997 503
+554 physics 9087 447
+559 biology 775 495
+566 physics 1634 250
+663 physics 1261 720
+678 chemistry 1087 716
+800 physics 1155 492
+878 chemistry 9112 324
+897 biology 726 628
+958 physics 1703 637
+985 biology 1239 834
+[?2004hroot@0ccef502aeae:/app# python3 - <<'PY'
+[?2004l[?2004h> import urllib.request, time
+[?2004l[?2004h> url='https://hf-mirror.com/datasets/ryanmarten/OpenThoughts-1k-sample/resolve/main/data/train-00000-of-00001.parquet?download=true'
+[?2004l[?2004h> out='/app/data.parquet'
+[?2004l[?2004h> print('downloading', url)
+[?2004l[?2004h> req=urllib.request.Request(url, headers={'User-Agent':'python-urllib/3.13'})
+[?2004l[?2004h> start=time.time()
+[?2004l[?2004h> with urllib.request.urlopen(req, timeout=60) as r, open(out,'wb') as f:
+[?2004l[?2004h>     total=0
+[?2004l[?2004h>     while True:
+[?2004l[?2004h>         chunk=r.read(1024*1024)
+[?2004l[?2004h>         if not chunk: break
+[?2004l[?2004h>         f.write(chunk); total += len(chunk)
+[?2004l[?2004h> print('saved', out, total, 'bytes in', round(time.time()-start,1),'s')
+[?2004l[?2004h> PY
+[?2004ldownloading https://hf-mirror.com/datasets/ryanmarten/OpenThoughts-1k-sample/resolve/main/data/train-00000-of-00001.parquet?download=true
+python3 - <<'PY'
+import pyarrow.parquet as pq
+meta=pq.read_table('/app/metadata.parquet').to_pylist()
+data=pq.read_table('/app/data.parquet').to_pylist()
+print('data rows', len(data), 'columns', data[0].keys())
+science=['physics','chemistry','biology']
+for i,m in enumerate(meta):
+    if m['domain'] in science:
+        d=data[i]
+        print('='*40, i, m['domain'], m['source'])
+        print('system:', repr(d.get('system')))
+        print('conversations len', len(d.get('conversations') or []))
+        for j,turn in enumerate((d.get('conversations') or [])[:4]):
+            print('turn',j, turn.get('from'), repr((turn.get('value') or '')[:500]))
+        print('META reasoning head:', repr(m['deepseek_reasoning'][:200]))
+        print('META solution head:', repr(m['deepseek_solution'][:200]))
+        if i>110: break
+PY
+saved /app/data.parquet 13994266 bytes in 32.9 s
+[?2004hroot@0ccef502aeae:/app# python3 - <<'PY'
+[?2004l[?2004h> import pyarrow.parquet as pq
+[?2004l[?2004h> meta=pq.read_table('/app/metadata.parquet').to_pylist()
+[?2004l[?2004h> data=pq.read_table('/app/data.parquet').to_pylist()
+[?2004l[?2004h> print('data rows', len(data), 'columns', data[0].keys())
+[?2004l[?2004h> science=['physics','chemistry','biology']
+[?2004l[?2004h> for i,m in enumerate(meta):
+[?2004l[?2004h>     if m['domain'] in science:
+[?2004l[?2004h>         d=data[i]
+[?2004l[?2004h>         print('='*40, i, m['domain'], m['source'])
+[?2004l[?2004h>         print('system:', repr(d.get('system')))
+[?2004l[?2004h>         print('conversations len', len(d.get('conversations') or []))
+[?2004l[?2004h>         for j,turn in enumerate((d.get('conversations') or [])[:4]):
+[?2004l[?2004h>             print('turn',j, turn.get('from'), repr((turn.get('value') or '')[:500]))
+[?2004l[?2004h>         print('META reasoning head:', repr(m['deepseek_reasoning'][:200]))
+[?2004l[?2004h>         print('META solution head:', repr(m['deepseek_solution'][:200]))
+[?2004l[?2004h>         if i>110: break
+[?2004l[?2004h> PY
+[?2004ldata rows 1000 columns dict_keys(['system', 'conversations'])
+======================================== 5 biology camelai_biology
+system: "Your role as an assistant involves thoroughly exploring questions through a systematic long thinking process before providing the final precise and accurate solutions. This requires engaging in a comprehensive cycle of analysis, summarizing, exploration, reassessment, reflection, backtracing, and iteration to develop well-considered thinking process. Please structure your response into two main sections: Thought and Solution. In the Thought section, detail your reasoning process using the specified format: <|begin_of_thought|> {thought with steps separated with '\\n\\n'} <|end_of_thought|> Each step should include detailed considerations such as analisying questions, summarizing relevant findings, brainstorming new ideas, verifying the accuracy of the current steps, refining any errors, and revisiting previous steps. In the Solution section, based on various attempts, explorations, and reflections from the Thought section, systematically present the final solution that you deem correct. The solution should remain a logical, accurate, concise expression style and detail necessary step needed to reach the conclusion, formatted as follows: <|begin_of_solution|> {final formatted, precise, and clear solution} <|end_of_solution|> Now, try to solve the following question through the above guidelines:"
+conversations len 2
+turn 0 user 'Generate an executable Python function generated from the given prompt. The function should take stdin as input and print the output. Simply call the function after the definition.VK news recommendation system daily selects interesting publications of one of n disjoint categories for each user. Each publication belongs to exactly one category. For each category i batch algorithm selects a_i publications.\n\nThe latest A/B test suggests that users are reading recommended publications more actively '
+turn 1 assistant "<|begin_of_thought|>\n\nOkay, so I need to solve this programming problem. Let's read the problem carefully.\n\nThe problem is about adjusting the number of publications in each category such that all have distinct counts, and we can't decrease any counts, only add. The goal is to find the minimal total time required to achieve this. Each addition for a category i takes t_i seconds per publication added.\n\nHmm. So the initial a_i values might have duplicates. We need to make all a_i's unique by incre"
+META reasoning head: 'Okay, so I need to figure out the specific mechanisms by which lead exposure affects the developing brain and how to mitigate those harmful effects. Let me start by recalling what I know about lead an'
+META solution head: 'The harmful effects of lead exposure on the developing brain involve multiple interconnected mechanisms, each contributing to neurodevelopmental impairments. Below is a detailed breakdown of these mec'
+======================================== 95 biology camelai_biology
+system: "Your role as an assistant involves thoroughly exploring questions through a systematic long thinking process before providing the final precise and accurate solutions. This requires engaging in a comprehensive cycle of analysis, summarizing, exploration, reassessment, reflection, backtracing, and iteration to develop well-considered thinking process. Please structure your response into two main sections: Thought and Solution. In the Thought section, detail your reasoning process using the specified format: <|begin_of_thought|> {thought with steps separated with '\\n\\n'} <|end_of_thought|> Each step should include detailed considerations such as analisying questions, summarizing relevant findings, brainstorming new ideas, verifying the accuracy of the current steps, refining any errors, and revisiting previous steps. In the Solution section, based on various attempts, explorations, and reflections from the Thought section, systematically present the final solution that you deem correct. The solution should remain a logical, accurate, concise expression style and detail necessary step needed to reach the conclusion, formatted as follows: <|begin_of_solution|> {final formatted, precise, and clear solution} <|end_of_solution|> Now, try to solve the following question through the above guidelines:"
+conversations len 2
+turn 0 user 'Generate an executable Python function generated from the given prompt. The function should take stdin as input and print the output. Simply call the function after the definition.Help Saurabh with his Chemistry Assignment.\nSaurabh has been given a chemistry assignment by Ruby Mam. Though the assignment is simple but\nSaurabh has to watch India vs Pakistan Match and he has no time to do the assignment by himself.\nSo Saurabh wants you to do his assignment so that he doesn’t get scolded by Ruby Mam'
+turn 1 assistant "<|begin_of_thought|>\n\nOkay, let's see. So Saurabh's chemistry assignment problem. The task is to compute the number of particles in a box at time N, given that initially (t=0) there are X particles. And the rule is that at time t, the number of particles becomes t multiplied by the number of particles at t-1. So for each test case with N and X, we need to compute this value modulo 1e6+3.\n\nHmm. Let's think through the example. Like the second example: N=2, X=1. At t=0, it's 1. Then t=1, it's 1 * "
+META reasoning head: 'Okay, so I need to figure out how an increase in body weight affects the biomechanics of a vertical jump. Let me start by recalling what a vertical jump involves biomechanically. From what I remember,'
+META solution head: 'An increase in body weight influences the biomechanics of a vertical jump through several interconnected mechanisms, with outcomes dependent on whether the weight gain is due to muscle (active mass) o'
+======================================== 96 chemistry camelai_chemistry
+system: "Your role as an assistant involves thoroughly exploring questions through a systematic long thinking process before providing the final precise and accurate solutions. This requires engaging in a comprehensive cycle of analysis, summarizing, exploration, reassessment, reflection, backtracing, and iteration to develop well-considered thinking process. Please structure your response into two main sections: Thought and Solution. In the Thought section, detail your reasoning process using the specified format: <|begin_of_thought|> {thought with steps separated with '\\n\\n'} <|end_of_thought|> Each step should include detailed considerations such as analisying questions, summarizing relevant findings, brainstorming new ideas, verifying the accuracy of the current steps, refining any errors, and revisiting previous steps. In the Solution section, based on various attempts, explorations, and reflections from the Thought section, systematically present the final solution that you deem correct. The solution should remain a logical, accurate, concise expression style and detail necessary step needed to reach the conclusion, formatted as follows: <|begin_of_solution|> {final formatted, precise, and clear solution} <|end_of_solution|> Now, try to solve the following question through the above guidelines:"
+conversations len 2
+turn 0 user 'Generate an executable Python function generated from the given prompt. The function should take stdin as input and print the output. Simply call the function after the definition.Turtle Shi-ta and turtle Be-ko decided to divide a chocolate. The shape of the chocolate is rectangle. The corners of the chocolate are put on (0,0), (w,0), (w,h) and (0,h). The chocolate has lines for cutting. They cut the chocolate only along some of these lines.\n\nThe lines are expressed as follows. There are  m  poi'
+turn 1 assistant "<|begin_of_thought|>\n\nOkay, let's try to tackle this problem. Hmm, the problem statement is a bit complex, so I need to parse it carefully. Let's read through it again.\n\nSo, the problem is about dividing a rectangular chocolate into regions based on vertical lines (since the lines are between (0,0)-(0,h) and (w,0)-(w,h)), which I think means they are vertical lines across the width of the chocolate. Wait, no, wait. The lines are described as connecting points on the left edge (0,0 to 0,h) and th"
+META reasoning head: 'Okay, so I need to figure out the steps involved in designing a drug that specifically targets an enzyme or receptor, and how to optimize those steps for better effectiveness and fewer side effects. L'
+META solution head: 'Designing a drug that specifically targets an enzyme or receptor involves a multi-step process, each requiring careful optimization to enhance efficacy and minimize side effects. Below is a structured'
+======================================== 103 physics camelai_physics
+system: "Your role as an assistant involves thoroughly exploring questions through a systematic long thinking process before providing the final precise and accurate solutions. This requires engaging in a comprehensive cycle of analysis, summarizing, exploration, reassessment, reflection, backtracing, and iteration to develop well-considered thinking process. Please structure your response into two main sections: Thought and Solution. In the Thought section, detail your reasoning process using the specified format: <|begin_of_thought|> {thought with steps separated with '\\n\\n'} <|end_of_thought|> Each step should include detailed considerations such as analisying questions, summarizing relevant findings, brainstorming new ideas, verifying the accuracy of the current steps, refining any errors, and revisiting previous steps. In the Solution section, based on various attempts, explorations, and reflections from the Thought section, systematically present the final solution that you deem correct. The solution should remain a logical, accurate, concise expression style and detail necessary step needed to reach the conclusion, formatted as follows: <|begin_of_solution|> {final formatted, precise, and clear solution} <|end_of_solution|> Now, try to solve the following question through the above guidelines:"
+conversations len 2
+turn 0 user 'Generate an executable Python function generated from the given prompt. The function should take stdin as input and print the output. Simply call the function after the definition.For the multiset of positive integers s=\\\\{s_1,s_2,...,s_k\\}, define the Greatest Common Divisor (GCD) and Least Common Multiple (LCM) of s as follow:\n\n  * \\gcd(s) is the maximum positive integer x, such that all integers in s are divisible on x.\n  * lcm(s) is the minimum positive integer x, that divisible on all integ'
+turn 1 assistant "<|begin_of_thought|>\n\nOkay, I need to find the GCD of all LCMs of pairs in the given array. Hmm, let's think about this. The problem is to compute the GCD of all possible LCM(a_i, a_j) where i < j. The straightforward approach would be to compute all pairs' LCMs and then compute their GCD. But wait, the constraints say n can be up to 1e5, which means the number of pairs is around (1e5)^2 / 2 = 5e9. That's way too big to handle directly. So, we need a smarter approach.\n\nLet me think about the mat"
+META reasoning head: "Okay, so I need to figure out how non-geometric backgrounds affect string theory's predictions about the universe's evolution and structure. Let me start by recalling what I know about string theory a"
+META solution head: "The presence of non-geometric backgrounds in string theory significantly influences predictions about the universe's evolution and structure through several interconnected mechanisms:\n\n### 1. **Moduli"
+======================================== 201 biology camelai_biology
+system: "Your role as an assistant involves thoroughly exploring questions through a systematic long thinking process before providing the final precise and accurate solutions. This requires engaging in a comprehensive cycle of analysis, summarizing, exploration, reassessment, reflection, backtracing, and iteration to develop well-considered thinking process. Please structure your response into two main sections: Thought and Solution. In the Thought section, detail your reasoning process using the specified format: <|begin_of_thought|> {thought with steps separated with '\\n\\n'} <|end_of_thought|> Each step should include detailed considerations such as analisying questions, summarizing relevant findings, brainstorming new ideas, verifying the accuracy of the current steps, refining any errors, and revisiting previous steps. In the Solution section, based on various attempts, explorations, and reflections from the Thought section, systematically present the final solution that you deem correct. The solution should remain a logical, accurate, concise expression style and detail necessary step needed to reach the conclusion, formatted as follows: <|begin_of_solution|> {final formatted, precise, and clear solution} <|end_of_solution|> Now, try to solve the following question through the above guidelines:"
+conversations len 2
+turn 0 user 'Generate an executable Python function generated from the given prompt. The function should take stdin as input and print the output. Simply call the function after the definition.You are given an array of positive integers a1, a2, ..., an × T of length n × T. We know that for any i > n it is true that ai = ai - n. Find the length of the longest non-decreasing sequence of the given array.\n\nInput\n\nThe first line contains two space-separated integers: n, T (1 ≤ n ≤ 100, 1 ≤ T ≤ 107). The second li'
+turn 1 assistant "<|begin_of_thought|>\n\nOkay, let's tackle this problem. So, the task is to find the length of the longest non-decreasing subsequence (LNDS) in a sequence that's formed by repeating an array T times. The original array has n elements, and after that, each element is a copy of the original array's elements in a cyclic manner. So for i > n, ai is ai-n. Hmm.\n\nFirst, I need to understand the problem correctly. Let's take the sample input. The array is [3, 1, 4, 2], and T is 3. The full array becomes ["
+META reasoning head: "Okay, so I need to figure out how metabolic flux analysis (MFA) helps understand metabolic pathways and how it's used in biotech to optimize producing valuable compounds. Let me start by recalling wha"
+META solution head: '**Metabolic Flux Analysis (MFA): Understanding Pathways and Biotech Optimization**\n\n**1. Core Concept of MFA**  \nMFA quantifies the flow of metabolites through biochemical pathways, using stoichiometr'
+[?2004hroot@0ccef502aeae:/app# python3 - <<'PY'
+[?2004l[?2004h> import pyarrow.parquet as pq
+[?2004l[?2004h> meta=pq.read_table('/app/metadata.parquet').to_pylist()
+[?2004l[?2004h> data=pq.read_table('/app/data.parquet').to_pylist()
+[?2004l[?2004h> # Build user text for each data row
+[?2004l[?2004h> users=[]
+[?2004l[?2004h> for d in data:
+[?2004l[?2004h>     conv=d.get('conversations') or []
+[?2004l[?2004h>     u=next((t.get('value') or '' for t in conv if t.get('from')=='user'), '')
+[?2004l[?2004h>     users.append(u)
+[?2004l[?2004h> # exact/substring metadata problem in data user prompt
+[?2004l[?2004h> for i,m in enumerate(meta):
+[?2004l[?2004h>     p=m['problem'] or ''
+[?2004l[?2004h>     matches=[j for j,u in enumerate(users) if p and p in u]
+[?2004l[?2004h>     if m['domain'] in ('physics','chemistry','biology'):
+[?2004l[?2004h>         print('SCI', i, m['domain'], 'matches', matches[:5])
+[?2004l[?2004h>     if i<10:
+[?2004l[?2004h>         print('ROW', i, m['domain'], 'first match?', matches[:3], 'problem head', repr(p[:100]))
+[?2004l[?2004h> PY
+[?2004lROW 0 math first match? [] problem head 'Show that the planes $2x + 3y - 4z + 1 = 0$ and $5x - 2y + z + 6 = 0$ are mutually perpendicular.'
+ROW 1 code first match? [] problem head "Chef's friend Alex runs a movie theatre. Due to the increasing number of platforms for watching movi"
+ROW 2 code first match? [] problem head 'After a lot of hard work, Goyal has finally completed his app. But before he launches it, he needs t'
+ROW 3 math first match? [] problem head 'A sequence of natural numbers \\( \\{x_{n}\\} \\) is constructed by the following rule: \\( x_{1} = 2 \\),'
+ROW 4 math first match? [] problem head 'Determine the value of\n\n$$\nz=a \\sqrt{a} \\sqrt[4]{a} \\sqrt[8]{a} \\ldots \\sqrt[2^{n}]{a} \\ldots\n$$\n\nif'
+SCI 5 biology matches []
+ROW 5 biology first match? [] problem head 'What are the specific mechanisms by which exposure to lead affects the developing brain, and how can'
+ROW 6 puzzle first match? [] problem head 'When you go to buy a sheep you will learn that it is what?\nA: expensive\nB: wolf\nC: wool\nD: goat\nE: l'
+ROW 7 code first match? [] problem head 'You are given a text consisting of n space-separated words. There is exactly one space character bet'
+ROW 8 math first match? [] problem head 'In a group of \\( n \\) people, some know each other while others do not. It is given that if \\( A \\) '
+ROW 9 math first match? [] problem head 'The equation \\( x^{2} + a x + 8 = 0 \\) has two distinct roots \\( x_{1} \\) and \\( x_{2} \\); moreover,'
+SCI 95 biology matches []
+SCI 96 chemistry matches []
+SCI 103 physics matches []
+SCI 201 biology matches []
+SCI 231 physics matches []
+SCI 278 physics matches []
+SCI 302 chemistry matches []
+SCI 351 physics matches []
+SCI 367 chemistry matches []
+SCI 379 chemistry matches []
+SCI 394 biology matches []
+SCI 408 physics matches []
+SCI 459 chemistry matches []
+SCI 505 chemistry matches []
+SCI 543 chemistry matches []
+SCI 554 physics matches []
+SCI 559 biology matches []
+SCI 566 physics matches []
+SCI 663 physics matches []
+SCI 678 chemistry matches []
+SCI 800 physics matches []
+SCI 878 chemistry matches []
+SCI 897 biology matches []
+SCI 958 physics matches []
+SCI 985 biology matches []
+[?2004hroot@0ccef502aeae:/app# python3 - <<'PY'
+[?2004l[?2004h> import pyarrow.parquet as pq
+[?2004l[?2004h> meta=pq.read_table('/app/metadata.parquet').to_pylist()
+[?2004l[?2004h> data=pq.read_table('/app/data.parquet').to_pylist()
+[?2004l[?2004h> for i,d in enumerate(data[:15]):
+[?2004l[?2004h>     conv=d.get('conversations') or []
+[?2004l[?2004h>     u=next((t.get('value') or '' for t in conv if t.get('from')=='user'), '')
+[?2004l[?2004h>     a=next((t.get('value') or '' for t in conv if t.get('from')=='assistant'), '')
+[?2004l[?2004h>     print('='*20, i)
+[?2004l[?2004h>     print('USER:', repr(u[:400]))
+[?2004l[?2004h>     print('ASST:', repr(a[:300]))
+[?2004l[?2004h> print('\n\nSEARCH MATCHES')
+[?2004l[?2004h> users=[next((t.get('value') or '' for t in (d.get('conversations') or []) if t.get('from')=='user'), '') for d in data]
+[?2004l[?2004h> assts=[next((t.get('value') or '' for t in (d.get('conversations') or []) if t.get('from')=='assistant'), '') for d in data]
+[?2004l[?2004h> for i,m in enumerate(meta):
+[?2004l[?2004h>     if m['domain'] not in ('physics','chemistry','biology'): continue
+[?2004l[?2004h>     p=(m['problem'] or '').strip()
+[?2004l[?2004h>     r=(m['deepseek_reasoning'] or '').strip()
+[?2004l[?2004h>     s=(m['deepseek_solution'] or '').strip()
+[?2004l[?2004h>     pu=[j for j,u in enumerate(users) if p[:80] and p[:80] in u]
+[?2004l[?2004h>     ru=[j for j,a in enumerate(assts) if r[:100] and r[:100] in a]
+[?2004l[?2004h>     su=[j for j,a in enumerate(assts) if s[:100] and s[:100] in a]
+[?2004l[?2004h>     print(i, m['domain'], 'problem', pu[:5], 'reason', ru[:5], 'solution', su[:5])
+[?2004l[?2004h> PY
+[?2004l==================== 0
+USER: 'Generate an executable Python function generated from the given prompt. The function should take stdin as input and print the output. Simply call the function after the definition.You are given an undirected graph consisting of n vertices and <image> edges. Instead of giving you the edges that exist in the graph, we give you m unordered pairs (x, y) such that there is no edge between x and y, and '
+ASST: "<|begin_of_thought|>\n\nOkay, I need to solve this programming problem. Let's read the problem carefully.\n\nSo the problem is about an undirected graph where the edges are given as the complement. That is, all possible edges are present except for the m pairs provided. We have to find the number of con"
+==================== 1
+USER: 'Generate an executable Python function generated from the given prompt. The function should take stdin as input and print the output. Simply call the function after the definition.Two friends are on the coordinate axis Ox in points with integer coordinates. One of them is in the point x1 = a, another one is in the point x2 = b. \n\nEach of the friends can move by one along the line in any direction '
+ASST: "<|begin_of_thought|>\n\nOkay, let's try to figure out this problem. So, the problem is about two friends on a coordinate axis. They start at positions a and b, which are different. They want to meet at the same point, and each of their movements adds to their tiredness in a specific way. The first mov"
+==================== 2
+USER: 'Generate an executable Python function generated from the given prompt. The function should take stdin as input and print the output. Simply call the function after the definition.ICPC (International Connecting Points Company) starts to sell a new railway toy. It consists of a toy tramcar and many rail units on square frames of the same size. There are four types of rail units, namely, straight (S'
+ASST: "<|begin_of_thought|>\n\nOkay, I need to solve this programming problem. Let's read the problem carefully and understand what needs to be done.\n\nSo, the problem is about a grid of rail units. Each rail can be rotated in 90-degree multiples. The goal is to rotate them such that the layout is valid. A va"
+==================== 3
+USER: 'Generate an executable Python function generated from the given prompt. The function should take stdin as input and print the output. Simply call the function after the definition.Good evening, contestants.\n\nIf a and d are relatively prime positive integers, the arithmetic sequence beginning with a and increasing by d, i.e., a, a + d, a + 2d, a + 3d, a + 4d, ..., contains infinitely many prime num'
+ASST: "<|begin_of_thought|>\n\nOkay, I need to solve this programming problem. Let's read the problem statement carefully.\n\nThe task is to find the nth prime number in the arithmetic sequence starting with 'a' and increasing by 'd'. The input consists of multiple datasets, each with a, d, n. The constraints "
+==================== 4
+USER: 'Generate an executable Python function generated from the given prompt. The function should take stdin as input and print the output. Simply call the function after the definition.We have N integers. The i-th number is A_i.\n\n\\\\{A_i\\\\} is said to be pairwise coprime when GCD(A_i,A_j)=1 holds for every pair (i, j) such that 1\\leq i < j \\leq N.\n\n\\\\{A_i\\\\} is said to be setwise coprime when \\\\{A_i\\\\} '
+ASST: "<|begin_of_thought|>\n\nOkay, I need to solve this problem where I have to determine if a list of integers is pairwise coprime, setwise coprime, or neither. Let's start by understanding the definitions again.\n\nSo, pairwise coprime means every pair in the list has a GCD of 1. That's the strictest condi"
+==================== 5
+USER: 'Generate an executable Python function generated from the given prompt. The function should take stdin as input and print the output. Simply call the function after the definition.VK news recommendation system daily selects interesting publications of one of n disjoint categories for each user. Each publication belongs to exactly one category. For each category i batch algorithm selects a_i public'
+ASST: "<|begin_of_thought|>\n\nOkay, so I need to solve this programming problem. Let's read the problem carefully.\n\nThe problem is about adjusting the number of publications in each category such that all have distinct counts, and we can't decrease any counts, only add. The goal is to find the minimal total"
+==================== 6
+USER: 'Generate an executable Python function generated from the given prompt. The function should take stdin as input and print the output. Simply call the function after the definition.Couple Cover, a wildly popular luck-based game, is about to begin! Two players must work together to construct a rectangle. A bag with n balls, each with an integer written on it, is placed on the table. The first player'
+ASST: "<|begin_of_thought|>\n\nOkay, so I need to solve this programming problem. Let's read the problem statement carefully.\n\nThe problem is about calculating the number of winning pairs for various values of p. The winning condition is when the product of the two selected balls (without replacement) is at "
+==================== 7
+USER: "Generate an executable Python function generated from the given prompt. The function should take stdin as input and print the output. Simply call the function after the definition.You want to go on a trip with a friend. However, friends who have a habit of spending money cannot easily save travel expenses. I don't know when my friends will go on a trip if they continue their current lives. So, if "
+ASST: "<|begin_of_thought|>\n\nOkay, I need to solve this programming problem. Let's read the problem carefully.\n\nThe task is to determine the number of months it takes for the savings to reach or exceed the travel cost L. Each month, the friend saves (Mi - Ni) yen. We process each dataset, which includes L "
+==================== 8
+USER: 'Generate an executable Python function generated from the given prompt. The function should take stdin as input and print the output. Simply call the function after the definition.HackerMan has a message that he has coded in form of digits, which means that the message contains only numbers and nothing else. He is fearful that the enemy may get their hands on the secret message and may decode it. '
+ASST: "<|begin_of_thought|>\n\nOkay, I need to solve this programming problem. Let's read the problem carefully.\n\nSo, the task is to take two numbers, reverse each of them (removing leading zeros in the reversed numbers), sum them, then reverse the sum again (also removing leading zeros), and output that res"
+==================== 9
+USER: 'Generate an executable Python function generated from the given prompt. The function should take stdin as input and print the output. Simply call the function after the definition.Calculate the number of ways to place n rooks on n × n chessboard so that both following conditions are met:\n\n  * each empty cell is under attack; \n  * exactly k pairs of rooks attack each other. \n\n\n\nAn empty cell is und'
+ASST: "<|begin_of_thought|>\n\nOkay, I need to solve this problem where I have to calculate the number of ways to place n rooks on an n x n chessboard such that every empty cell is under attack and exactly k pairs of rooks attack each other. Hmm, let's think through this step by step.\n\nFirst, let's understan"
+==================== 10
+USER: 'Generate an executable Python function generated from the given prompt. The function should take stdin as input and print the output. Simply call the function after the definition.Pratyush, a six year old kid has just learnt how to write 1 through 1000 in decimal number system(DNS). Being a very curious kid, he made some modifications in DNS and removed the digits 0 through 3 and 7 through 9. So t'
+ASST: "<|begin_of_thought|>\n\nOkay, let's see. The problem is to find the nth number in the Pratyush Number System (PNS). From the description, PNS numbers are made up of digits 4,5,6 and are ordered in increasing order. So the sequence is 4,5,6,44,45,46,54,55,56,64,65,66,444, etc. \n\nThe task is, given a nu"
+==================== 11
+USER: 'Generate an executable Python function generated from the given prompt. The function should take stdin as input and print the output. Simply call the function after the definition.Leonard has decided to quit living with Dr. Sheldon Cooper and has started to live with Penny. Yes, you read it right. (And you read it here for the first time!) He is fed up of Sheldon, after all. Since, Sheldon no more'
+ASST: "<|begin_of_thought|>\n\nOkay, let's try to figure out this problem. So, the task is to find the minimum number of cab drivers Sheldon needs to trust so he can travel between all the places he needs to go. Hmm, this sounds like a graph problem. Let's break it down.\n\nThe input gives us multiple test cas"
+==================== 12
+USER: "Generate an executable Python function generated from the given prompt. The function should take stdin as input and print the output. Simply call the function after the definition.Vasya's bicycle chain drive consists of two parts: n stars are attached to the pedal axle, m stars are attached to the rear wheel axle. The chain helps to rotate the rear wheel by transmitting the pedal rotation.\n\nWe kno"
+ASST: "<|begin_of_thought|>\n\nOkay, let's tackle this problem. So, the task is to find the number of gears (i,j) where the ratio of b_j to a_i is an integer. Among all these gears, we need to find the maximum possible ratio and then count how many gears achieve this maximum.\n\nHmm. Let's think about the step"
+==================== 13
+USER: 'Generate an executable Python function generated from the given prompt. The function should take stdin as input and print the output. Simply call the function after the definition.Vipul has N empty boxes, numbered from 1 to N, with infinite capacity. He performs M operations. Each operation is described by 3 integers, a, b, and k. Here, a and b are indices of the boxes, and k is the number of marb'
+ASST: "<|begin_of_thought|>\n\nOkay, let's see. I need to find the average number of marbles after M operations. The average is the total marbles divided by the number of boxes N, then rounded down. Hmm. But calculating each box's marbles directly might be expensive, especially since N can be up to 1e7 and M"
+==================== 14
+USER: 'Generate an executable Python function generated from the given prompt. The function should take stdin as input and print the output. Simply call the function after the definition.Indigo Real-estate Company is now planning to develop a new housing complex. The entire complex is a square, all of whose edges are equally a meters. The complex contains n subdivided blocks, each of which is a b-meter s'
+ASST: "<|begin_of_thought|>\n\nOkay, let's tackle this problem step by step. So the task is to find the minimum a and b for a given n such that the housing complex (a square of side a) can contain n subdivided blocks (each a square of side b), with the total area of blocks not exceeding 50% of the complex's "
+
+
+SEARCH MATCHES
+5 biology problem [] reason [] solution []
+95 biology problem [] reason [] solution []
+96 chemistry problem [] reason [] solution []
+103 physics problem [] reason [] solution []
+201 biology problem [] reason [] solution []
+231 physics problem [] reason [] solution []
+278 physics problem [] reason [] solution []
+302 chemistry problem [] reason [] solution []
+351 physics problem [] reason [] solution []
+367 chemistry problem [] reason [] solution []
+379 chemistry problem [] reason [] solution []
+394 biology problem [] reason [] solution []
+408 physics problem [] reason [] solution []
+459 chemistry problem [] reason [] solution []
+505 chemistry problem [] reason [] solution []
+543 chemistry problem [] reason [] solution []
+554 physics problem [] reason [] solution []
+559 biology problem [] reason [] solution []
+566 physics problem [] reason [] solution []
+663 physics problem [] reason [] solution []
+678 chemistry problem [] reason [] solution []
+800 physics problem [] reason [] solution []
+878 chemistry problem [] reason [] solution []
+897 biology problem [] reason [] solution []
+958 physics problem [] reason [] solution []
+985 biology problem [] reason [] solution []
+[?2004hroot@0ccef502aeae:/app# python3 - <<'PY'
+[?2004l[?2004h> import pyarrow.parquet as pq
+[?2004l[?2004h> meta=pq.read_table('/app/metadata.parquet').to_pylist()
+[?2004l[?2004h> data=pq.read_table('/app/data.parquet').to_pylist()
+[?2004l[?2004h> for phrase in ['lead exposure','vertical jump','human leukocyte antigen','lattice vibrations','metabolic flux','drug that specifically targets']:
+[?2004l[?2004h>     hits=[]
+[?2004l[?2004h>     for j,d in enumerate(data):
+[?2004l[?2004h>         for t in (d.get('conversations') or []):
+[?2004l[?2004h>             if phrase.lower() in (t.get('value') or '').lower():
+[?2004l[?2004h>                 hits.append((j,t.get('from')))
+[?2004l[?2004h>     print(phrase, hits[:10])
+[?2004l[?2004h> print('\nToken overlap mapping for science metadata')
+[?2004l[?2004h> import re
+[?2004l[?2004h> users=[next((t.get('value') or '' for t in (d.get('conversations') or []) if t.get('from')=='user'), '') for d in data]
+[?2004l[?2004h> assts=[next((t.get('value') or '' for t in (d.get('conversations') or []) if t.get('from')=='assistant'), '') for d in data]
+[?2004l[?2004h> def words(s): return set(re.findall(r'[A-Za-z0-9_]{4,}', s.lower()))
+[?2004l[?2004h> for i,m in enumerate(meta):
+[?2004l[?2004h>     if m['domain'] not in ('physics','chemistry','biology'): continue
+[?2004l[?2004h>     mp=words(m['problem']); mr=words(m['deepseek_reasoning']); ms=words(m['deepseek_solution'])
+[?2004l[?2004h>     best=[]
+[?2004l[?2004h>     for j,u in enumerate(users):
+[?2004l[?2004h>         score=len(mp & words(u))
+[?2004l[?2004h>         if score>=5: best.append((score,j))
+[?2004l[?2004h>     best.sort(reverse=True)
+[?2004l[?2004h>     print(i, m['domain'], 'best user word overlap', best[:5])
+[?2004l[?2004h> PY
+[?2004llead exposure []
+vertical jump []
+human leukocyte antigen []
+lattice vibrations []
+metabolic flux []
+drug that specifically targets []
+
+Token overlap mapping for science metadata
+5 biology best user word overlap []
+95 biology best user word overlap []
+96 chemistry best user word overlap [(6, 710), (5, 960), (5, 696), (5, 562), (5, 519)]
+103 physics best user word overlap []
+201 biology best user word overlap []
+231 physics best user word overlap []
+278 physics best user word overlap [(5, 696), (5, 314)]
+302 chemistry best user word overlap []
+351 physics best user word overlap [(5, 998), (5, 940), (5, 879), (5, 763), (5, 748)]
+367 chemistry best user word overlap []
+379 chemistry best user word overlap []
+394 biology best user word overlap []
+408 physics best user word overlap [(7, 924), (7, 158), (6, 977), (6, 891), (6, 736)]
+459 chemistry best user word overlap []
+505 chemistry best user word overlap [(5, 519)]
+543 chemistry best user word overlap [(5, 260)]
+554 physics best user word overlap [(5, 668)]
+559 biology best user word overlap []
+566 physics best user word overlap []
+663 physics best user word overlap [(5, 945), (5, 834), (5, 780), (5, 696), (5, 260)]
+678 chemistry best user word overlap [(6, 820), (6, 349), (5, 981), (5, 801), (5, 780)]
+800 physics best user word overlap []
+878 chemistry best user word overlap [(7, 496), (6, 936), (6, 794), (6, 780), (6, 726)]
+897 biology best user word overlap []
+958 physics best user word overlap []
+985 biology best user word overlap []
+[?2004hroot@0ccef502aeae:/app# python3 - <<'PY'
+[?2004l[?2004h> import pyarrow.parquet as pq, re
+[?2004l[?2004h> meta=pq.read_table('/app/metadata.parquet').to_pylist()
+[?2004l[?2004h> data=pq.read_table('/app/data.parquet').to_pylist()
+[?2004l[?2004h> users=[next((t.get('value') or '' for t in (d.get('conversations') or []) if t.get('from')=='user'), '') for d in data]
+[?2004l[?2004h> for i in [0,5,50,100,166,167,168,200,300,500,700,800,900,959,985,999]:
+[?2004l[?2004h>     d=data[i]; u=users[i]
+[?2004l[?2004h>     print('='*20,i,'user head:',repr(u[:300]))
+[?2004l[?2004h> for i in range(10):
+[?2004l[?2004h>     p=(meta[i]['problem'] or '').strip()
+[?2004l[?2004h>     hits=[j for j,u in enumerate(users) if p[:60] and p[:60] in u]
+[?2004l[?2004h>     print('meta',i,meta[i]['domain'],'hits',hits[:5], 'phead',repr(p[:80]))
+[?2004l[?2004h> print('default user prefix counts')
+[?2004l[?2004h> from collections import Counter
+[?2004l[?2004h> c=Counter(u[:50] for u in users)
+[?2004l[?2004h> for k,v in c.most_common(20): print(v, repr(k))
+[?2004l[?2004h> PY
+[?2004l==================== 0 user head: 'Generate an executable Python function generated from the given prompt. The function should take stdin as input and print the output. Simply call the function after the definition.You are given an undirected graph consisting of n vertices and <image> edges. Instead of giving you the edges that exist'
+==================== 5 user head: 'Generate an executable Python function generated from the given prompt. The function should take stdin as input and print the output. Simply call the function after the definition.VK news recommendation system daily selects interesting publications of one of n disjoint categories for each user. Each'
+==================== 50 user head: 'Generate an executable Python function generated from the given prompt. The function should take stdin as input and print the output. Simply call the function after the definition.The last stage of Football World Cup is played using the play-off system.\n\nThere are n teams left in this stage, they ar'
+==================== 100 user head: 'Generate an executable Python function generated from the given prompt. The function should take stdin as input and print the output. Simply call the function after the definition.The postal code in Atcoder Kingdom is A+B+1 characters long, its (A+1)-th character is a hyphen `-`, and the other chara'
+==================== 166 user head: 'Generate an executable Python function generated from the given prompt. The function should take stdin as input and print the output. Simply call the function after the definition.There are n cities numbered from 1 to n in Berland. Some of them are connected by two-way roads. Each road has its own l'
+==================== 167 user head: 'Generate an executable Python function generated from the given prompt. The function should take stdin as input and print the output. Simply call the function after the definition.Bear Limak likes watching sports on TV. He is going to watch a game today. The game lasts 90 minutes and there are no br'
+==================== 168 user head: 'Generate an executable Python function generated from the given prompt. The function should take stdin as input and print the output. Simply call the function after the definition.A Garden with Ponds\n\nMr. Gardiner is a modern garden designer who is excellent at utilizing the terrain features. His de'
+==================== 200 user head: "Generate an executable Python function generated from the given prompt. The function should take stdin as input and print the output. Simply call the function after the definition.Let c be some positive integer. Let's call an array a_1, a_2, …, a_n of positive integers c-array, if for all i conditio"
+==================== 300 user head: 'Generate an executable Python function generated from the given prompt. The function should take stdin as input and print the output. Simply call the function after the definition.Problem\n\nThe popular video posting site "ZouTube" is now in the midst of an unprecedented "virtual ZouTuber" boom. Among'
+==================== 500 user head: 'Generate an executable Python function generated from the given prompt. The function should take stdin as input and print the output. Simply call the function after the definition.Today, as a friendship gift, Bakry gave Badawy n integers a_1, a_2, ..., a_n and challenged him to choose an integer X s'
+==================== 700 user head: 'Generate an executable Python function generated from the given prompt. The function should take stdin as input and print the output. Simply call the function after the definition.Roy has N coin boxes numbered from 1 to N.\nEvery day he selects two indices [L,R] and adds 1 coin to each coin box start'
+==================== 800 user head: 'Generate an executable Python function generated from the given prompt. The function should take stdin as input and print the output. Simply call the function after the definition.Two boys decided to compete in text typing on the site "Key races". During the competition, they have to type a text con'
+==================== 900 user head: 'Generate an executable Python function generated from the given prompt. The function should take stdin as input and print the output. Simply call the function after the definition.Shaass has decided to hunt some birds. There are n horizontal electricity wires aligned parallel to each other. Wires ar'
+==================== 959 user head: 'Generate an executable Python function generated from the given prompt. The function should take stdin as input and print the output. Simply call the function after the definition.Consider the infinite sequence of integers: 1, 1, 2, 1, 2, 3, 1, 2, 3, 4, 1, 2, 3, 4, 5.... The sequence is built in the'
+==================== 985 user head: 'Generate an executable Python function generated from the given prompt. The function should take stdin as input and print the output. Simply call the function after the definition.This is the easier version of the problem. In this version 1 ≤ n, m ≤ 100. You can hack this problem only if you solve a'
+==================== 999 user head: 'Generate an executable Python function generated from the given prompt. The function should take stdin as input and print the output. Simply call the function after the definition.An African crossword is a rectangular table n × m in size. Each cell of the table contains exactly one letter. This tabl'
+meta 0 math hits [] phead 'Show that the planes $2x + 3y - 4z + 1 = 0$ and $5x - 2y + z + 6 = 0$ are mutual'
+meta 1 code hits [] phead "Chef's friend Alex runs a movie theatre. Due to the increasing number of platfor"
+meta 2 code hits [] phead 'After a lot of hard work, Goyal has finally completed his app. But before he lau'
+meta 3 math hits [] phead 'A sequence of natural numbers \\( \\{x_{n}\\} \\) is constructed by the following ru'
+meta 4 math hits [] phead 'Determine the value of\n\n$$\nz=a \\sqrt{a} \\sqrt[4]{a} \\sqrt[8]{a} \\ldots \\sqrt[2^{'
+meta 5 biology hits [] phead 'What are the specific mechanisms by which exposure to lead affects the developin'
+meta 6 puzzle hits [] phead 'When you go to buy a sheep you will learn that it is what?\nA: expensive\nB: wolf\n'
+meta 7 code hits [] phead 'You are given a text consisting of n space-separated words. There is exactly one'
+meta 8 math hits [] phead 'In a group of \\( n \\) people, some know each other while others do not. It is gi'
+meta 9 math hits [] phead 'The equation \\( x^{2} + a x + 8 = 0 \\) has two distinct roots \\( x_{1} \\) and \\('
+default user prefix counts
+1000 'Generate an executable Python function generated f'
+[?2004hroot@0ccef502aeae:/app# export HF_ENDPOINT=https://hf-mirror.com
+[?2004l[?2004hroot@0ccef502aeae:/app# python3 - <<'PY'
+[?2004l[?2004h> from transformers import AutoTokenizer
+[?2004l[?2004h> tok=AutoTokenizer.from_pretrained('Qwen/Qwen2.5-1.5B-Instruct')
+[?2004l[?2004h> s='Hello world'
+[?2004l[?2004h> for a in [False, True]:
+[?2004l[?2004h>     ids=tok.encode(s, add_special_tokens=a)
+[?2004l[?2004h>     print(a, ids, [tok.convert_ids_to_tokens(i) for i in ids])
+[?2004l[?2004h> print('bos', tok.bos_token, 'eos', tok.eos_token, 'pad', tok.pad_token, 'add_bos', tok.add_bos_token, 'add_eos', tok.add_eos_token)
+[?2004l[?2004h> PY
+[?2004l[transformers] PyTorch was not found. Models won't be available and only tokenizers, configuration and file/data utilities can be used.
+False [9707, 1879] ['Hello', 'Ġworld']
+True [9707, 1879] ['Hello', 'Ġworld']
+bos None eos <|im_end|> pad <|endoftext|> add_bos False add_eos False
+[?2004hroot@0ccef502aeae:/app# sed -n '70,100p' /app/main_README.md
+[?2004l- **Repository:** https://github.com/open-thoughts/open-thoughts
+- **Point of Contact:** [Open Thoughts Team](contact@open-thoughts.ai)
+
+This is a 1k sample of the [OpenThoughts-114k dataset](https://huggingface.co/datasets/open-thoughts/OpenThoughts-114k).
+
+Open synthetic reasoning dataset with high-quality examples covering math, science, code, and puzzles!
+
+Inspect the content with rich formatting with [Curator Viewer](https://curator.bespokelabs.ai/datasets/1389c194254c4ead96daaf145505c3d1).
+
+### Available Subsets
+
+**default** subset containing ready-to-train data used to finetune the [OpenThinker-7B](https://huggingface.co/open-thoughts/OpenThinker-7B) and [OpenThinker-32B](https://huggingface.co/open-thoughts/OpenThinker-32B) models:
+```
+ds = load_dataset("ryanmarten/OpenThoughts-1k-sample", split="train")
+```
+**metadata** subset containing extra columns used in dataset construction:
+- `problem`
+- `ground_truth_solution`
+- `deepseek_reasoning`
+- `deepseek_solution`
+- `domain`
+- `source`
+- `test_cases` (code only)
+- `starter_code`(code only)
+
+```
+ds = load_dataset("ryanmarten/OpenThoughts-1k-sample", "metadata", split="train")
+```
+
+# OpenThinker Models
+
+[?2004hroot@0ccef502aeae:/app# grep -in -C 3 -E 'deepseek|token' /app/main_README.md | sed -n '1,240p'
+[?2004l29-  features:
+30-  - name: problem
+31-    dtype: string
+32:  - name: deepseek_reasoning
+33-    dtype: string
+34:  - name: deepseek_solution
+35-    dtype: string
+36-  - name: ground_truth_solution
+37-    dtype: string
+--
+85-**metadata** subset containing extra columns used in dataset construction:
+86-- `problem`
+87-- `ground_truth_solution`
+88:- `deepseek_reasoning`
+89:- `deepseek_solution`
+90-- `domain`
+91-- `source`
+92-- `test_cases` (code only)
+--
+105-| [OpenThinker-32B](https://huggingface.co/open-thoughts/OpenThinker-32B)             | 66       | 90.6    | 61.6         | 95.1        | 70.9          | 26.8        | 68.9       |
+106-| [OpenThinker-7B](https://huggingface.co/open-thoughts/OpenThinker-7B)              | 31.3     | 83.0    | 42.4         | 75.3        | 28.6          | 6.5         | 39.9       |
+107-| Bespoke-Stratos-7B          | 22.7     | 79.6    | 38.9         | 71.4        | 25.2          | 0.8         | 35.8       |
+108:| DeepSeek-R1-Distill-Qwen-7B | 60       | 88.2    | 46.9         | 79.7        | 45.1          | 14.6        | 50.1       |
+109-| gpt-4o-0513                 | 8.7      | 75.8    | 46.5         | 87.4        | 42.7          | 8.9         | 50.5       |
+110-| o1-mini                     | 64       | 85.6    | 60           | 92.8        | 74.7          | 39.8        | 72.8       |
+111-
+--
+116-|OpenThinker-32B|✅|[✅](https://huggingface.co/datasets/open-thoughts/OpenThoughts-114k)|[✅](https://github.com/open-thoughts/open-thoughts) |
+117-|OpenThinker-7B|✅|[✅](https://huggingface.co/datasets/open-thoughts/OpenThoughts-114k)|[✅](https://github.com/open-thoughts/open-thoughts) |
+118-|Bespoke-Stratos-7B|✅|[✅](https://huggingface.co/datasets/bespokelabs/Bespoke-Stratos-17k)|[✅](https://github.com/bespokelabsai/curator/tree/main/examples/bespoke-stratos-data-generation)|
+119:|DeepSeek-R1-Distill models|✅|❌|❌|
+120-|OpenAI/Gemini|❌|❌|❌|❌|
+121-
+122-We are actively working towards improving the dataset, so please stay tuned!
+--
+140-Puzzle
+141-- [INK-USC/riddle_sense](https://huggingface.co/datasets/INK-USC/riddle_sense)
+142-
+143:Using a curated mix of the datasets above, we generate reasoning traces from DeepSeek-R1 and verify correctness to construct the final dataset.
+144-
+145-![diagram](diagram.png)
+146-
+[?2004hroot@0ccef502aeae:/app# python3 - <<'PY'
+[?2004l[?2004h> import pyarrow.parquet as pq
+[?2004l[?2004h> t=pq.read_table('/app/metadata.parquet')
+[?2004l[?2004h> print(t.schema)
+[?2004l[?2004h> print(t.column('domain').to_pylist()[:20])
+[?2004l[?2004h> PY
+[?2004lproblem: string
+deepseek_reasoning: string
+deepseek_solution: string
+ground_truth_solution: string
+domain: string
+source: string
+test_cases: string
+starter_code: string
+-- schema metadata --
+huggingface: '{"info": {"features": {"problem": {"dtype": "string", "_typ' + 406
+['math', 'code', 'code', 'math', 'math', 'biology', 'puzzle', 'code', 'math', 'math', 'math', 'math', 'code', 'math', 'math', 'math', 'code', 'math', 'math', 'math']
+[?2004hroot@0ccef502aeae:/app# export HF_ENDPOINT=https://hf-mirror.com
+[?2004l[?2004hroot@0ccef502aeae:/app# python3 - <<'PY'
+[?2004l[?2004h> from transformers import AutoTokenizer
+[?2004l[?2004h> import pyarrow.parquet as pq
+[?2004l[?2004h> 
+[?2004l[?2004h> rows=pq.read_table('/app/metadata.parquet').to_pylist()
+[?2004l[?2004h> science={'physics','chemistry','biology'}
+[?2004l[?2004h> rows=[r for r in rows if r['domain'] in science]
+[?2004l[?2004h> tok=AutoTokenizer.from_pretrained('Qwen/Qwen2.5-1.5B-Instruct')
+[?2004l[?2004h> def n(s): return len(tok.encode(s or '', add_special_tokens=False))
+[?2004l[?2004h> rs=[r['deepseek_reasoning'] or '' for r in rows]
+[?2004l[?2004h> ss=[r['deepseek_solution'] or '' for r in rows]
+[?2004l[?2004h> print('science rows', len(rows))
+[?2004l[?2004h> print('reasoning only, per-row sum', sum(n(x) for x in rs))
+[?2004l[?2004h> print('solution only, per-row sum', sum(n(x) for x in ss))
+[?2004l[?2004h> print('both, per-row sum', sum(n(x)+n(y) for x,y in zip(rs,ss)))
+[?2004l[?2004h> print('both, one string per row', sum(n(x+'\n'+y) for x,y in zip(rs,ss)))
+[?2004l[?2004h> print('both, global join per field', n('\n'.join(rs)) + n('\n'.join(ss)))
+[?2004l[?2004h> print('both, global joined records', n('\n'.join(x+'\n'+y for x,y in zip(rs,ss))))
+[?2004l[?2004h> print('with tags, per-row', sum(n('<|begin_of_thought|>\n\n'+x+'\n\n<|end_of_thought|>\n<|begin_of_solution|>\n\n'+y+'\n\n<|end_of_solution|>') for x,y in zip((rs,ss)))
+[?2004l[?2004h> print('with simple separators', sum(n(x+' '+y) for x,y in zip(rs,ss)))
+[?2004l[?2004h> PY
+[?2004l[transformers] PyTorch was not found. Models won't be available and only tokenizers, configuration and file/data utilities can be used.
+science rows 26
+reasoning only, per-row sum 63841
+solution only, per-row sum 15745
+both, per-row sum 79586
+both, one string per row 79586
+both, global join per field 79586
+both, global joined records 79586
+with tags, per-row 80366
+with simple separators 79585
+[?2004hroot@0ccef502aeae:/app# printf '79586' > /app/answer.txt
+[?2004l[?2004hroot@0ccef502aeae:/app# wc -c /app/answer.txt
+[?2004l5 /app/answer.txt
+[?2004hroot@0ccef502aeae:/app# 

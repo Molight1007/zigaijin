@@ -1,0 +1,4192 @@
+{
+  "candidates": [
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 52,
+        "k_bytes": 432,
+        "k_cc": 2,
+        "k_chars": 432,
+        "k_gzip": 129,
+        "k_lines_nb": 3
+      },
+      "evidence": {
+        "body_span": [
+          26,
+          34
+        ],
+        "qualname": "AsciinemaHandler.__init__",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0001",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "asciinema_handler.py",
+      "protection": [
+        {
+          "end": 25,
+          "kind": "dunder",
+          "reason": "dunder/framework hook would be touched",
+          "start": 25
+        }
+      ],
+      "span": [
+        25,
+        34
+      ],
+      "symbol": "AsciinemaHandler.__init__"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 52,
+        "k_bytes": 824,
+        "k_cc": 3,
+        "k_chars": 824,
+        "k_gzip": 270,
+        "k_lines_nb": 6
+      },
+      "evidence": {
+        "body_span": [
+          37,
+          53
+        ],
+        "qualname": "AsciinemaHandler.merge_markers",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0002",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "asciinema_handler.py",
+      "protection": [
+        {
+          "end": 36,
+          "kind": "public_signature",
+          "reason": "public signature would be changed",
+          "start": 36
+        }
+      ],
+      "span": [
+        36,
+        53
+      ],
+      "symbol": "AsciinemaHandler.merge_markers"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 78,
+        "k_bytes": 720,
+        "k_cc": 2,
+        "k_chars": 720,
+        "k_gzip": 155,
+        "k_lines_nb": 12
+      },
+      "evidence": {
+        "body_span": [
+          56,
+          74
+        ],
+        "qualname": "AsciinemaHandler._write_merged_recording",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0003",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "asciinema_handler.py",
+      "protection": [],
+      "span": [
+        55,
+        74
+      ],
+      "symbol": "AsciinemaHandler._write_merged_recording"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 129,
+        "k_bytes": 952,
+        "k_cc": 5,
+        "k_chars": 952,
+        "k_gzip": 262,
+        "k_lines_nb": 22
+      },
+      "evidence": {
+        "body_span": [
+          82,
+          104
+        ],
+        "qualname": "AsciinemaHandler._process_recording_line",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0004",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "asciinema_handler.py",
+      "protection": [
+        {
+          "end": 101,
+          "kind": "try",
+          "reason": "exception structure would be touched",
+          "start": 87
+        }
+      ],
+      "span": [
+        76,
+        104
+      ],
+      "symbol": "AsciinemaHandler._process_recording_line"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 53,
+        "k_bytes": 303,
+        "k_cc": 1,
+        "k_chars": 303,
+        "k_gzip": 73,
+        "k_lines_nb": 4
+      },
+      "evidence": {
+        "body_span": [
+          107,
+          110
+        ],
+        "qualname": "AsciinemaHandler._write_marker",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0005",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "asciinema_handler.py",
+      "protection": [],
+      "span": [
+        106,
+        110
+      ],
+      "symbol": "AsciinemaHandler._write_marker"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 37,
+        "k_bytes": 279,
+        "k_cc": 2,
+        "k_chars": 279,
+        "k_gzip": 55,
+        "k_lines_nb": 5
+      },
+      "evidence": {
+        "body_span": [
+          115,
+          117
+        ],
+        "qualname": "AsciinemaHandler._write_remaining_markers",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0006",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "asciinema_handler.py",
+      "protection": [],
+      "span": [
+        112,
+        117
+      ],
+      "symbol": "AsciinemaHandler._write_remaining_markers"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 34,
+        "k_bytes": 146,
+        "k_cc": 1,
+        "k_chars": 146,
+        "k_gzip": 40,
+        "k_lines_nb": 3
+      },
+      "evidence": {
+        "body_span": [
+          73,
+          74
+        ],
+        "qualname": "Memory.__init__",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0007",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "mechanisms.py",
+      "protection": [
+        {
+          "end": 72,
+          "kind": "dunder",
+          "reason": "dunder/framework hook would be touched",
+          "start": 72
+        }
+      ],
+      "span": [
+        72,
+        74
+      ],
+      "symbol": "Memory.__init__"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 35,
+        "k_bytes": 154,
+        "k_cc": 2,
+        "k_chars": 154,
+        "k_gzip": 50,
+        "k_lines_nb": 3
+      },
+      "evidence": {
+        "body_span": [
+          77,
+          78
+        ],
+        "qualname": "Memory._path",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0008",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "mechanisms.py",
+      "protection": [],
+      "span": [
+        76,
+        78
+      ],
+      "symbol": "Memory._path"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 205,
+        "k_bytes": 1053,
+        "k_cc": 9,
+        "k_chars": 1053,
+        "k_gzip": 289,
+        "k_lines_nb": 22
+      },
+      "evidence": {
+        "body_span": [
+          82,
+          103
+        ],
+        "qualname": "Memory.write",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0009",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "mechanisms.py",
+      "protection": [
+        {
+          "end": 81,
+          "kind": "public_signature",
+          "reason": "public signature would be changed",
+          "start": 80
+        },
+        {
+          "end": 99,
+          "kind": "try",
+          "reason": "exception structure would be touched",
+          "start": 94
+        }
+      ],
+      "span": [
+        80,
+        103
+      ],
+      "symbol": "Memory.write"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 158,
+        "k_bytes": 694,
+        "k_cc": 6,
+        "k_chars": 694,
+        "k_gzip": 142,
+        "k_lines_nb": 19
+      },
+      "evidence": {
+        "body_span": [
+          106,
+          123
+        ],
+        "qualname": "Memory.read",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0010",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "mechanisms.py",
+      "protection": [
+        {
+          "end": 105,
+          "kind": "public_signature",
+          "reason": "public signature would be changed",
+          "start": 105
+        },
+        {
+          "end": 116,
+          "kind": "try",
+          "reason": "exception structure would be touched",
+          "start": 113
+        }
+      ],
+      "span": [
+        105,
+        123
+      ],
+      "symbol": "Memory.read"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 74,
+        "k_bytes": 413,
+        "k_cc": 3,
+        "k_chars": 411,
+        "k_gzip": 124,
+        "k_lines_nb": 7
+      },
+      "evidence": {
+        "body_span": [
+          127,
+          132
+        ],
+        "qualname": "Memory.digest",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0011",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "mechanisms.py",
+      "protection": [
+        {
+          "end": 126,
+          "kind": "public_signature",
+          "reason": "public signature would be changed",
+          "start": 125
+        }
+      ],
+      "span": [
+        125,
+        132
+      ],
+      "symbol": "Memory.digest"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 11,
+        "k_bytes": 55,
+        "k_cc": 1,
+        "k_chars": 55,
+        "k_gzip": 10,
+        "k_lines_nb": 2
+      },
+      "evidence": {
+        "body_span": [
+          141,
+          141
+        ],
+        "qualname": "ToolRegistry.__init__",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0012",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "mechanisms.py",
+      "protection": [
+        {
+          "end": 140,
+          "kind": "dunder",
+          "reason": "dunder/framework hook would be touched",
+          "start": 140
+        }
+      ],
+      "span": [
+        140,
+        141
+      ],
+      "symbol": "ToolRegistry.__init__"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 25,
+        "k_bytes": 89,
+        "k_cc": 1,
+        "k_chars": 89,
+        "k_gzip": 22,
+        "k_lines_nb": 2
+      },
+      "evidence": {
+        "body_span": [
+          144,
+          144
+        ],
+        "qualname": "ToolRegistry.register",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0013",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "mechanisms.py",
+      "protection": [
+        {
+          "end": 143,
+          "kind": "public_signature",
+          "reason": "public signature would be changed",
+          "start": 143
+        }
+      ],
+      "span": [
+        143,
+        144
+      ],
+      "symbol": "ToolRegistry.register"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 55,
+        "k_bytes": 215,
+        "k_cc": 3,
+        "k_chars": 215,
+        "k_gzip": 64,
+        "k_lines_nb": 5
+      },
+      "evidence": {
+        "body_span": [
+          147,
+          150
+        ],
+        "qualname": "ToolRegistry.spec",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0014",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "mechanisms.py",
+      "protection": [
+        {
+          "end": 146,
+          "kind": "public_signature",
+          "reason": "public signature would be changed",
+          "start": 146
+        }
+      ],
+      "span": [
+        146,
+        150
+      ],
+      "symbol": "ToolRegistry.spec"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 75,
+        "k_bytes": 361,
+        "k_cc": 4,
+        "k_chars": 361,
+        "k_gzip": 121,
+        "k_lines_nb": 7
+      },
+      "evidence": {
+        "body_span": [
+          153,
+          158
+        ],
+        "qualname": "ToolRegistry.call",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0015",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "mechanisms.py",
+      "protection": [
+        {
+          "end": 152,
+          "kind": "public_signature",
+          "reason": "public signature would be changed",
+          "start": 152
+        },
+        {
+          "end": 158,
+          "kind": "try",
+          "reason": "exception structure would be touched",
+          "start": 155
+        }
+      ],
+      "span": [
+        152,
+        158
+      ],
+      "symbol": "ToolRegistry.call"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 45,
+        "k_bytes": 532,
+        "k_cc": 3,
+        "k_chars": 532,
+        "k_gzip": 217,
+        "k_lines_nb": 7
+      },
+      "evidence": {
+        "body_span": [
+          163,
+          172
+        ],
+        "qualname": "subcall",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0016",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "mechanisms.py",
+      "protection": [
+        {
+          "end": 162,
+          "kind": "public_signature",
+          "reason": "public signature would be changed",
+          "start": 162
+        },
+        {
+          "end": 172,
+          "kind": "try",
+          "reason": "exception structure would be touched",
+          "start": 167
+        }
+      ],
+      "span": [
+        162,
+        172
+      ],
+      "symbol": "subcall"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 175,
+        "k_bytes": 1312,
+        "k_cc": 4,
+        "k_chars": 1312,
+        "k_gzip": 423,
+        "k_lines_nb": 22
+      },
+      "evidence": {
+        "body_span": [
+          178,
+          202
+        ],
+        "qualname": "upload_skills",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0017",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "mechanisms.py",
+      "protection": [
+        {
+          "end": 177,
+          "kind": "public_signature",
+          "reason": "public signature would be changed",
+          "start": 176
+        },
+        {
+          "end": 202,
+          "kind": "try",
+          "reason": "exception structure would be touched",
+          "start": 186
+        }
+      ],
+      "span": [
+        176,
+        202
+      ],
+      "symbol": "upload_skills"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 35,
+        "k_bytes": 179,
+        "k_cc": 2,
+        "k_chars": 179,
+        "k_gzip": 77,
+        "k_lines_nb": 6
+      },
+      "evidence": {
+        "body_span": [
+          90,
+          92
+        ],
+        "qualname": "_terminal_observation_source_call_id",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0018",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_2.py",
+      "protection": [],
+      "span": [
+        87,
+        92
+      ],
+      "symbol": "_terminal_observation_source_call_id"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 15,
+        "k_bytes": 97,
+        "k_cc": 1,
+        "k_chars": 97,
+        "k_gzip": 30,
+        "k_lines_nb": 4
+      },
+      "evidence": {
+        "body_span": [
+          459,
+          459
+        ],
+        "qualname": "Terminus2.name",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0019",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_2.py",
+      "protection": [
+        {
+          "end": 458,
+          "kind": "decorator",
+          "reason": "decorated definition would be touched",
+          "start": 456
+        },
+        {
+          "end": 458,
+          "kind": "public_signature",
+          "reason": "public signature would be changed",
+          "start": 458
+        }
+      ],
+      "span": [
+        456,
+        459
+      ],
+      "symbol": "Terminus2.name"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 12,
+        "k_bytes": 74,
+        "k_cc": 1,
+        "k_chars": 74,
+        "k_gzip": 12,
+        "k_lines_nb": 3
+      },
+      "evidence": {
+        "body_span": [
+          463,
+          463
+        ],
+        "qualname": "Terminus2.version",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0020",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_2.py",
+      "protection": [
+        {
+          "end": 462,
+          "kind": "decorator",
+          "reason": "decorated definition would be touched",
+          "start": 461
+        },
+        {
+          "end": 462,
+          "kind": "public_signature",
+          "reason": "public signature would be changed",
+          "start": 462
+        }
+      ],
+      "span": [
+        461,
+        463
+      ],
+      "symbol": "Terminus2.version"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 104,
+        "k_bytes": 926,
+        "k_cc": 2,
+        "k_chars": 926,
+        "k_gzip": 191,
+        "k_lines_nb": 20
+      },
+      "evidence": {
+        "body_span": [
+          467,
+          485
+        ],
+        "qualname": "Terminus2.setup",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0021",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_2.py",
+      "protection": [
+        {
+          "end": 466,
+          "kind": "decorator",
+          "reason": "decorated definition would be touched",
+          "start": 465
+        },
+        {
+          "end": 466,
+          "kind": "public_signature",
+          "reason": "public signature would be changed",
+          "start": 466
+        }
+      ],
+      "span": [
+        465,
+        485
+      ],
+      "symbol": "Terminus2.setup"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 106,
+        "k_bytes": 629,
+        "k_cc": 6,
+        "k_chars": 629,
+        "k_gzip": 193,
+        "k_lines_nb": 14
+      },
+      "evidence": {
+        "body_span": [
+          515,
+          529
+        ],
+        "qualname": "Terminus2._parse_skill_frontmatter",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0022",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_2.py",
+      "protection": [
+        {
+          "end": 514,
+          "kind": "decorator",
+          "reason": "decorated definition would be touched",
+          "start": 513
+        },
+        {
+          "end": 526,
+          "kind": "try",
+          "reason": "exception structure would be touched",
+          "start": 523
+        }
+      ],
+      "span": [
+        513,
+        529
+      ],
+      "symbol": "Terminus2._parse_skill_frontmatter"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 293,
+        "k_bytes": 2131,
+        "k_cc": 12,
+        "k_chars": 2131,
+        "k_gzip": 593,
+        "k_lines_nb": 35
+      },
+      "evidence": {
+        "body_span": [
+          532,
+          582
+        ],
+        "qualname": "Terminus2._build_skills_section",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0023",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_2.py",
+      "protection": [],
+      "span": [
+        531,
+        582
+      ],
+      "symbol": "Terminus2._build_skills_section"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 37,
+        "k_bytes": 453,
+        "k_cc": 3,
+        "k_chars": 453,
+        "k_gzip": 61,
+        "k_lines_nb": 9
+      },
+      "evidence": {
+        "body_span": [
+          585,
+          596
+        ],
+        "qualname": "Terminus2._get_error_response_type",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0024",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_2.py",
+      "protection": [
+        {
+          "end": 596,
+          "kind": "raise",
+          "reason": "raise would be removed",
+          "start": 594
+        }
+      ],
+      "span": [
+        584,
+        596
+      ],
+      "symbol": "Terminus2._get_error_response_type"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 50,
+        "k_bytes": 1161,
+        "k_cc": 3,
+        "k_chars": 1161,
+        "k_gzip": 199,
+        "k_lines_nb": 21
+      },
+      "evidence": {
+        "body_span": [
+          599,
+          619
+        ],
+        "qualname": "Terminus2._get_completion_confirmation_message",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0025",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_2.py",
+      "protection": [
+        {
+          "end": 619,
+          "kind": "raise",
+          "reason": "raise would be removed",
+          "start": 617
+        }
+      ],
+      "span": [
+        598,
+        619
+      ],
+      "symbol": "Terminus2._get_completion_confirmation_message"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 24,
+        "k_bytes": 246,
+        "k_cc": 1,
+        "k_chars": 246,
+        "k_gzip": 71,
+        "k_lines_nb": 3
+      },
+      "evidence": {
+        "body_span": [
+          622,
+          625
+        ],
+        "qualname": "Terminus2._count_total_tokens",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0026",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_2.py",
+      "protection": [],
+      "span": [
+        621,
+        625
+      ],
+      "symbol": "Terminus2._count_total_tokens"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 127,
+        "k_bytes": 1302,
+        "k_cc": 2,
+        "k_chars": 1302,
+        "k_gzip": 340,
+        "k_lines_nb": 16
+      },
+      "evidence": {
+        "body_span": [
+          628,
+          663
+        ],
+        "qualname": "Terminus2._limit_output_length",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0027",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_2.py",
+      "protection": [],
+      "span": [
+        627,
+        663
+      ],
+      "symbol": "Terminus2._limit_output_length"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 128,
+        "k_bytes": 989,
+        "k_cc": 4,
+        "k_chars": 989,
+        "k_gzip": 196,
+        "k_lines_nb": 19
+      },
+      "evidence": {
+        "body_span": [
+          668,
+          689
+        ],
+        "qualname": "Terminus2._unwind_messages_to_free_tokens",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0028",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_2.py",
+      "protection": [],
+      "span": [
+        665,
+        689
+      ],
+      "symbol": "Terminus2._unwind_messages_to_free_tokens"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 129,
+        "k_bytes": 979,
+        "k_cc": 8,
+        "k_chars": 979,
+        "k_gzip": 172,
+        "k_lines_nb": 16
+      },
+      "evidence": {
+        "body_span": [
+          692,
+          713
+        ],
+        "qualname": "Terminus2._collect_subagent_rollout_detail",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0029",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_2.py",
+      "protection": [],
+      "span": [
+        691,
+        713
+      ],
+      "symbol": "Terminus2._collect_subagent_rollout_detail"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 59,
+        "k_bytes": 620,
+        "k_cc": 2,
+        "k_chars": 620,
+        "k_gzip": 73,
+        "k_lines_nb": 7
+      },
+      "evidence": {
+        "body_span": [
+          716,
+          727
+        ],
+        "qualname": "Terminus2._update_subagent_metrics",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0030",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_2.py",
+      "protection": [],
+      "span": [
+        715,
+        727
+      ],
+      "symbol": "Terminus2._update_subagent_metrics"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 58,
+        "k_bytes": 594,
+        "k_cc": 3,
+        "k_chars": 594,
+        "k_gzip": 110,
+        "k_lines_nb": 9
+      },
+      "evidence": {
+        "body_span": [
+          730,
+          746
+        ],
+        "qualname": "Terminus2._extract_usage_metrics",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0031",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_2.py",
+      "protection": [],
+      "span": [
+        729,
+        746
+      ],
+      "symbol": "Terminus2._extract_usage_metrics"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 37,
+        "k_bytes": 345,
+        "k_cc": 1,
+        "k_chars": 345,
+        "k_gzip": 44,
+        "k_lines_nb": 4
+      },
+      "evidence": {
+        "body_span": [
+          749,
+          756
+        ],
+        "qualname": "Terminus2._track_api_request_time",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0032",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_2.py",
+      "protection": [],
+      "span": [
+        748,
+        756
+      ],
+      "symbol": "Terminus2._track_api_request_time"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 215,
+        "k_bytes": 2776,
+        "k_cc": 1,
+        "k_chars": 2776,
+        "k_gzip": 526,
+        "k_lines_nb": 47
+      },
+      "evidence": {
+        "body_span": [
+          769,
+          835
+        ],
+        "qualname": "Terminus2._run_subagent",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0033",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_2.py",
+      "protection": [],
+      "span": [
+        758,
+        835
+      ],
+      "symbol": "Terminus2._run_subagent"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 534,
+        "k_bytes": 9940,
+        "k_cc": 3,
+        "k_chars": 9940,
+        "k_gzip": 2378,
+        "k_lines_nb": 139
+      },
+      "evidence": {
+        "body_span": [
+          840,
+          1051
+        ],
+        "qualname": "Terminus2._summarize",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0034",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_2.py",
+      "protection": [],
+      "span": [
+        837,
+        1051
+      ],
+      "symbol": "Terminus2._summarize"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 128,
+        "k_bytes": 1126,
+        "k_cc": 3,
+        "k_chars": 1126,
+        "k_gzip": 139,
+        "k_lines_nb": 18
+      },
+      "evidence": {
+        "body_span": [
+          1056,
+          1077
+        ],
+        "qualname": "Terminus2._check_proactive_summarization",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0035",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_2.py",
+      "protection": [
+        {
+          "end": 1075,
+          "kind": "try",
+          "reason": "exception structure would be touched",
+          "start": 1069
+        }
+      ],
+      "span": [
+        1053,
+        1077
+      ],
+      "symbol": "Terminus2._check_proactive_summarization"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 721,
+        "k_bytes": 7301,
+        "k_cc": 19,
+        "k_chars": 7301,
+        "k_gzip": 1501,
+        "k_lines_nb": 132
+      },
+      "evidence": {
+        "body_span": [
+          1098,
+          1251
+        ],
+        "qualname": "Terminus2._query_llm",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0036",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_2.py",
+      "protection": [
+        {
+          "end": 1091,
+          "kind": "decorator",
+          "reason": "decorated definition would be touched",
+          "start": 1079
+        },
+        {
+          "end": 1251,
+          "kind": "try",
+          "reason": "exception structure would be touched",
+          "start": 1098
+        },
+        {
+          "end": 1114,
+          "kind": "raise",
+          "reason": "raise would be removed",
+          "start": 1114
+        },
+        {
+          "end": 1119,
+          "kind": "raise",
+          "reason": "raise would be removed",
+          "start": 1119
+        },
+        {
+          "end": 1136,
+          "kind": "try",
+          "reason": "exception structure would be touched",
+          "start": 1125
+        },
+        {
+          "end": 1154,
+          "kind": "try",
+          "reason": "exception structure would be touched",
+          "start": 1140
+        },
+        {
+          "end": 1179,
+          "kind": "try",
+          "reason": "exception structure would be touched",
+          "start": 1165
+        },
+        {
+          "end": 1219,
+          "kind": "try",
+          "reason": "exception structure would be touched",
+          "start": 1211
+        },
+        {
+          "end": 1251,
+          "kind": "raise",
+          "reason": "raise would be removed",
+          "start": 1251
+        }
+      ],
+      "span": [
+        1079,
+        1251
+      ],
+      "symbol": "Terminus2._query_llm"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 201,
+        "k_bytes": 1248,
+        "k_cc": 6,
+        "k_chars": 1248,
+        "k_gzip": 223,
+        "k_lines_nb": 36
+      },
+      "evidence": {
+        "body_span": [
+          1260,
+          1293
+        ],
+        "qualname": "Terminus2._handle_llm_interaction",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0037",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_2.py",
+      "protection": [],
+      "span": [
+        1253,
+        1293
+      ],
+      "symbol": "Terminus2._handle_llm_interaction"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 98,
+        "k_bytes": 1077,
+        "k_cc": 3,
+        "k_chars": 1077,
+        "k_gzip": 183,
+        "k_lines_nb": 21
+      },
+      "evidence": {
+        "body_span": [
+          1300,
+          1325
+        ],
+        "qualname": "Terminus2._execute_commands",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0038",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_2.py",
+      "protection": [
+        {
+          "end": 1323,
+          "kind": "try",
+          "reason": "exception structure would be touched",
+          "start": 1310
+        }
+      ],
+      "span": [
+        1295,
+        1325
+      ],
+      "symbol": "Terminus2._execute_commands"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 1153,
+        "k_bytes": 14403,
+        "k_cc": 39,
+        "k_chars": 14403,
+        "k_gzip": 2627,
+        "k_lines_nb": 246
+      },
+      "evidence": {
+        "body_span": [
+          1333,
+          1636
+        ],
+        "qualname": "Terminus2._run_agent_loop",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0039",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_2.py",
+      "protection": [
+        {
+          "end": 1334,
+          "kind": "raise",
+          "reason": "raise would be removed",
+          "start": 1334
+        },
+        {
+          "end": 1344,
+          "kind": "raise",
+          "reason": "raise would be removed",
+          "start": 1344
+        }
+      ],
+      "span": [
+        1327,
+        1636
+      ],
+      "symbol": "Terminus2._run_agent_loop"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 82,
+        "k_bytes": 724,
+        "k_cc": 2,
+        "k_chars": 724,
+        "k_gzip": 204,
+        "k_lines_nb": 11
+      },
+      "evidence": {
+        "body_span": [
+          1639,
+          1652
+        ],
+        "qualname": "Terminus2._reset_per_run_state",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0040",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_2.py",
+      "protection": [],
+      "span": [
+        1638,
+        1652
+      ],
+      "symbol": "Terminus2._reset_per_run_state"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 406,
+        "k_bytes": 3332,
+        "k_cc": 8,
+        "k_chars": 3332,
+        "k_gzip": 701,
+        "k_lines_nb": 72
+      },
+      "evidence": {
+        "body_span": [
+          1661,
+          1739
+        ],
+        "qualname": "Terminus2.run",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0041",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_2.py",
+      "protection": [
+        {
+          "end": 1655,
+          "kind": "decorator",
+          "reason": "decorated definition would be touched",
+          "start": 1654
+        },
+        {
+          "end": 1660,
+          "kind": "public_signature",
+          "reason": "public signature would be changed",
+          "start": 1655
+        },
+        {
+          "end": 1666,
+          "kind": "raise",
+          "reason": "raise would be removed",
+          "start": 1666
+        },
+        {
+          "end": 1739,
+          "kind": "try",
+          "reason": "exception structure would be touched",
+          "start": 1702
+        }
+      ],
+      "span": [
+        1654,
+        1739
+      ],
+      "symbol": "Terminus2.run"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 57,
+        "k_bytes": 741,
+        "k_cc": 4,
+        "k_chars": 741,
+        "k_gzip": 168,
+        "k_lines_nb": 11
+      },
+      "evidence": {
+        "body_span": [
+          1745,
+          1761
+        ],
+        "qualname": "Terminus2._remove_metrics_from_copied_steps",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0042",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_2.py",
+      "protection": [
+        {
+          "end": 1744,
+          "kind": "decorator",
+          "reason": "decorated definition would be touched",
+          "start": 1743
+        }
+      ],
+      "span": [
+        1743,
+        1761
+      ],
+      "symbol": "Terminus2._remove_metrics_from_copied_steps"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 63,
+        "k_bytes": 594,
+        "k_cc": 1,
+        "k_chars": 594,
+        "k_gzip": 152,
+        "k_lines_nb": 7
+      },
+      "evidence": {
+        "body_span": [
+          1766,
+          1777
+        ],
+        "qualname": "Terminus2._prepare_copied_trajectory_steps",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0043",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_2.py",
+      "protection": [],
+      "span": [
+        1763,
+        1777
+      ],
+      "symbol": "Terminus2._prepare_copied_trajectory_steps"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 181,
+        "k_bytes": 2064,
+        "k_cc": 5,
+        "k_chars": 2064,
+        "k_gzip": 251,
+        "k_lines_nb": 42
+      },
+      "evidence": {
+        "body_span": [
+          1787,
+          1829
+        ],
+        "qualname": "Terminus2._append_subagent_response_step",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0044",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_2.py",
+      "protection": [],
+      "span": [
+        1779,
+        1829
+      ],
+      "symbol": "Terminus2._append_subagent_response_step"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 216,
+        "k_bytes": 2506,
+        "k_cc": 4,
+        "k_chars": 2506,
+        "k_gzip": 456,
+        "k_lines_nb": 50
+      },
+      "evidence": {
+        "body_span": [
+          1840,
+          1896
+        ],
+        "qualname": "Terminus2._save_subagent_trajectory",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0045",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_2.py",
+      "protection": [
+        {
+          "end": 1890,
+          "kind": "try",
+          "reason": "exception structure would be touched",
+          "start": 1881
+        }
+      ],
+      "span": [
+        1831,
+        1896
+      ],
+      "symbol": "Terminus2._save_subagent_trajectory"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 166,
+        "k_bytes": 1998,
+        "k_cc": 6,
+        "k_chars": 1998,
+        "k_gzip": 371,
+        "k_lines_nb": 39
+      },
+      "evidence": {
+        "body_span": [
+          1904,
+          1956
+        ],
+        "qualname": "Terminus2._convert_chat_messages_to_steps",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0046",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_2.py",
+      "protection": [],
+      "span": [
+        1898,
+        1956
+      ],
+      "symbol": "Terminus2._convert_chat_messages_to_steps"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 73,
+        "k_bytes": 1379,
+        "k_cc": 2,
+        "k_chars": 1379,
+        "k_gzip": 333,
+        "k_lines_nb": 9
+      },
+      "evidence": {
+        "body_span": [
+          1959,
+          1983
+        ],
+        "qualname": "Terminus2._split_trajectory_on_summarization",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0047",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_2.py",
+      "protection": [],
+      "span": [
+        1958,
+        1983
+      ],
+      "symbol": "Terminus2._split_trajectory_on_summarization"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 322,
+        "k_bytes": 3047,
+        "k_cc": 14,
+        "k_chars": 3047,
+        "k_gzip": 499,
+        "k_lines_nb": 48
+      },
+      "evidence": {
+        "body_span": [
+          1986,
+          2051
+        ],
+        "qualname": "Terminus2._dump_trajectory_with_continuation_index",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0048",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_2.py",
+      "protection": [
+        {
+          "end": 2051,
+          "kind": "try",
+          "reason": "exception structure would be touched",
+          "start": 2045
+        }
+      ],
+      "span": [
+        1985,
+        2051
+      ],
+      "symbol": "Terminus2._dump_trajectory_with_continuation_index"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 14,
+        "k_bytes": 192,
+        "k_cc": 1,
+        "k_chars": 192,
+        "k_gzip": 26,
+        "k_lines_nb": 2
+      },
+      "evidence": {
+        "body_span": [
+          2054,
+          2055
+        ],
+        "qualname": "Terminus2._dump_trajectory",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0049",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_2.py",
+      "protection": [],
+      "span": [
+        2053,
+        2055
+      ],
+      "symbol": "Terminus2._dump_trajectory"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 103,
+        "k_bytes": 1346,
+        "k_cc": 5,
+        "k_chars": 1346,
+        "k_gzip": 286,
+        "k_lines_nb": 17
+      },
+      "evidence": {
+        "body_span": [
+          44,
+          76
+        ],
+        "qualname": "TerminusJSONPlainParser.parse_response",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0050",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_json_plain_parser.py",
+      "protection": [
+        {
+          "end": 43,
+          "kind": "public_signature",
+          "reason": "public signature would be changed",
+          "start": 43
+        }
+      ],
+      "span": [
+        43,
+        76
+      ],
+      "symbol": "TerminusJSONPlainParser.parse_response"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 364,
+        "k_bytes": 3192,
+        "k_cc": 14,
+        "k_chars": 3192,
+        "k_gzip": 532,
+        "k_lines_nb": 75
+      },
+      "evidence": {
+        "body_span": [
+          79,
+          177
+        ],
+        "qualname": "TerminusJSONPlainParser._try_parse_response",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0051",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_json_plain_parser.py",
+      "protection": [
+        {
+          "end": 121,
+          "kind": "try",
+          "reason": "exception structure would be touched",
+          "start": 105
+        }
+      ],
+      "span": [
+        78,
+        177
+      ],
+      "symbol": "TerminusJSONPlainParser._try_parse_response"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 246,
+        "k_bytes": 1542,
+        "k_cc": 16,
+        "k_chars": 1542,
+        "k_gzip": 322,
+        "k_lines_nb": 36
+      },
+      "evidence": {
+        "body_span": [
+          180,
+          226
+        ],
+        "qualname": "TerminusJSONPlainParser._extract_json_content",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0052",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_json_plain_parser.py",
+      "protection": [],
+      "span": [
+        179,
+        226
+      ],
+      "symbol": "TerminusJSONPlainParser._extract_json_content"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 196,
+        "k_bytes": 1401,
+        "k_cc": 10,
+        "k_chars": 1401,
+        "k_gzip": 257,
+        "k_lines_nb": 23
+      },
+      "evidence": {
+        "body_span": [
+          231,
+          263
+        ],
+        "qualname": "TerminusJSONPlainParser._validate_json_structure",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0053",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_json_plain_parser.py",
+      "protection": [],
+      "span": [
+        228,
+        263
+      ],
+      "symbol": "TerminusJSONPlainParser._validate_json_structure"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 306,
+        "k_bytes": 2206,
+        "k_cc": 10,
+        "k_chars": 2206,
+        "k_gzip": 487,
+        "k_lines_nb": 40
+      },
+      "evidence": {
+        "body_span": [
+          268,
+          317
+        ],
+        "qualname": "TerminusJSONPlainParser._parse_commands",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0054",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_json_plain_parser.py",
+      "protection": [],
+      "span": [
+        265,
+        317
+      ],
+      "symbol": "TerminusJSONPlainParser._parse_commands"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 20,
+        "k_bytes": 344,
+        "k_cc": 1,
+        "k_chars": 344,
+        "k_gzip": 77,
+        "k_lines_nb": 8
+      },
+      "evidence": {
+        "body_span": [
+          320,
+          327
+        ],
+        "qualname": "TerminusJSONPlainParser._get_auto_fixes",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0055",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_json_plain_parser.py",
+      "protection": [],
+      "span": [
+        319,
+        327
+      ],
+      "symbol": "TerminusJSONPlainParser._get_auto_fixes"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 89,
+        "k_bytes": 591,
+        "k_cc": 6,
+        "k_chars": 591,
+        "k_gzip": 108,
+        "k_lines_nb": 12
+      },
+      "evidence": {
+        "body_span": [
+          330,
+          342
+        ],
+        "qualname": "TerminusJSONPlainParser._fix_incomplete_json",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0056",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_json_plain_parser.py",
+      "protection": [],
+      "span": [
+        329,
+        342
+      ],
+      "symbol": "TerminusJSONPlainParser._fix_incomplete_json"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 71,
+        "k_bytes": 517,
+        "k_cc": 3,
+        "k_chars": 517,
+        "k_gzip": 128,
+        "k_lines_nb": 10
+      },
+      "evidence": {
+        "body_span": [
+          345,
+          357
+        ],
+        "qualname": "TerminusJSONPlainParser._fix_mixed_content",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0057",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_json_plain_parser.py",
+      "protection": [
+        {
+          "end": 355,
+          "kind": "try",
+          "reason": "exception structure would be touched",
+          "start": 351
+        }
+      ],
+      "span": [
+        344,
+        357
+      ],
+      "symbol": "TerminusJSONPlainParser._fix_mixed_content"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 30,
+        "k_bytes": 293,
+        "k_cc": 2,
+        "k_chars": 293,
+        "k_gzip": 62,
+        "k_lines_nb": 5
+      },
+      "evidence": {
+        "body_span": [
+          360,
+          364
+        ],
+        "qualname": "TerminusJSONPlainParser._combine_warnings",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0058",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_json_plain_parser.py",
+      "protection": [],
+      "span": [
+        359,
+        364
+      ],
+      "symbol": "TerminusJSONPlainParser._combine_warnings"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 205,
+        "k_bytes": 1608,
+        "k_cc": 10,
+        "k_chars": 1604,
+        "k_gzip": 427,
+        "k_lines_nb": 27
+      },
+      "evidence": {
+        "body_span": [
+          369,
+          407
+        ],
+        "qualname": "TerminusJSONPlainParser._check_field_order",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0059",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_json_plain_parser.py",
+      "protection": [],
+      "span": [
+        366,
+        407
+      ],
+      "symbol": "TerminusJSONPlainParser._check_field_order"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 13,
+        "k_bytes": 90,
+        "k_cc": 1,
+        "k_chars": 90,
+        "k_gzip": 22,
+        "k_lines_nb": 2
+      },
+      "evidence": {
+        "body_span": [
+          40,
+          40
+        ],
+        "qualname": "TerminusXMLPlainParser.__init__",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0060",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_xml_plain_parser.py",
+      "protection": [
+        {
+          "end": 39,
+          "kind": "dunder",
+          "reason": "dunder/framework hook would be touched",
+          "start": 39
+        }
+      ],
+      "span": [
+        39,
+        40
+      ],
+      "symbol": "TerminusXMLPlainParser.__init__"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 103,
+        "k_bytes": 1344,
+        "k_cc": 5,
+        "k_chars": 1344,
+        "k_gzip": 273,
+        "k_lines_nb": 17
+      },
+      "evidence": {
+        "body_span": [
+          43,
+          74
+        ],
+        "qualname": "TerminusXMLPlainParser.parse_response",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0061",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_xml_plain_parser.py",
+      "protection": [
+        {
+          "end": 42,
+          "kind": "public_signature",
+          "reason": "public signature would be changed",
+          "start": 42
+        }
+      ],
+      "span": [
+        42,
+        74
+      ],
+      "symbol": "TerminusXMLPlainParser.parse_response"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 322,
+        "k_bytes": 3753,
+        "k_cc": 15,
+        "k_chars": 3753,
+        "k_gzip": 562,
+        "k_lines_nb": 81
+      },
+      "evidence": {
+        "body_span": [
+          77,
+          183
+        ],
+        "qualname": "TerminusXMLPlainParser._try_parse_response",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0062",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_xml_plain_parser.py",
+      "protection": [],
+      "span": [
+        76,
+        183
+      ],
+      "symbol": "TerminusXMLPlainParser._try_parse_response"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 13,
+        "k_bytes": 270,
+        "k_cc": 1,
+        "k_chars": 270,
+        "k_gzip": 72,
+        "k_lines_nb": 7
+      },
+      "evidence": {
+        "body_span": [
+          186,
+          192
+        ],
+        "qualname": "TerminusXMLPlainParser._get_auto_fixes",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0063",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_xml_plain_parser.py",
+      "protection": [],
+      "span": [
+        185,
+        192
+      ],
+      "symbol": "TerminusXMLPlainParser._get_auto_fixes"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 30,
+        "k_bytes": 293,
+        "k_cc": 2,
+        "k_chars": 293,
+        "k_gzip": 64,
+        "k_lines_nb": 5
+      },
+      "evidence": {
+        "body_span": [
+          195,
+          199
+        ],
+        "qualname": "TerminusXMLPlainParser._combine_warnings",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0064",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_xml_plain_parser.py",
+      "protection": [],
+      "span": [
+        194,
+        199
+      ],
+      "symbol": "TerminusXMLPlainParser._combine_warnings"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 48,
+        "k_bytes": 384,
+        "k_cc": 2,
+        "k_chars": 384,
+        "k_gzip": 83,
+        "k_lines_nb": 5
+      },
+      "evidence": {
+        "body_span": [
+          202,
+          208
+        ],
+        "qualname": "TerminusXMLPlainParser._fix_missing_response_tag",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0065",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_xml_plain_parser.py",
+      "protection": [],
+      "span": [
+        201,
+        208
+      ],
+      "symbol": "TerminusXMLPlainParser._fix_missing_response_tag"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 128,
+        "k_bytes": 1234,
+        "k_cc": 6,
+        "k_chars": 1234,
+        "k_gzip": 175,
+        "k_lines_nb": 19
+      },
+      "evidence": {
+        "body_span": [
+          211,
+          237
+        ],
+        "qualname": "TerminusXMLPlainParser._check_extra_text",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0066",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_xml_plain_parser.py",
+      "protection": [],
+      "span": [
+        210,
+        237
+      ],
+      "symbol": "TerminusXMLPlainParser._check_extra_text"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 82,
+        "k_bytes": 516,
+        "k_cc": 3,
+        "k_chars": 516,
+        "k_gzip": 80,
+        "k_lines_nb": 8
+      },
+      "evidence": {
+        "body_span": [
+          240,
+          250
+        ],
+        "qualname": "TerminusXMLPlainParser._extract_response_content",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0067",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_xml_plain_parser.py",
+      "protection": [],
+      "span": [
+        239,
+        250
+      ],
+      "symbol": "TerminusXMLPlainParser._extract_response_content"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 358,
+        "k_bytes": 3364,
+        "k_cc": 11,
+        "k_chars": 3364,
+        "k_gzip": 621,
+        "k_lines_nb": 61
+      },
+      "evidence": {
+        "body_span": [
+          253,
+          332
+        ],
+        "qualname": "TerminusXMLPlainParser._extract_sections",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0068",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_xml_plain_parser.py",
+      "protection": [],
+      "span": [
+        252,
+        332
+      ],
+      "symbol": "TerminusXMLPlainParser._extract_sections"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 283,
+        "k_bytes": 2755,
+        "k_cc": 9,
+        "k_chars": 2755,
+        "k_gzip": 692,
+        "k_lines_nb": 55
+      },
+      "evidence": {
+        "body_span": [
+          337,
+          405
+        ],
+        "qualname": "TerminusXMLPlainParser._parse_xml_commands",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0069",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_xml_plain_parser.py",
+      "protection": [
+        {
+          "end": 364,
+          "kind": "try",
+          "reason": "exception structure would be touched",
+          "start": 358
+        }
+      ],
+      "span": [
+        334,
+        405
+      ],
+      "symbol": "TerminusXMLPlainParser._parse_xml_commands"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 211,
+        "k_bytes": 1614,
+        "k_cc": 11,
+        "k_chars": 1614,
+        "k_gzip": 374,
+        "k_lines_nb": 29
+      },
+      "evidence": {
+        "body_span": [
+          408,
+          454
+        ],
+        "qualname": "TerminusXMLPlainParser._find_top_level_tags",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0070",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_xml_plain_parser.py",
+      "protection": [],
+      "span": [
+        407,
+        454
+      ],
+      "symbol": "TerminusXMLPlainParser._find_top_level_tags"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 192,
+        "k_bytes": 1543,
+        "k_cc": 10,
+        "k_chars": 1539,
+        "k_gzip": 354,
+        "k_lines_nb": 24
+      },
+      "evidence": {
+        "body_span": [
+          457,
+          494
+        ],
+        "qualname": "TerminusXMLPlainParser._check_section_order",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0071",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_xml_plain_parser.py",
+      "protection": [],
+      "span": [
+        456,
+        494
+      ],
+      "symbol": "TerminusXMLPlainParser._check_section_order"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 175,
+        "k_bytes": 1495,
+        "k_cc": 5,
+        "k_chars": 1495,
+        "k_gzip": 314,
+        "k_lines_nb": 25
+      },
+      "evidence": {
+        "body_span": [
+          499,
+          526
+        ],
+        "qualname": "TerminusXMLPlainParser._check_attribute_issues",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0072",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_xml_plain_parser.py",
+      "protection": [],
+      "span": [
+        496,
+        526
+      ],
+      "symbol": "TerminusXMLPlainParser._check_attribute_issues"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 30,
+        "k_bytes": 496,
+        "k_cc": 2,
+        "k_chars": 496,
+        "k_gzip": 128,
+        "k_lines_nb": 9
+      },
+      "evidence": {
+        "body_span": [
+          529,
+          540
+        ],
+        "qualname": "TerminusXMLPlainParser._check_task_complete",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0073",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_xml_plain_parser.py",
+      "protection": [],
+      "span": [
+        528,
+        540
+      ],
+      "symbol": "TerminusXMLPlainParser._check_task_complete"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 159,
+        "k_bytes": 2085,
+        "k_cc": 8,
+        "k_chars": 2085,
+        "k_gzip": 483,
+        "k_lines_nb": 25
+      },
+      "evidence": {
+        "body_span": [
+          545,
+          594
+        ],
+        "qualname": "TerminusXMLPlainParser.salvage_truncated_response",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0074",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "terminus_xml_plain_parser.py",
+      "protection": [
+        {
+          "end": 544,
+          "kind": "public_signature",
+          "reason": "public signature would be changed",
+          "start": 542
+        },
+        {
+          "end": 594,
+          "kind": "try",
+          "reason": "exception structure would be touched",
+          "start": 573
+        }
+      ],
+      "span": [
+        542,
+        594
+      ],
+      "symbol": "TerminusXMLPlainParser.salvage_truncated_response"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 228,
+        "k_bytes": 1335,
+        "k_cc": 5,
+        "k_chars": 1335,
+        "k_gzip": 285,
+        "k_lines_nb": 30
+      },
+      "evidence": {
+        "body_span": [
+          77,
+          94
+        ],
+        "qualname": "TmuxSession.__init__",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0075",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "tmux_session.py",
+      "protection": [
+        {
+          "end": 76,
+          "kind": "dunder",
+          "reason": "dunder/framework hook would be touched",
+          "start": 65
+        },
+        {
+          "end": 81,
+          "kind": "try",
+          "reason": "exception structure would be touched",
+          "start": 77
+        },
+        {
+          "end": 81,
+          "kind": "raise",
+          "reason": "raise would be removed",
+          "start": 81
+        },
+        {
+          "end": 83,
+          "kind": "raise",
+          "reason": "raise would be removed",
+          "start": 83
+        }
+      ],
+      "span": [
+        65,
+        94
+      ],
+      "symbol": "TmuxSession.__init__"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 40,
+        "k_bytes": 1054,
+        "k_cc": 2,
+        "k_chars": 1054,
+        "k_gzip": 295,
+        "k_lines_nb": 13
+      },
+      "evidence": {
+        "body_span": [
+          114,
+          134
+        ],
+        "qualname": "TmuxSession._attempt_tmux_installation",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0076",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "tmux_session.py",
+      "protection": [
+        {
+          "end": 134,
+          "kind": "try",
+          "reason": "exception structure would be touched",
+          "start": 123
+        }
+      ],
+      "span": [
+        113,
+        134
+      ],
+      "symbol": "TmuxSession._attempt_tmux_installation"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 356,
+        "k_bytes": 3256,
+        "k_cc": 18,
+        "k_chars": 3256,
+        "k_gzip": 460,
+        "k_lines_nb": 60
+      },
+      "evidence": {
+        "body_span": [
+          137,
+          213
+        ],
+        "qualname": "TmuxSession._install_recording_tools",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0077",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "tmux_session.py",
+      "protection": [],
+      "span": [
+        136,
+        213
+      ],
+      "symbol": "TmuxSession._install_recording_tools"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 287,
+        "k_bytes": 2293,
+        "k_cc": 16,
+        "k_chars": 2293,
+        "k_gzip": 472,
+        "k_lines_nb": 50
+      },
+      "evidence": {
+        "body_span": [
+          216,
+          277
+        ],
+        "qualname": "TmuxSession._detect_system_info",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0078",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "tmux_session.py",
+      "protection": [],
+      "span": [
+        215,
+        277
+      ],
+      "symbol": "TmuxSession._detect_system_info"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 120,
+        "k_bytes": 1136,
+        "k_cc": 3,
+        "k_chars": 1136,
+        "k_gzip": 242,
+        "k_lines_nb": 18
+      },
+      "evidence": {
+        "body_span": [
+          282,
+          305
+        ],
+        "qualname": "TmuxSession._get_combined_install_command",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0079",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "tmux_session.py",
+      "protection": [],
+      "span": [
+        279,
+        305
+      ],
+      "symbol": "TmuxSession._get_combined_install_command"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 131,
+        "k_bytes": 2217,
+        "k_cc": 5,
+        "k_chars": 2217,
+        "k_gzip": 371,
+        "k_lines_nb": 39
+      },
+      "evidence": {
+        "body_span": [
+          308,
+          357
+        ],
+        "qualname": "TmuxSession._build_tmux_from_source",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0080",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "tmux_session.py",
+      "protection": [
+        {
+          "end": 357,
+          "kind": "try",
+          "reason": "exception structure would be touched",
+          "start": 311
+        }
+      ],
+      "span": [
+        307,
+        357
+      ],
+      "symbol": "TmuxSession._build_tmux_from_source"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 148,
+        "k_bytes": 1858,
+        "k_cc": 7,
+        "k_chars": 1858,
+        "k_gzip": 180,
+        "k_lines_nb": 33
+      },
+      "evidence": {
+        "body_span": [
+          360,
+          403
+        ],
+        "qualname": "TmuxSession._install_asciinema_with_pip",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0081",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "tmux_session.py",
+      "protection": [
+        {
+          "end": 403,
+          "kind": "try",
+          "reason": "exception structure would be touched",
+          "start": 363
+        }
+      ],
+      "span": [
+        359,
+        403
+      ],
+      "symbol": "TmuxSession._install_asciinema_with_pip"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 83,
+        "k_bytes": 628,
+        "k_cc": 2,
+        "k_chars": 628,
+        "k_gzip": 204,
+        "k_lines_nb": 13
+      },
+      "evidence": {
+        "body_span": [
+          408,
+          419
+        ],
+        "qualname": "TmuxSession._tmux_start_session",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0082",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "tmux_session.py",
+      "protection": [
+        {
+          "end": 406,
+          "kind": "decorator",
+          "reason": "decorated definition would be touched",
+          "start": 405
+        }
+      ],
+      "span": [
+        405,
+        419
+      ],
+      "symbol": "TmuxSession._tmux_start_session"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 19,
+        "k_bytes": 279,
+        "k_cc": 1,
+        "k_chars": 279,
+        "k_gzip": 104,
+        "k_lines_nb": 3
+      },
+      "evidence": {
+        "body_span": [
+          423,
+          428
+        ],
+        "qualname": "TmuxSession._utf8_len",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0083",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "tmux_session.py",
+      "protection": [
+        {
+          "end": 422,
+          "kind": "decorator",
+          "reason": "decorated definition would be touched",
+          "start": 421
+        }
+      ],
+      "span": [
+        421,
+        428
+      ],
+      "symbol": "TmuxSession._utf8_len"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 23,
+        "k_bytes": 234,
+        "k_cc": 1,
+        "k_chars": 234,
+        "k_gzip": 69,
+        "k_lines_nb": 3
+      },
+      "evidence": {
+        "body_span": [
+          434,
+          434
+        ],
+        "qualname": "TmuxSession._send_keys_prefix",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0084",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "tmux_session.py",
+      "protection": [
+        {
+          "end": 431,
+          "kind": "decorator",
+          "reason": "decorated definition would be touched",
+          "start": 430
+        }
+      ],
+      "span": [
+        430,
+        434
+      ],
+      "symbol": "TmuxSession._send_keys_prefix"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 26,
+        "k_bytes": 288,
+        "k_cc": 1,
+        "k_chars": 288,
+        "k_gzip": 54,
+        "k_lines_nb": 7
+      },
+      "evidence": {
+        "body_span": [
+          438,
+          443
+        ],
+        "qualname": "TmuxSession._max_escaped_key_length",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0085",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "tmux_session.py",
+      "protection": [
+        {
+          "end": 437,
+          "kind": "decorator",
+          "reason": "decorated definition would be touched",
+          "start": 436
+        }
+      ],
+      "span": [
+        436,
+        443
+      ],
+      "symbol": "TmuxSession._max_escaped_key_length"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 39,
+        "k_bytes": 147,
+        "k_cc": 2,
+        "k_chars": 147,
+        "k_gzip": 22,
+        "k_lines_nb": 2
+      },
+      "evidence": {
+        "body_span": [
+          446,
+          446
+        ],
+        "qualname": "TmuxSession._send_keys_command",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0086",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "tmux_session.py",
+      "protection": [],
+      "span": [
+        445,
+        446
+      ],
+      "symbol": "TmuxSession._send_keys_command"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 27,
+        "k_bytes": 132,
+        "k_cc": 1,
+        "k_chars": 132,
+        "k_gzip": 12,
+        "k_lines_nb": 2
+      },
+      "evidence": {
+        "body_span": [
+          449,
+          449
+        ],
+        "qualname": "TmuxSession._key_requires_paste",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0087",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "tmux_session.py",
+      "protection": [],
+      "span": [
+        448,
+        449
+      ],
+      "symbol": "TmuxSession._key_requires_paste"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 173,
+        "k_bytes": 1227,
+        "k_cc": 6,
+        "k_chars": 1227,
+        "k_gzip": 240,
+        "k_lines_nb": 23
+      },
+      "evidence": {
+        "body_span": [
+          452,
+          481
+        ],
+        "qualname": "TmuxSession._batch_keys_for_send",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0088",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "tmux_session.py",
+      "protection": [
+        {
+          "end": 470,
+          "kind": "raise",
+          "reason": "raise would be removed",
+          "start": 467
+        }
+      ],
+      "span": [
+        451,
+        481
+      ],
+      "symbol": "TmuxSession._batch_keys_for_send"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 35,
+        "k_bytes": 456,
+        "k_cc": 2,
+        "k_chars": 456,
+        "k_gzip": 113,
+        "k_lines_nb": 4
+      },
+      "evidence": {
+        "body_span": [
+          484,
+          492
+        ],
+        "qualname": "TmuxSession._tmux_send_keys",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0089",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "tmux_session.py",
+      "protection": [],
+      "span": [
+        483,
+        492
+      ],
+      "symbol": "TmuxSession._tmux_send_keys"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 43,
+        "k_bytes": 406,
+        "k_cc": 2,
+        "k_chars": 406,
+        "k_gzip": 73,
+        "k_lines_nb": 15
+      },
+      "evidence": {
+        "body_span": [
+          495,
+          509
+        ],
+        "qualname": "TmuxSession._tmux_capture_pane",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0090",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "tmux_session.py",
+      "protection": [],
+      "span": [
+        494,
+        509
+      ],
+      "symbol": "TmuxSession._tmux_capture_pane"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 182,
+        "k_bytes": 1599,
+        "k_cc": 6,
+        "k_chars": 1599,
+        "k_gzip": 238,
+        "k_lines_nb": 39
+      },
+      "evidence": {
+        "body_span": [
+          512,
+          552
+        ],
+        "qualname": "TmuxSession.start",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0091",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "tmux_session.py",
+      "protection": [
+        {
+          "end": 511,
+          "kind": "public_signature",
+          "reason": "public signature would be changed",
+          "start": 511
+        },
+        {
+          "end": 519,
+          "kind": "raise",
+          "reason": "raise would be removed",
+          "start": 517
+        }
+      ],
+      "span": [
+        511,
+        552
+      ],
+      "symbol": "TmuxSession.start"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 158,
+        "k_bytes": 1520,
+        "k_cc": 5,
+        "k_chars": 1520,
+        "k_gzip": 265,
+        "k_lines_nb": 31
+      },
+      "evidence": {
+        "body_span": [
+          555,
+          591
+        ],
+        "qualname": "TmuxSession.stop",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0092",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "tmux_session.py",
+      "protection": [
+        {
+          "end": 554,
+          "kind": "public_signature",
+          "reason": "public signature would be changed",
+          "start": 554
+        }
+      ],
+      "span": [
+        554,
+        591
+      ],
+      "symbol": "TmuxSession.stop"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 17,
+        "k_bytes": 86,
+        "k_cc": 1,
+        "k_chars": 86,
+        "k_gzip": 15,
+        "k_lines_nb": 2
+      },
+      "evidence": {
+        "body_span": [
+          594,
+          594
+        ],
+        "qualname": "TmuxSession._is_enter_key",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0093",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "tmux_session.py",
+      "protection": [],
+      "span": [
+        593,
+        594
+      ],
+      "symbol": "TmuxSession._is_enter_key"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 28,
+        "k_bytes": 151,
+        "k_cc": 1,
+        "k_chars": 151,
+        "k_gzip": 31,
+        "k_lines_nb": 3
+      },
+      "evidence": {
+        "body_span": [
+          597,
+          598
+        ],
+        "qualname": "TmuxSession._ends_with_newline",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0094",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "tmux_session.py",
+      "protection": [],
+      "span": [
+        596,
+        598
+      ],
+      "symbol": "TmuxSession._ends_with_newline"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 38,
+        "k_bytes": 299,
+        "k_cc": 1,
+        "k_chars": 299,
+        "k_gzip": 73,
+        "k_lines_nb": 6
+      },
+      "evidence": {
+        "body_span": [
+          601,
+          606
+        ],
+        "qualname": "TmuxSession.is_session_alive",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0095",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "tmux_session.py",
+      "protection": [
+        {
+          "end": 600,
+          "kind": "public_signature",
+          "reason": "public signature would be changed",
+          "start": 600
+        }
+      ],
+      "span": [
+        600,
+        606
+      ],
+      "symbol": "TmuxSession.is_session_alive"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 25,
+        "k_bytes": 126,
+        "k_cc": 2,
+        "k_chars": 126,
+        "k_gzip": 19,
+        "k_lines_nb": 2
+      },
+      "evidence": {
+        "body_span": [
+          609,
+          609
+        ],
+        "qualname": "TmuxSession._is_executing_command",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0096",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "tmux_session.py",
+      "protection": [],
+      "span": [
+        608,
+        609
+      ],
+      "symbol": "TmuxSession._is_executing_command"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 99,
+        "k_bytes": 462,
+        "k_cc": 5,
+        "k_chars": 462,
+        "k_gzip": 82,
+        "k_lines_nb": 12
+      },
+      "evidence": {
+        "body_span": [
+          612,
+          624
+        ],
+        "qualname": "TmuxSession._prevent_execution",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0097",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "tmux_session.py",
+      "protection": [],
+      "span": [
+        611,
+        624
+      ],
+      "symbol": "TmuxSession._prevent_execution"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 106,
+        "k_bytes": 799,
+        "k_cc": 5,
+        "k_chars": 799,
+        "k_gzip": 141,
+        "k_lines_nb": 12
+      },
+      "evidence": {
+        "body_span": [
+          631,
+          651
+        ],
+        "qualname": "TmuxSession._prepare_keys",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0098",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "tmux_session.py",
+      "protection": [],
+      "span": [
+        626,
+        651
+      ],
+      "symbol": "TmuxSession._prepare_keys"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 54,
+        "k_bytes": 367,
+        "k_cc": 1,
+        "k_chars": 367,
+        "k_gzip": 99,
+        "k_lines_nb": 8
+      },
+      "evidence": {
+        "body_span": [
+          656,
+          660
+        ],
+        "qualname": "TmuxSession._send_keys_error",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0099",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "tmux_session.py",
+      "protection": [],
+      "span": [
+        653,
+        660
+      ],
+      "symbol": "TmuxSession._send_keys_error"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 31,
+        "k_bytes": 195,
+        "k_cc": 3,
+        "k_chars": 195,
+        "k_gzip": 29,
+        "k_lines_nb": 4
+      },
+      "evidence": {
+        "body_span": [
+          663,
+          665
+        ],
+        "qualname": "TmuxSession._is_command_too_long_error",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0100",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "tmux_session.py",
+      "protection": [],
+      "span": [
+        662,
+        665
+      ],
+      "symbol": "TmuxSession._is_command_too_long_error"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 220,
+        "k_bytes": 1912,
+        "k_cc": 6,
+        "k_chars": 1912,
+        "k_gzip": 543,
+        "k_lines_nb": 23
+      },
+      "evidence": {
+        "body_span": [
+          668,
+          705
+        ],
+        "qualname": "TmuxSession._paste_key",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0101",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "tmux_session.py",
+      "protection": [
+        {
+          "end": 691,
+          "kind": "raise",
+          "reason": "raise would be removed",
+          "start": 691
+        },
+        {
+          "end": 705,
+          "kind": "try",
+          "reason": "exception structure would be touched",
+          "start": 693
+        }
+      ],
+      "span": [
+        667,
+        705
+      ],
+      "symbol": "TmuxSession._paste_key"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 45,
+        "k_bytes": 238,
+        "k_cc": 2,
+        "k_chars": 238,
+        "k_gzip": 21,
+        "k_lines_nb": 4
+      },
+      "evidence": {
+        "body_span": [
+          689,
+          691
+        ],
+        "qualname": "TmuxSession._paste_key._run",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0102",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "tmux_session.py",
+      "protection": [
+        {
+          "end": 691,
+          "kind": "raise",
+          "reason": "raise would be removed",
+          "start": 691
+        }
+      ],
+      "span": [
+        688,
+        691
+      ],
+      "symbol": "TmuxSession._paste_key._run"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 82,
+        "k_bytes": 583,
+        "k_cc": 3,
+        "k_chars": 583,
+        "k_gzip": 98,
+        "k_lines_nb": 9
+      },
+      "evidence": {
+        "body_span": [
+          708,
+          717
+        ],
+        "qualname": "TmuxSession._send_single_key",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0103",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "tmux_session.py",
+      "protection": [
+        {
+          "end": 717,
+          "kind": "raise",
+          "reason": "raise would be removed",
+          "start": 717
+        }
+      ],
+      "span": [
+        707,
+        717
+      ],
+      "symbol": "TmuxSession._send_single_key"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 108,
+        "k_bytes": 982,
+        "k_cc": 5,
+        "k_chars": 982,
+        "k_gzip": 164,
+        "k_lines_nb": 15
+      },
+      "evidence": {
+        "body_span": [
+          720,
+          736
+        ],
+        "qualname": "TmuxSession._send_key_batches",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0104",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "tmux_session.py",
+      "protection": [
+        {
+          "end": 736,
+          "kind": "raise",
+          "reason": "raise would be removed",
+          "start": 736
+        }
+      ],
+      "span": [
+        719,
+        736
+      ],
+      "symbol": "TmuxSession._send_key_batches"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 90,
+        "k_bytes": 757,
+        "k_cc": 5,
+        "k_chars": 757,
+        "k_gzip": 138,
+        "k_lines_nb": 13
+      },
+      "evidence": {
+        "body_span": [
+          739,
+          759
+        ],
+        "qualname": "TmuxSession._send_keys_to_session",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0105",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "tmux_session.py",
+      "protection": [],
+      "span": [
+        738,
+        759
+      ],
+      "symbol": "TmuxSession._send_keys_to_session"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 23,
+        "k_bytes": 148,
+        "k_cc": 2,
+        "k_chars": 148,
+        "k_gzip": 27,
+        "k_lines_nb": 4
+      },
+      "evidence": {
+        "body_span": [
+          748,
+          750
+        ],
+        "qualname": "TmuxSession._send_keys_to_session._flush",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0106",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "tmux_session.py",
+      "protection": [],
+      "span": [
+        747,
+        750
+      ],
+      "symbol": "TmuxSession._send_keys_to_session._flush"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 100,
+        "k_bytes": 612,
+        "k_cc": 2,
+        "k_chars": 612,
+        "k_gzip": 91,
+        "k_lines_nb": 14
+      },
+      "evidence": {
+        "body_span": [
+          766,
+          777
+        ],
+        "qualname": "TmuxSession._send_blocking_keys",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0107",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "tmux_session.py",
+      "protection": [
+        {
+          "end": 774,
+          "kind": "raise",
+          "reason": "raise would be removed",
+          "start": 774
+        }
+      ],
+      "span": [
+        761,
+        777
+      ],
+      "symbol": "TmuxSession._send_blocking_keys"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 64,
+        "k_bytes": 398,
+        "k_cc": 2,
+        "k_chars": 398,
+        "k_gzip": 36,
+        "k_lines_nb": 10
+      },
+      "evidence": {
+        "body_span": [
+          784,
+          791
+        ],
+        "qualname": "TmuxSession._send_non_blocking_keys",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0108",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "tmux_session.py",
+      "protection": [],
+      "span": [
+        779,
+        791
+      ],
+      "symbol": "TmuxSession._send_non_blocking_keys"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 113,
+        "k_bytes": 1415,
+        "k_cc": 4,
+        "k_chars": 1415,
+        "k_gzip": 267,
+        "k_lines_nb": 28
+      },
+      "evidence": {
+        "body_span": [
+          800,
+          834
+        ],
+        "qualname": "TmuxSession.send_keys",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0109",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "tmux_session.py",
+      "protection": [
+        {
+          "end": 799,
+          "kind": "public_signature",
+          "reason": "public signature would be changed",
+          "start": 793
+        }
+      ],
+      "span": [
+        793,
+        834
+      ],
+      "symbol": "TmuxSession.send_keys"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 41,
+        "k_bytes": 246,
+        "k_cc": 2,
+        "k_chars": 246,
+        "k_gzip": 22,
+        "k_lines_nb": 5
+      },
+      "evidence": {
+        "body_span": [
+          837,
+          840
+        ],
+        "qualname": "TmuxSession.capture_pane",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0110",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "tmux_session.py",
+      "protection": [
+        {
+          "end": 836,
+          "kind": "public_signature",
+          "reason": "public signature would be changed",
+          "start": 836
+        }
+      ],
+      "span": [
+        836,
+        840
+      ],
+      "symbol": "TmuxSession.capture_pane"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 14,
+        "k_bytes": 109,
+        "k_cc": 1,
+        "k_chars": 109,
+        "k_gzip": 16,
+        "k_lines_nb": 2
+      },
+      "evidence": {
+        "body_span": [
+          843,
+          843
+        ],
+        "qualname": "TmuxSession._get_visible_screen",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0111",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "tmux_session.py",
+      "protection": [],
+      "span": [
+        842,
+        843
+      ],
+      "symbol": "TmuxSession._get_visible_screen"
+    },
+    {
+      "applicable": true,
+      "blocked": false,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 72,
+        "k_bytes": 416,
+        "k_cc": 4,
+        "k_chars": 416,
+        "k_gzip": 105,
+        "k_lines_nb": 8
+      },
+      "evidence": {
+        "body_span": [
+          846,
+          853
+        ],
+        "qualname": "TmuxSession._find_new_content",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0112",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "tmux_session.py",
+      "protection": [],
+      "span": [
+        845,
+        853
+      ],
+      "symbol": "TmuxSession._find_new_content"
+    },
+    {
+      "applicable": true,
+      "blocked": true,
+      "component": "terminus2:all",
+      "delta": {
+        "k_ast": 102,
+        "k_bytes": 1547,
+        "k_cc": 4,
+        "k_chars": 1547,
+        "k_gzip": 380,
+        "k_lines_nb": 15
+      },
+      "evidence": {
+        "body_span": [
+          856,
+          890
+        ],
+        "qualname": "TmuxSession.get_incremental_output",
+        "tasks_total": 2,
+        "tasks_touched": 0
+      },
+      "id": "l2-0113",
+      "kind": "zero_touch_function",
+      "layer": "L2",
+      "path": "tmux_session.py",
+      "protection": [
+        {
+          "end": 855,
+          "kind": "public_signature",
+          "reason": "public signature would be changed",
+          "start": 855
+        }
+      ],
+      "span": [
+        855,
+        890
+      ],
+      "symbol": "TmuxSession.get_incremental_output"
+    }
+  ],
+  "decision": "candidates_found",
+  "l2": {
+    "applicable_count": 113,
+    "blocked_count": 54,
+    "candidate_count": 113,
+    "delta": {
+      "k_ast": 6810,
+      "k_bytes": 64395,
+      "k_cc": 266,
+      "k_chars": 64387,
+      "k_gzip": 0,
+      "k_lines_nb": 1122
+    },
+    "reduction_pct": {
+      "k_ast": 41.7817,
+      "k_cc": 44.8567,
+      "k_chars": 37.6484,
+      "k_lines_nb": 38.7833
+    },
+    "selected_count": 58
+  },
+  "layer": "L2",
+  "root": "D:\\面向用户反馈闭环的大模型研发实验自动化与自迭代关键技术研究\\vendor\\terminus2",
+  "subject": "terminus2",
+  "tasks": [
+    "probe-import",
+    "probe-construct"
+  ],
+  "touched": 9,
+  "trace_paths_outside_components": [],
+  "units": 122,
+  "zero_touch": 113
+}

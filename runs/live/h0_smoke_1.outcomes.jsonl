@@ -1,0 +1,6 @@
+{"task_id": "terminal-bench/cancel-async-tasks", "trial_id": "cancel-async-tasks__NKWvhos", "status": "completed", "reward": 1.0, "tokens_in": 8886, "tokens_out": 8435, "cost_usd": 0.010868567999999999, "failure_cause": null}
+{"task_id": "terminal-bench/cancel-async-tasks", "trial_id": "cancel-async-tasks__rWST7NN", "status": "completed", "reward": 0.0, "tokens_in": 7882, "tokens_out": 7468, "cost_usd": 0.009708024, "failure_cause": null}
+{"task_id": "terminal-bench/cancel-async-tasks", "trial_id": "cancel-async-tasks__xYKGhD2", "status": "completed", "reward": 0.0, "tokens_in": 15327, "tokens_out": 16593, "cost_usd": 0.02112282, "failure_cause": null}
+{"task_id": "terminal-bench/chess-best-move", "trial_id": "chess-best-move__EyxMeKb", "status": "agent_error", "reward": 0.0, "tokens_in": 1387343, "tokens_out": 110652, "cost_usd": 0.15712328399999997, "failure_cause": "AgentTimeoutError"}
+{"task_id": "terminal-bench/chess-best-move", "trial_id": "chess-best-move__GMM5tgj", "status": "agent_error", "reward": 0.0, "tokens_in": 911271, "tokens_out": 114949, "cost_usd": 0.156476196, "failure_cause": "AgentTimeoutError"}
+{"task_id": "terminal-bench/chess-best-move", "trial_id": "chess-best-move__xWjijEb", "status": "infra_error", "reward": null, "tokens_in": null, "tokens_out": null, "cost_usd": null, "failure_cause": "EnvironmentStartTimeoutError"}

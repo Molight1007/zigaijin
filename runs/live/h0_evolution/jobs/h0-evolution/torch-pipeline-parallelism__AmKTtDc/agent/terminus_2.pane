@@ -1,0 +1,1038 @@
+[?2004hroot@682368998efa:/app# ls -la /app
+[?2004ltotal 8
+drwxr-xr-x 2 root root 4096 Oct 22  2025 [0m[01;34m.[0m
+drwxr-xr-x 1 root root 4096 Nov  5 11:34 [01;34m..[0m
+[?2004hroot@682368998efa:/app# find /app -maxdepth 3 -type f | sed 's#^#/##' | head -200
+[?2004l[?2004hroot@682368998efa:/app# python - <<'PY'
+[?2004l[?2004h> import torch, transformers
+[?2004l[?2004h> print('torch', torch.__version__)
+[?2004l[?2004h> print('transformers', transformers.__version__)
+[?2004l[?2004h> from transformers import LlamaForCausalLM, LlamaConfig
+[?2004l[?2004h> print(LlamaForCausalLM)
+[?2004l[?2004h> PY
+[?2004lbash: python: command not found
+[?2004hroot@682368998efa:/app# python - <<'PY'
+[?2004l[?2004h> import inspect
+[?2004l[?2004h> from transformers.models.llama import modeling_llama
+[?2004l[?2004h> print(inspect.getsource(modeling_llama.LlamaForCausalLM.forward))
+[?2004l[?2004h> PY
+[?2004lbash: python: command not found
+[?2004hroot@682368998efa:/app# grep -R "train_step_pipeline_afab" -n /app /tmp /root 2>/dev/null | head -50
+[?2004l[?2004hroot@682368998efa:/app# python3 --version && python3 - <<'PY'
+[?2004l[?2004h> import torch, transformers
+[?2004l[?2004h> print('torch', torch.__version__)
+[?2004l[?2004h> print('transformers', transformers.__version__)
+[?2004l[?2004h> from transformers import LlamaForCausalLM, LlamaConfig
+[?2004l[?2004h> print(LlamaForCausalLM)
+[?2004l[?2004h> PY
+[?2004lbash: python3: command not found
+[?2004hroot@682368998efa:/app# python3 - <<'PY'
+[?2004l[?2004h> import inspect
+[?2004l[?2004h> from transformers.models.llama import modeling_llama
+[?2004l[?2004h> for name in ['LlamaForCausalLM','LlamaModel','LlamaDecoderLayer']:
+[?2004l[?2004h>     cls = getattr(modeling_llama, name)
+[?2004l[?2004h>     print('===== ' + name + ' =====')
+[?2004l[?2004h>     print(inspect.getsource(cls.forward))
+[?2004l[?2004h> PY
+[?2004lbash: python3: command not found
+[?2004hroot@682368998efa:/app# find / -type f \( -name '*pipeline*' -o -name '*llama*test*' -o -name 'test_*.py' \) 2>/dev/null | head -100
+[?2004l[?2004hroot@682368998efa:/app# echo $PATH
+[?2004l/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+[?2004hroot@682368998efa:/app# ls -la /usr/bin/python* /usr/local/bin/python* /opt/*/bin/python* 2>/dev/null
+[?2004l[?2004hroot@682368998efa:/app# which pip pip3 conda uv 2>/dev/null; ls -la /usr/local/lib 2>/dev/null | head
+[?2004ltotal 8
+drwxr-xr-x  2 root root 4096 Oct  1  2025 .
+drwxr-xr-x 10 root root 4096 Oct  1  2025 ..
+[?2004hroot@682368998efa:/app# find / -maxdepth 4 -type f -name 'python3*' 2>/dev/null | head -50
+[?2004l[?2004hroot@682368998efa:/app# cat > /app/pipeline_parallel.py <<'PY'
+[?2004l[?2004h> import inspect
+[?2004l[?2004h> import torch
+[?2004l[?2004h> import torch.distributed as dist
+[?2004l[?2004h> import torch.nn.functional as F
+[?2004l= [?2004h> 
+[?2004l[?2004h> 
+[?2004l[?2004h> def _call_with_supported_kwargs(fn, *args, **kwargs):
+[?2004l[?2004h>     try:
+[?2004l[?2004h>         signature = inspect.signature(fn)
+[?2004lt([?2004h>     except (TypeError, ValueError):
+[?2004l[?2004h>         return fn(*args, **kwargs)
+[?2004l[?2004h> 
+[?2004l[?2004h>     parameters = signature.parameters
+[?2004lk[?2004h>     accepts_kwargs = any(
+[?2004l[?2004h>         p.kind == inspect.Parameter.VAR_KEYWORD for p in parameters.values()
+[?2004l[?2004h>     )
+[?2004l[?2004h>     if not accepts_kwargs:
+[?2004l[?2004h>         kwargs = {k: v for k, v in kwargs.items() if k in parameters}
+[?2004l[?2004h>     return fn(*args, **kwargs)
+[?2004ln_[?2004h> 
+[?2004l[?2004h> 
+[?2004l[?2004h> def _make_causal_mask(base_model, hidden_states, cache_position, dtype, device):
+[?2004l[?2004h>     if hasattr(base_model, '_update_causal_mask'):
+[?2004l[?2004h>         try:
+[?2004l[?2004h>             return base_model._update_causal_mask(
+[?2004l[?2004h>                 None, hidden_states, cache_position, None, False
+[?2004l[?2004h>             )
+[?2004l[?2004h>         except Exception:
+[?2004l[?2004h>             pass
+[?2004l[?2004h> 
+[?2004l[?2004h>     seq_len = hidden_states.size(1)
+[?2004l[?2004h>     mask = torch.full(
+[?2004l[?2004h>         (seq_len, seq_len),
+[?2004l[?2004h>         torch.finfo(dtype).min,
+[?2004l[?2004h>         dtype=dtype,
+[?2004l(de[?2004h>         device=device,
+[?2004l[?2004h>     )
+[?2004l[?2004h>     mask = torch.triu(mask, diagonal=1)
+[?2004l[?2004h>     return mask.unsqueeze(0).unsqueeze(0)
+[?2004l[?2004h> 
+[?2004l[?2004h> 
+[?2004l[?2004h> def train_step_pipeline_afab(model, inputs, targets, device, dtype):
+[?2004l[?2004h>     device = torch.device(device)
+[?2004l[?2004h>     rank = dist.get_rank()
+[?2004l[?2004h>     world_size = dist.get_world_size()
+[?2004l[?2004h>     num_microbatches = len(inputs)
+[?2004l[?2004h> 
+[?2004l[?2004h>     model.to(device=device, dtype=dtype)
+[?2004l[?2004h> 
+[?2004l[?2004h>     if world_size == 1:
+[?2004l:[?2004h>         total_loss = None
+[?2004l[?2004h>         for i in range(num_microbatches):
+[?2004l[?2004h>             input_ids = inputs[i].to(device=device, dtype=torch.long)
+[?2004l[?2004h>             target_ids = targets[i].to(device=device, dtype=torch.long)
+[?2004l[?2004h>             output = model(
+[?2004l[?2004h>                 input_ids=input_ids,
+[?2004l[?2004h>                 labels=target_ids,
+[?2004l[?2004h>                 use_cache=False,
+[?2004l[?2004h>             )
+[?2004l[?2004h>             loss = output.loss
+[?2004l[?2004h>             if total_loss is None:
+[?2004l[?2004h>                 total_loss = loss
+[?2004l[?2004h>             else:
+[?2004l[?2004h>                 total_loss = total_loss + loss
+[?2004l[?2004h>         (total_loss / num_microbatches).backward()
+[?2004l[?2004h>         return
+[?2004l[?2004h> 
+[?2004l[?2004h>     if rank == 0:
+[?2004l[?2004h>         metadata = torch.tensor([num_microbatches], dtype=torch.long, device=device)
+[?2004l[?2004h>     else:
+[?2004l[?2004h>         metadata = torch.tensor([0], dtype=torch.long, device=device)
+[?2004l[?2004h>     dist.broadcast(metadata, src=0)
+[?2004lu[?2004h>     num_microbatches = int(metadata.item())
+[?2004l[?2004h> 
+[?2004l[?2004h>     base_model = model.model
+[?2004l[?2004h>     num_layers = len(base_model.layers)
+[?2004l[?2004h>     base_layers = num_layers // world_size
+[?2004l[?2004h>     remainder = num_layers % world_size
+[?2004l[?2004h>     start = rank * base_layers + min(rank, remainder)
+[?2004l[?2004h>     count = base_layers + (1 if rank < remainder else 0)
+[?2004l[?2004h>     stage_layers = list(base_model.layers)[start:start + count]
+[?2004l[?2004h> 
+[?2004l[?2004h>     supports_position_embeddings = False
+[?2004l[?2004h>     if len(stage_layers) > 0:
+[?2004l[?2004h>         try:
+[?2004l[?2004h>             attn_signature = inspect.signature(stage_layers[0].self_attn.forward)
+[?2004l[?2004h>             supports_position_embeddings = (
+[?2004l[?2004h>                 'position_embeddings' in attn_signature.parameters
+[?2004l[?2004h>             )
+[?2004l[?2004h>         except (AttributeError, TypeError, ValueError):
+[?2004l[?2004h>             supports_position_embeddings = False
+[?2004l[?2004h> 
+[?2004l[?2004h>     stage_inputs = []
+[?2004l[?2004h>     stage_outputs = []
+[?2004l[?2004h>     losses = []
+[?2004l[?2004h> 
+[?2004l[?2004h>     for i in range(num_microbatches):
+[?2004l[?2004h>         if rank == 0:
+[?2004l[?2004h>             input_ids = inputs[i].to(device=device, dtype=torch.long)
+[?2004l[?2004h>             h = base_model.embed_tokens(input_ids)
+[?2004l[?2004h>         else:
+[?2004l[?2004h>             shape = torch.empty(3, dtype=torch.long, device=device)
+[?2004l[?2004h>             dist.recv(shape, src=rank - 1, tag=1000 + 2 * i)
+[?2004l[?2004h>             h = torch.empty(
+[?2004l[?2004h>                 tuple(shape.tolist()),
+[?2004l[?2004h>                 dtype=dtype,
+[?2004l[?2004h>                 device=device,
+[?2004l[?2004h>             )
+[?2004l[?2004h>             dist.recv(h, src=rank - 1, tag=1000 + 2 * i + 1)
+[?2004l[?2004h>             h.requires_grad_(True)
+[?2004l[?2004h> 
+[?2004l[?2004h>         h = h.to(device=device, dtype=dtype)
+[?2004l[?2004h>         if h.requires_grad:
+[?2004l[?2004h>             h.retain_grad()
+[?2004l[?2004h>         else:
+[?2004l[?2004h>             h.requires_grad_(True)
+[?2004l[?2004h>             h.retain_grad()
+[?2004l[?2004h>         stage_inputs.append(h)
+[?2004l[?2004h> 
+[?2004l[?2004h>         seq_len = h.size(1)
+[?2004l[?2004h>         cache_position = torch.arange(seq_len, device=device)
+[?2004l[?2004h>         position_ids = cache_position.unsqueeze(0).expand(h.size(0), -1)
+[?2004l[?2004h>         causal_mask = _make_causal_mask(
+[?2004l[?2004h>             base_model, h, cache_position, dtype, device
+[?2004l[?2004h>         )
+[?2004l[?2004h> 
+[?2004l[?2004h>         position_embeddings = None
+[?2004l[?2004h>         if supports_position_embeddings:
+[?2004l[?2004h>             position_embeddings = base_model.rotary_emb(h, position_ids)
+[?2004l[?2004h> 
+[?2004l[?2004h>         for layer in stage_layers:
+[?2004l[?2004h>             layer_kwargs = dict(
+[?2004l[?2004h>                 attention_mask=causal_mask,
+[?2004l[?2004h>                 position_ids=position_ids,
+[?2004l[?2004h>                 past_key_value=None,
+[?2004l[?2004h>                 output_attentions=False,
+[?2004l[?2004h>                 use_cache=False,
+[?2004l[?2004h>                 cache_position=cache_position,
+[?2004l[?2004h>             )
+[?2004l[?2004h>             if position_embeddings is not None:
+[?2004l[?2004h>                 layer_kwargs['position_embeddings'] = position_embeddings
+[?2004l[?2004h>             output = _call_with_supported_kwargs(
+[?2004l[?2004h>                 layer.forward, h, **layer_kwargs
+[?2004l[?2004h>             )
+[?2004l[?2004h>             h = output[0] if isinstance(output, tuple) else output
+[?2004l[?2004h> 
+[?2004l[?2004h>         stage_outputs.append(h)
+[?2004l[?2004h> 
+[?2004l[?2004h>         if rank < world_size - 1:
+[?2004l[?2004h>             shape = torch.tensor(h.shape, dtype=torch.long, device=device)
+[?2004l[?2004h>             dist.send(shape, dst=rank + 1, tag=1000 + 2 * i)
+[?2004l[?2004h>             send_tensor = h.detach().to(device=device, dtype=dtype).contiguous()
+[?2004l[?2004h>             dist.send(send_tensor, dst=rank + 1, tag=1000 + 2 * i + 1)
+[?2004l[?2004h>         else:
+[?2004l[?2004h>             target_ids = targets[i].to(device=device, dtype=torch.long)
+[?2004l[?2004h>             normed = base_model.norm(h)
+[?2004l[?2004h>             logits = model.lm_head(normed)
+[?2004l[?2004h>             shift_logits = logits[..., :-1, :].contiguous()
+[?2004l[?2004h>             shift_labels = target_ids[..., 1:].contiguous()
+[?2004l[?2004h>             loss = F.cross_entropy(
+[?2004l[?2004h>                 shift_logits.view(-1, shift_logits.size(-1)),
+[?2004l[?2004h>                 shift_labels.view(-1),
+[?2004l[?2004h>             )
+[?2004l[?2004h>             losses.append(loss / num_microbatches)
+[?2004l[?2004h> 
+[?2004l[?2004h>     for i in range(num_microbatches):
+[?2004l[?2004h>         if rank == world_size - 1:
+[?2004l[?2004h>             torch.autograd.backward(losses[i])
+[?2004l[?2004h>             grad = stage_inputs[i].grad
+[?2004l[?2004h>             if grad is None:
+[?2004l[?2004h>                 grad = torch.zeros_like(stage_inputs[i])
+[?2004l[?2004h>             grad = grad.to(device=device, dtype=dtype).contiguous()
+[?2004l[?2004h>             dist.send(grad.detach(), dst=rank - 1, tag=2000 + i)
+[?2004l[?2004h>         elif rank > 0:
+[?2004l[?2004h>             grad = torch.empty_like(
+[?2004l[?2004h>                 stage_outputs[i], dtype=dtype, device=device
+[?2004l[?2004h>             )
+[?2004l[?2004h>             dist.recv(grad, src=rank + 1, tag=2000 + i)
+[?2004l[?2004h>             torch.autograd.backward(stage_outputs[i], grad_tensors=grad)
+[?2004l[?2004h>             input_grad = stage_inputs[i].grad
+[?2004l[?2004h>             if input_grad is None:
+[?2004l[?2004h>                 input_grad = torch.zeros_like(stage_inputs[i])
+[?2004l[?2004h>             input_grad = input_grad.to(
+[?2004l[?2004h>                 device=device, dtype=dtype
+[?2004l[?2004h>             ).contiguous()
+[?2004l[?2004h>             dist.send(input_grad.detach(), dst=rank - 1, tag=2000 + i)
+[?2004l[?2004h>         else:
+[?2004l[?2004h>             grad = torch.empty_like(
+[?2004l[?2004h>                 stage_outputs[i], dtype=dtype, device=device
+[?2004l[?2004h>             )
+[?2004l[?2004h>             dist.recv(grad, src=rank + 1, tag=2000 + i)
+[?2004l[?2004h>             torch.autograd.backward(stage_outputs[i], grad_tensors=grad)
+[?2004l[?2004h> PY
+[?2004l[?2004hroot@682368998efa:/app# sed -n '1,80p' /app/pipeline_parallel.py
+[?2004limport inspect
+import torch
+import torch.distributed as dist
+import torch.nn.functional as F
+
+
+def _call_with_supported_kwargs(fn, *args, **kwargs):
+    try:
+        signature = inspect.signature(fn)
+    except (TypeError, ValueError):
+        return fn(*args, **kwargs)
+
+    parameters = signature.parameters
+    accepts_kwargs = any(
+        p.kind == inspect.Parameter.VAR_KEYWORD for p in parameters.values()
+    )
+    if not accepts_kwargs:
+        kwargs = {k: v for k, v in kwargs.items() if k in parameters}
+    return fn(*args, **kwargs)
+
+
+def _make_causal_mask(base_model, hidden_states, cache_position, dtype, device):
+    if hasattr(base_model, '_update_causal_mask'):
+        try:
+            return base_model._update_causal_mask(
+                None, hidden_states, cache_position, None, False
+            )
+        except Exception:
+            pass
+
+    seq_len = hidden_states.size(1)
+    mask = torch.full(
+        (seq_len, seq_len),
+        torch.finfo(dtype).min,
+        dtype=dtype,
+        device=device,
+    )
+    mask = torch.triu(mask, diagonal=1)
+    return mask.unsqueeze(0).unsqueeze(0)
+
+
+def train_step_pipeline_afab(model, inputs, targets, device, dtype):
+    device = torch.device(device)
+    rank = dist.get_rank()
+    world_size = dist.get_world_size()
+    num_microbatches = len(inputs)
+
+    model.to(device=device, dtype=dtype)
+
+    if world_size == 1:
+        total_loss = None
+        for i in range(num_microbatches):
+            input_ids = inputs[i].to(device=device, dtype=torch.long)
+            target_ids = targets[i].to(device=device, dtype=torch.long)
+            output = model(
+                input_ids=input_ids,
+                labels=target_ids,
+                use_cache=False,
+            )
+            loss = output.loss
+            if total_loss is None:
+                total_loss = loss
+            else:
+                total_loss = total_loss + loss
+        (total_loss / num_microbatches).backward()
+        return
+
+    if rank == 0:
+        metadata = torch.tensor([num_microbatches], dtype=torch.long, device=device)
+    else:
+        metadata = torch.tensor([0], dtype=torch.long, device=device)
+    dist.broadcast(metadata, src=0)
+    num_microbatches = int(metadata.item())
+
+    base_model = model.model
+    num_layers = len(base_model.layers)
+    base_layers = num_layers // world_size
+    remainder = num_layers % world_size
+    start = rank * base_layers + min(rank, remainder)
+    count = base_layers + (1 if rank < remainder else 0)
+[?2004hroot@682368998efa:/app# grep -nP '[^\x00-\x7F]' /app/pipeline_parallel.py || true
+[?2004l[?2004hroot@682368998efa:/app# wc -l /app/pipeline_parallel.py
+[?2004l192 /app/pipeline_parallel.py
+[?2004hroot@682368998efa:/app# sed -n '80,220p' /app/pipeline_parallel.py
+[?2004l    count = base_layers + (1 if rank < remainder else 0)
+    stage_layers = list(base_model.layers)[start:start + count]
+
+    supports_position_embeddings = False
+    if len(stage_layers) > 0:
+        try:
+            attn_signature = inspect.signature(stage_layers[0].self_attn.forward)
+            supports_position_embeddings = (
+                'position_embeddings' in attn_signature.parameters
+            )
+        except (AttributeError, TypeError, ValueError):
+            supports_position_embeddings = False
+
+    stage_inputs = []
+    stage_outputs = []
+    losses = []
+
+    for i in range(num_microbatches):
+        if rank == 0:
+            input_ids = inputs[i].to(device=device, dtype=torch.long)
+            h = base_model.embed_tokens(input_ids)
+        else:
+            shape = torch.empty(3, dtype=torch.long, device=device)
+            dist.recv(shape, src=rank - 1, tag=1000 + 2 * i)
+            h = torch.empty(
+                tuple(shape.tolist()),
+                dtype=dtype,
+                device=device,
+            )
+            dist.recv(h, src=rank - 1, tag=1000 + 2 * i + 1)
+            h.requires_grad_(True)
+
+        h = h.to(device=device, dtype=dtype)
+        if h.requires_grad:
+            h.retain_grad()
+        else:
+            h.requires_grad_(True)
+            h.retain_grad()
+        stage_inputs.append(h)
+
+        seq_len = h.size(1)
+        cache_position = torch.arange(seq_len, device=device)
+        position_ids = cache_position.unsqueeze(0).expand(h.size(0), -1)
+        causal_mask = _make_causal_mask(
+            base_model, h, cache_position, dtype, device
+        )
+
+        position_embeddings = None
+        if supports_position_embeddings:
+            position_embeddings = base_model.rotary_emb(h, position_ids)
+
+        for layer in stage_layers:
+            layer_kwargs = dict(
+                attention_mask=causal_mask,
+                position_ids=position_ids,
+                past_key_value=None,
+                output_attentions=False,
+                use_cache=False,
+                cache_position=cache_position,
+            )
+            if position_embeddings is not None:
+                layer_kwargs['position_embeddings'] = position_embeddings
+            output = _call_with_supported_kwargs(
+                layer.forward, h, **layer_kwargs
+            )
+            h = output[0] if isinstance(output, tuple) else output
+
+        stage_outputs.append(h)
+
+        if rank < world_size - 1:
+            shape = torch.tensor(h.shape, dtype=torch.long, device=device)
+            dist.send(shape, dst=rank + 1, tag=1000 + 2 * i)
+            send_tensor = h.detach().to(device=device, dtype=dtype).contiguous()
+            dist.send(send_tensor, dst=rank + 1, tag=1000 + 2 * i + 1)
+        else:
+            target_ids = targets[i].to(device=device, dtype=torch.long)
+            normed = base_model.norm(h)
+            logits = model.lm_head(normed)
+            shift_logits = logits[..., :-1, :].contiguous()
+            shift_labels = target_ids[..., 1:].contiguous()
+            loss = F.cross_entropy(
+                shift_logits.view(-1, shift_logits.size(-1)),
+                shift_labels.view(-1),
+            )
+            losses.append(loss / num_microbatches)
+
+    for i in range(num_microbatches):
+        if rank == world_size - 1:
+            torch.autograd.backward(losses[i])
+            grad = stage_inputs[i].grad
+            if grad is None:
+                grad = torch.zeros_like(stage_inputs[i])
+            grad = grad.to(device=device, dtype=dtype).contiguous()
+            dist.send(grad.detach(), dst=rank - 1, tag=2000 + i)
+        elif rank > 0:
+            grad = torch.empty_like(
+                stage_outputs[i], dtype=dtype, device=device
+            )
+            dist.recv(grad, src=rank + 1, tag=2000 + i)
+            torch.autograd.backward(stage_outputs[i], grad_tensors=grad)
+            input_grad = stage_inputs[i].grad
+            if input_grad is None:
+                input_grad = torch.zeros_like(stage_inputs[i])
+            input_grad = input_grad.to(
+                device=device, dtype=dtype
+            ).contiguous()
+            dist.send(input_grad.detach(), dst=rank - 1, tag=2000 + i)
+        else:
+            grad = torch.empty_like(
+                stage_outputs[i], dtype=dtype, device=device
+            )
+            dist.recv(grad, src=rank + 1, tag=2000 + i)
+            torch.autograd.backward(stage_outputs[i], grad_tensors=grad)
+[?2004hroot@682368998efa:/app# ls -la /
+[?2004ltotal 68
+drwxr-xr-x   1 root root 4096 Nov  5 11:34 [0m[01;34m.[0m
+drwxr-xr-x   1 root root 4096 Nov  5 11:34 [01;34m..[0m
+-rwxr-xr-x   1 root root    0 Nov  5 11:34 [01;32m.dockerenv[0m
+drwxr-xr-x   1 root root 4096 Nov  5 11:38 [01;34mapp[0m
+lrwxrwxrwx   1 root root    7 Apr 22  2024 [01;36mbin[0m -> [01;34musr/bin[0m
+drwxr-xr-x   2 root root 4096 Apr 22  2024 [01;34mboot[0m
+drwxr-xr-x   5 root root  340 Nov  5 11:34 [01;34mdev[0m
+drwxr-xr-x   1 root root 4096 Nov  5 11:34 [01;34metc[0m
+drwxr-xr-x   3 root root 4096 Oct  1  2025 [01;34mhome[0m
+lrwxrwxrwx   1 root root    7 Apr 22  2024 [01;36mlib[0m -> [01;34musr/lib[0m
+lrwxrwxrwx   1 root root    9 Apr 22  2024 [01;36mlib64[0m -> [01;34musr/lib64[0m
+drwxr-xr-x   5 root root 4096 Nov  5 11:34 [01;34mlogs[0m
+drwxr-xr-x   2 root root 4096 Oct  1  2025 [01;34mmedia[0m
+drwxr-xr-x   2 root root 4096 Oct  1  2025 [01;34mmnt[0m
+drwxr-xr-x   1 root root 4096 Nov  5 11:34 [01;34mopt[0m
+dr-xr-xr-x 406 root root    0 Nov  5 11:34 [01;34mproc[0m
+drwx------   2 root root 4096 Oct  1  2025 [01;34mroot[0m
+drwxr-xr-x   4 root root 4096 Oct  1  2025 [01;34mrun[0m
+lrwxrwxrwx   1 root root    8 Apr 22  2024 [01;36msbin[0m -> [01;34musr/sbin[0m
+drwxr-xr-x   2 root root 4096 Oct  1  2025 [01;34msrv[0m
+dr-xr-xr-x  13 root root    0 Nov  5 11:34 [01;34msys[0m
+drwxrwxrwt   1 root root 4096 Nov  5 11:34 [30;42mtmp[0m
+drwxr-xr-x   1 root root 4096 Oct  1  2025 [01;34musr[0m
+drwxr-xr-x  11 root root 4096 Oct  1  2025 [01;34mvar[0m
+[?2004hroot@682368998efa:/app# find / -maxdepth 3 -type f 2>/dev/null | grep -E '(test|pipeline|llama|python)' | head -100
+[?2004l/usr/bin/test
+/app/pipeline_parallel.py
+[?2004hroot@682368998efa:/app# nl -ba /app/pipeline_parallel.py
+[?2004l     1	import inspect
+     2	import torch
+     3	import torch.distributed as dist
+     4	import torch.nn.functional as F
+     5	
+     6	
+     7	def _call_with_supported_kwargs(fn, *args, **kwargs):
+     8	    try:
+     9	        signature = inspect.signature(fn)
+    10	    except (TypeError, ValueError):
+    11	        return fn(*args, **kwargs)
+    12	
+    13	    parameters = signature.parameters
+    14	    accepts_kwargs = any(
+    15	        p.kind == inspect.Parameter.VAR_KEYWORD for p in parameters.values()
+    16	    )
+    17	    if not accepts_kwargs:
+    18	        kwargs = {k: v for k, v in kwargs.items() if k in parameters}
+    19	    return fn(*args, **kwargs)
+    20	
+    21	
+    22	def _make_causal_mask(base_model, hidden_states, cache_position, dtype, device):
+    23	    if hasattr(base_model, '_update_causal_mask'):
+    24	        try:
+    25	            return base_model._update_causal_mask(
+    26	                None, hidden_states, cache_position, None, False
+    27	            )
+    28	        except Exception:
+    29	            pass
+    30	
+    31	    seq_len = hidden_states.size(1)
+    32	    mask = torch.full(
+    33	        (seq_len, seq_len),
+    34	        torch.finfo(dtype).min,
+    35	        dtype=dtype,
+    36	        device=device,
+    37	    )
+    38	    mask = torch.triu(mask, diagonal=1)
+    39	    return mask.unsqueeze(0).unsqueeze(0)
+    40	
+    41	
+    42	def train_step_pipeline_afab(model, inputs, targets, device, dtype):
+    43	    device = torch.device(device)
+    44	    rank = dist.get_rank()
+    45	    world_size = dist.get_world_size()
+    46	    num_microbatches = len(inputs)
+    47	
+    48	    model.to(device=device, dtype=dtype)
+    49	
+    50	    if world_size == 1:
+    51	        total_loss = None
+    52	        for i in range(num_microbatches):
+    53	            input_ids = inputs[i].to(device=device, dtype=torch.long)
+    54	            target_ids = targets[i].to(device=device, dtype=torch.long)
+    55	            output = model(
+    56	                input_ids=input_ids,
+    57	                labels=target_ids,
+    58	                use_cache=False,
+    59	            )
+    60	            loss = output.loss
+    61	            if total_loss is None:
+    62	                total_loss = loss
+    63	            else:
+    64	                total_loss = total_loss + loss
+    65	        (total_loss / num_microbatches).backward()
+    66	        return
+    67	
+    68	    if rank == 0:
+    69	        metadata = torch.tensor([num_microbatches], dtype=torch.long, device=device)
+    70	    else:
+    71	        metadata = torch.tensor([0], dtype=torch.long, device=device)
+    72	    dist.broadcast(metadata, src=0)
+    73	    num_microbatches = int(metadata.item())
+    74	
+    75	    base_model = model.model
+    76	    num_layers = len(base_model.layers)
+    77	    base_layers = num_layers // world_size
+    78	    remainder = num_layers % world_size
+    79	    start = rank * base_layers + min(rank, remainder)
+    80	    count = base_layers + (1 if rank < remainder else 0)
+    81	    stage_layers = list(base_model.layers)[start:start + count]
+    82	
+    83	    supports_position_embeddings = False
+    84	    if len(stage_layers) > 0:
+    85	        try:
+    86	            attn_signature = inspect.signature(stage_layers[0].self_attn.forward)
+    87	            supports_position_embeddings = (
+    88	                'position_embeddings' in attn_signature.parameters
+    89	            )
+    90	        except (AttributeError, TypeError, ValueError):
+    91	            supports_position_embeddings = False
+    92	
+    93	    stage_inputs = []
+    94	    stage_outputs = []
+    95	    losses = []
+    96	
+    97	    for i in range(num_microbatches):
+    98	        if rank == 0:
+    99	            input_ids = inputs[i].to(device=device, dtype=torch.long)
+   100	            h = base_model.embed_tokens(input_ids)
+   101	        else:
+   102	            shape = torch.empty(3, dtype=torch.long, device=device)
+   103	            dist.recv(shape, src=rank - 1, tag=1000 + 2 * i)
+   104	            h = torch.empty(
+   105	                tuple(shape.tolist()),
+   106	                dtype=dtype,
+   107	                device=device,
+   108	            )
+   109	            dist.recv(h, src=rank - 1, tag=1000 + 2 * i + 1)
+   110	            h.requires_grad_(True)
+   111	
+   112	        h = h.to(device=device, dtype=dtype)
+   113	        if h.requires_grad:
+   114	            h.retain_grad()
+   115	        else:
+   116	            h.requires_grad_(True)
+   117	            h.retain_grad()
+   118	        stage_inputs.append(h)
+   119	
+   120	        seq_len = h.size(1)
+   121	        cache_position = torch.arange(seq_len, device=device)
+   122	        position_ids = cache_position.unsqueeze(0).expand(h.size(0), -1)
+   123	        causal_mask = _make_causal_mask(
+   124	            base_model, h, cache_position, dtype, device
+   125	        )
+   126	
+   127	        position_embeddings = None
+   128	        if supports_position_embeddings:
+   129	            position_embeddings = base_model.rotary_emb(h, position_ids)
+   130	
+   131	        for layer in stage_layers:
+   132	            layer_kwargs = dict(
+   133	                attention_mask=causal_mask,
+   134	                position_ids=position_ids,
+   135	                past_key_value=None,
+   136	                output_attentions=False,
+   137	                use_cache=False,
+   138	                cache_position=cache_position,
+   139	            )
+   140	            if position_embeddings is not None:
+   141	                layer_kwargs['position_embeddings'] = position_embeddings
+   142	            output = _call_with_supported_kwargs(
+   143	                layer.forward, h, **layer_kwargs
+   144	            )
+   145	            h = output[0] if isinstance(output, tuple) else output
+   146	
+   147	        stage_outputs.append(h)
+   148	
+   149	        if rank < world_size - 1:
+   150	            shape = torch.tensor(h.shape, dtype=torch.long, device=device)
+   151	            dist.send(shape, dst=rank + 1, tag=1000 + 2 * i)
+   152	            send_tensor = h.detach().to(device=device, dtype=dtype).contiguous()
+   153	            dist.send(send_tensor, dst=rank + 1, tag=1000 + 2 * i + 1)
+   154	        else:
+   155	            target_ids = targets[i].to(device=device, dtype=torch.long)
+   156	            normed = base_model.norm(h)
+   157	            logits = model.lm_head(normed)
+   158	            shift_logits = logits[..., :-1, :].contiguous()
+   159	            shift_labels = target_ids[..., 1:].contiguous()
+   160	            loss = F.cross_entropy(
+   161	                shift_logits.view(-1, shift_logits.size(-1)),
+   162	                shift_labels.view(-1),
+   163	            )
+   164	            losses.append(loss / num_microbatches)
+   165	
+   166	    for i in range(num_microbatches):
+   167	        if rank == world_size - 1:
+   168	            torch.autograd.backward(losses[i])
+   169	            grad = stage_inputs[i].grad
+   170	            if grad is None:
+   171	                grad = torch.zeros_like(stage_inputs[i])
+   172	            grad = grad.to(device=device, dtype=dtype).contiguous()
+   173	            dist.send(grad.detach(), dst=rank - 1, tag=2000 + i)
+   174	        elif rank > 0:
+   175	            grad = torch.empty_like(
+   176	                stage_outputs[i], dtype=dtype, device=device
+   177	            )
+   178	            dist.recv(grad, src=rank + 1, tag=2000 + i)
+   179	            torch.autograd.backward(stage_outputs[i], grad_tensors=grad)
+   180	            input_grad = stage_inputs[i].grad
+   181	            if input_grad is None:
+   182	                input_grad = torch.zeros_like(stage_inputs[i])
+   183	            input_grad = input_grad.to(
+   184	                device=device, dtype=dtype
+   185	            ).contiguous()
+   186	            dist.send(input_grad.detach(), dst=rank - 1, tag=2000 + i)
+   187	        else:
+   188	            grad = torch.empty_like(
+   189	                stage_outputs[i], dtype=dtype, device=device
+   190	            )
+   191	            dist.recv(grad, src=rank + 1, tag=2000 + i)
+   192	            torch.autograd.backward(stage_outputs[i], grad_tensors=grad)
+[?2004hroot@682368998efa:/app# cat > /app/pipeline_parallel.py <<'PY'
+[?2004l[?2004h> import inspect
+[?2004l  [?2004h> import torch
+[?2004l[?2004h> import torch.distributed as dist
+[?2004le[?2004h> import torch.nn.functional as F
+[?2004l [?2004h> 
+[?2004l[?2004h> 
+[?2004l[?2004h> def _supported_kwargs(fn, kwargs):
+[?2004l  [?2004h>     try:
+[?2004l[?2004h>         signature = inspect.signature(fn)
+[?2004l[?2004h>     except (AttributeError, TypeError, ValueError):
+[?2004l[?2004h>         return kwargs
+[?2004l[?2004h> 
+[?2004l[?2004h>     parameters = signature.parameters
+[?2004l[?2004h>     accepts_kwargs = any(
+[?2004lsit[?2004h>         p.kind == inspect.Parameter.VAR_KEYWORD for p in parameters.values()
+[?2004l[?2004h>     )
+[?2004l[?2004h>     if accepts_kwargs:
+[?2004l[?2004h>         return kwargs
+[?2004l[?2004h>     return {key: value for key, value in kwargs.items() if key in parameters}
+[?2004ly[?2004h> 
+[?2004l[?2004h> 
+[?2004l[?2004h> def _make_causal_mask(base_model, hidden_states, cache_position, dtype, device):
+[?2004l[?2004h>     if hasattr(base_model, '_update_causal_mask'):
+[?2004l[?2004h>         try:
+[?2004l[?2004h>             return base_model._update_causal_mask(
+[?2004l[?2004h>                 None, hidden_states, cache_position, None, False
+[?2004l[?2004h>             )
+[?2004l[?2004h>         except Exception:
+[?2004l0 +[?2004h>             pass
+[?2004l[?2004h> 
+[?2004l[?2004h>     seq_len = hidden_states.size(1)
+[?2004l[?2004h>     mask = torch.full(
+[?2004l[?2004h>         (seq_len, seq_len),
+[?2004l[?2004h>         torch.finfo(dtype).min,
+[?2004l[?2004h>         dtype=dtype,
+[?2004l[?2004h>         device=device,
+[?2004l[?2004h>     )
+[?2004l[?2004h>     mask = torch.triu(mask, diagonal=1)
+[?2004l[?2004h>     return mask.unsqueeze(0).unsqueeze(0)
+[?2004l[?2004h> 
+[?2004ls[?2004h> 
+[?2004l[?2004h> def train_step_pipeline_afab(model, inputs, targets, device, dtype):
+[?2004l[?2004h>     device = torch.device(device)
+[?2004l[?2004h>     rank = dist.get_rank()
+[?2004l [?2004h>     world_size = dist.get_world_size()
+[?2004l[?2004h>     num_microbatches = len(inputs)
+[?2004l[?2004h> 
+[?2004l[?2004h>     model.to(device=device, dtype=dtype)
+[?2004l[?2004h> 
+[?2004l[?2004h>     if world_size == 1:
+[?2004l[?2004h>         losses = []
+[?2004l[?2004h>         for i in range(num_microbatches):
+[?2004l[?2004h>             input_ids = inputs[i].to(device=device, dtype=torch.long)
+[?2004l[?2004h>             target_ids = targets[i].to(device=device, dtype=torch.long)
+[?2004l[?2004h>             output = model(
+[?2004l [?2004h>                 input_ids=input_ids,
+[?2004l[?2004h>                 labels=target_ids,
+[?2004l[?2004h>                 use_cache=False,
+[?2004l[?2004h>             )
+[?2004l[?2004h>             losses.append(output.loss)
+[?2004l[?2004h> 
+[?2004l[?2004h>         for loss in losses:
+[?2004l[?2004h>             (loss / num_microbatches).backward()
+[?2004l[?2004h>         return
+[?2004l[?2004h> 
+[?2004l[?2004h>     if rank == 0:
+[?2004l[?2004h>         metadata = torch.tensor([num_microbatches], dtype=torch.long, device=device)
+[?2004l[?2004h>     else:
+[?2004l[?2004h>         metadata = torch.tensor([0], dtype=torch.long, device=device)
+[?2004l[?2004h>     dist.broadcast(metadata, src=0)
+[?2004l[?2004h>     num_microbatches = int(metadata.item())
+[?2004lrs=[?2004h> 
+[?2004l[?2004h>     base_model = model.model
+[?2004l[?2004h>     num_layers = len(base_model.layers)
+[?2004lp[?2004h>     base_layers = num_layers // world_size
+[?2004l[?2004h>     remainder = num_layers % world_size
+[?2004l[?2004h>     start = rank * base_layers + min(rank, remainder)
+[?2004l[?2004h>     count = base_layers + (1 if rank < remainder else 0)
+[?2004l[?2004h>     stage_layers = list(base_model.layers)[start:start + count]
+[?2004l[?2004h> 
+[?2004li[?2004h>     supports_position_embeddings = False
+[?2004l[?2004h>     if len(stage_layers) > 0:
+[?2004l[?2004h>         try:
+[?2004l[?2004h>             layer_signature = inspect.signature(stage_layers[0].forward)
+[?2004l[?2004h>             supports_position_embeddings = (
+[?2004l[?2004h>                 'position_embeddings' in layer_signature.parameters
+[?2004l[?2004h>             )
+[?2004l[?2004h>         except (AttributeError, TypeError, ValueError):
+[?2004l[?2004h>             supports_position_embeddings = False
+[?2004l[?2004h> 
+[?2004l[?2004h>     stage_inputs = []
+[?2004l[?2004h>     stage_outputs = []
+[?2004l[?2004h>     losses = []
+[?2004l[?2004h> 
+[?2004l[?2004h>     for i in range(num_microbatches):
+[?2004l[?2004h>         if rank == 0:
+[?2004l[?2004h>             input_ids = inputs[i].to(device=device, dtype=torch.long)
+[?2004l[?2004h>             h = base_model.embed_tokens(input_ids)
+[?2004l[?2004h>         else:
+[?2004l[?2004h>             shape = torch.empty(3, dtype=torch.long, device=device)
+[?2004l[?2004h>             dist.recv(shape, src=rank - 1, tag=1000 + 2 * i)
+[?2004l[?2004h>             h = torch.empty(
+[?2004l[?2004h>                 tuple(shape.tolist()),
+[?2004l[?2004h>                 dtype=dtype,
+[?2004l[?2004h>                 device=device,
+[?2004l[?2004h>             )
+[?2004l[?2004h>             dist.recv(h, src=rank - 1, tag=1000 + 2 * i + 1)
+[?2004l[?2004h>             h.requires_grad_(True)
+[?2004l[?2004h> 
+[?2004l[?2004h>         h = h.to(device=device, dtype=dtype)
+[?2004l[?2004h>         if not h.requires_grad:
+[?2004l[?2004h>             h.requires_grad_(True)
+[?2004l[?2004h>         h.retain_grad()
+[?2004l[?2004h>         stage_inputs.append(h)
+[?2004l[?2004h> 
+[?2004l[?2004h>         seq_len = h.size(1)
+[?2004l[?2004h>         cache_position = torch.arange(seq_len, device=device)
+[?2004l[?2004h>         position_ids = cache_position.unsqueeze(0)
+[?2004l[?2004h>         causal_mask = _make_causal_mask(
+[?2004l[?2004h>             base_model, h, cache_position, dtype, device
+[?2004l[?2004h>         )
+[?2004l[?2004h> 
+[?2004l[?2004h>         position_embeddings = None
+[?2004l[?2004h>         if supports_position_embeddings and hasattr(base_model, 'rotary_emb'):
+[?2004l[?2004h>             position_embeddings = base_model.rotary_emb(h, position_ids)
+[?2004l[?2004h> 
+[?2004l[?2004h>         for layer in stage_layers:
+[?2004l[?2004h>             layer_kwargs = dict(
+[?2004l[?2004h>                 attention_mask=causal_mask,
+[?2004l[?2004h>                 position_ids=position_ids,
+[?2004l[?2004h>                 past_key_value=None,
+[?2004l[?2004h>                 output_attentions=False,
+[?2004l[?2004h>                 use_cache=False,
+[?2004l[?2004h>                 cache_position=cache_position,
+[?2004l[?2004h>             )
+[?2004l[?2004h>             if position_embeddings is not None:
+[?2004l[?2004h>                 layer_kwargs['position_embeddings'] = position_embeddings
+[?2004l[?2004h>             layer_kwargs = _supported_kwargs(layer.forward, layer_kwargs)
+[?2004l[?2004h>             layer_output = layer(h, **layer_kwargs)
+[?2004l[?2004h>             h = layer_output[0] if isinstance(layer_output, tuple) else layer_output
+[?2004l[?2004h> 
+[?2004l[?2004h>         stage_outputs.append(h)
+[?2004l[?2004h> 
+[?2004l[?2004h>         if rank < world_size - 1:
+[?2004l[?2004h>             shape = torch.tensor(h.shape, dtype=torch.long, device=device)
+[?2004l[?2004h>             dist.send(shape, dst=rank + 1, tag=1000 + 2 * i)
+[?2004l[?2004h>             send_tensor = h.detach().to(device=device, dtype=dtype).contiguous()
+[?2004l[?2004h>             dist.send(send_tensor, dst=rank + 1, tag=1000 + 2 * i + 1)
+[?2004l[?2004h>         else:
+[?2004l[?2004h>             target_ids = targets[i].to(device=device, dtype=torch.long)
+[?2004l[?2004h>             normed = base_model.norm(h)
+[?2004l[?2004h>             logits = model.lm_head(normed)
+[?2004l[?2004h>             shift_logits = logits[..., :-1, :].contiguous()
+[?2004l[?2004h>             shift_labels = target_ids[..., 1:].contiguous()
+[?2004l[?2004h>             loss = F.cross_entropy(
+[?2004l[?2004h>                 shift_logits.view(-1, shift_logits.size(-1)),
+[?2004l[?2004h>                 shift_labels.view(-1),
+[?2004l[?2004h>             )
+[?2004l[?2004h>             losses.append(loss / num_microbatches)
+[?2004l[?2004h> 
+[?2004l[?2004h>     for i in range(num_microbatches):
+[?2004l[?2004h>         if rank == world_size - 1:
+[?2004l[?2004h>             torch.autograd.backward(losses[i])
+[?2004l[?2004h>             grad = stage_inputs[i].grad
+[?2004l[?2004h>             if grad is None:
+[?2004l[?2004h>                 grad = torch.zeros_like(stage_inputs[i])
+[?2004l[?2004h>             grad = grad.to(device=device, dtype=dtype).contiguous()
+[?2004l[?2004h>             dist.send(grad.detach(), dst=rank - 1, tag=2000 + i)
+[?2004l[?2004h>         elif rank > 0:
+[?2004l[?2004h>             grad = torch.empty_like(
+[?2004l[?2004h>                 stage_outputs[i], dtype=dtype, device=device
+[?2004l[?2004h>             )
+[?2004l[?2004h>             dist.recv(grad, src=rank + 1, tag=2000 + i)
+[?2004l[?2004h>             torch.autograd.backward(stage_outputs[i], grad_tensors=grad)
+[?2004l[?2004h>             input_grad = stage_inputs[i].grad
+[?2004l[?2004h>             if input_grad is None:
+[?2004l[?2004h>                 input_grad = torch.zeros_like(stage_inputs[i])
+[?2004l[?2004h>             input_grad = input_grad.to(
+[?2004l[?2004h>                 device=device, dtype=dtype
+[?2004l[?2004h>             ).contiguous()
+[?2004l[?2004h>             dist.send(input_grad.detach(), dst=rank - 1, tag=2000 + i)
+[?2004l[?2004h>         else:
+[?2004l[?2004h>             grad = torch.empty_like(
+[?2004l[?2004h>                 stage_outputs[i], dtype=dtype, device=device
+[?2004l[?2004h>             )
+[?2004l[?2004h>             dist.recv(grad, src=rank + 1, tag=2000 + i)
+[?2004l[?2004h>             torch.autograd.backward(stage_outputs[i], grad_tensors=grad)
+[?2004l[?2004h> PY
+[?2004l[?2004hroot@682368998efa:/app# sed -n '1,260p' /app/pipeline_parallel.py
+[?2004limport inspect
+import torch
+import torch.distributed as dist
+import torch.nn.functional as F
+
+
+def _supported_kwargs(fn, kwargs):
+    try:
+        signature = inspect.signature(fn)
+    except (AttributeError, TypeError, ValueError):
+        return kwargs
+
+    parameters = signature.parameters
+    accepts_kwargs = any(
+        p.kind == inspect.Parameter.VAR_KEYWORD for p in parameters.values()
+    )
+    if accepts_kwargs:
+        return kwargs
+    return {key: value for key, value in kwargs.items() if key in parameters}
+
+
+def _make_causal_mask(base_model, hidden_states, cache_position, dtype, device):
+    if hasattr(base_model, '_update_causal_mask'):
+        try:
+            return base_model._update_causal_mask(
+                None, hidden_states, cache_position, None, False
+            )
+        except Exception:
+            pass
+
+    seq_len = hidden_states.size(1)
+    mask = torch.full(
+        (seq_len, seq_len),
+        torch.finfo(dtype).min,
+        dtype=dtype,
+        device=device,
+    )
+    mask = torch.triu(mask, diagonal=1)
+    return mask.unsqueeze(0).unsqueeze(0)
+
+
+def train_step_pipeline_afab(model, inputs, targets, device, dtype):
+    device = torch.device(device)
+    rank = dist.get_rank()
+    world_size = dist.get_world_size()
+    num_microbatches = len(inputs)
+
+    model.to(device=device, dtype=dtype)
+
+    if world_size == 1:
+        losses = []
+        for i in range(num_microbatches):
+            input_ids = inputs[i].to(device=device, dtype=torch.long)
+            target_ids = targets[i].to(device=device, dtype=torch.long)
+            output = model(
+                input_ids=input_ids,
+                labels=target_ids,
+                use_cache=False,
+            )
+            losses.append(output.loss)
+
+        for loss in losses:
+            (loss / num_microbatches).backward()
+        return
+
+    if rank == 0:
+        metadata = torch.tensor([num_microbatches], dtype=torch.long, device=device)
+    else:
+        metadata = torch.tensor([0], dtype=torch.long, device=device)
+    dist.broadcast(metadata, src=0)
+    num_microbatches = int(metadata.item())
+
+    base_model = model.model
+    num_layers = len(base_model.layers)
+    base_layers = num_layers // world_size
+    remainder = num_layers % world_size
+    start = rank * base_layers + min(rank, remainder)
+    count = base_layers + (1 if rank < remainder else 0)
+    stage_layers = list(base_model.layers)[start:start + count]
+
+    supports_position_embeddings = False
+    if len(stage_layers) > 0:
+        try:
+            layer_signature = inspect.signature(stage_layers[0].forward)
+            supports_position_embeddings = (
+                'position_embeddings' in layer_signature.parameters
+            )
+        except (AttributeError, TypeError, ValueError):
+            supports_position_embeddings = False
+
+    stage_inputs = []
+    stage_outputs = []
+    losses = []
+
+    for i in range(num_microbatches):
+        if rank == 0:
+            input_ids = inputs[i].to(device=device, dtype=torch.long)
+            h = base_model.embed_tokens(input_ids)
+        else:
+            shape = torch.empty(3, dtype=torch.long, device=device)
+            dist.recv(shape, src=rank - 1, tag=1000 + 2 * i)
+            h = torch.empty(
+                tuple(shape.tolist()),
+                dtype=dtype,
+                device=device,
+            )
+            dist.recv(h, src=rank - 1, tag=1000 + 2 * i + 1)
+            h.requires_grad_(True)
+
+        h = h.to(device=device, dtype=dtype)
+        if not h.requires_grad:
+            h.requires_grad_(True)
+        h.retain_grad()
+        stage_inputs.append(h)
+
+        seq_len = h.size(1)
+        cache_position = torch.arange(seq_len, device=device)
+        position_ids = cache_position.unsqueeze(0)
+        causal_mask = _make_causal_mask(
+            base_model, h, cache_position, dtype, device
+        )
+
+        position_embeddings = None
+        if supports_position_embeddings and hasattr(base_model, 'rotary_emb'):
+            position_embeddings = base_model.rotary_emb(h, position_ids)
+
+        for layer in stage_layers:
+            layer_kwargs = dict(
+                attention_mask=causal_mask,
+                position_ids=position_ids,
+                past_key_value=None,
+                output_attentions=False,
+                use_cache=False,
+                cache_position=cache_position,
+            )
+            if position_embeddings is not None:
+                layer_kwargs['position_embeddings'] = position_embeddings
+            layer_kwargs = _supported_kwargs(layer.forward, layer_kwargs)
+            layer_output = layer(h, **layer_kwargs)
+            h = layer_output[0] if isinstance(layer_output, tuple) else layer_output
+
+        stage_outputs.append(h)
+
+        if rank < world_size - 1:
+            shape = torch.tensor(h.shape, dtype=torch.long, device=device)
+            dist.send(shape, dst=rank + 1, tag=1000 + 2 * i)
+            send_tensor = h.detach().to(device=device, dtype=dtype).contiguous()
+            dist.send(send_tensor, dst=rank + 1, tag=1000 + 2 * i + 1)
+        else:
+            target_ids = targets[i].to(device=device, dtype=torch.long)
+            normed = base_model.norm(h)
+            logits = model.lm_head(normed)
+            shift_logits = logits[..., :-1, :].contiguous()
+            shift_labels = target_ids[..., 1:].contiguous()
+            loss = F.cross_entropy(
+                shift_logits.view(-1, shift_logits.size(-1)),
+                shift_labels.view(-1),
+            )
+            losses.append(loss / num_microbatches)
+
+    for i in range(num_microbatches):
+        if rank == world_size - 1:
+            torch.autograd.backward(losses[i])
+            grad = stage_inputs[i].grad
+            if grad is None:
+                grad = torch.zeros_like(stage_inputs[i])
+            grad = grad.to(device=device, dtype=dtype).contiguous()
+            dist.send(grad.detach(), dst=rank - 1, tag=2000 + i)
+        elif rank > 0:
+            grad = torch.empty_like(
+                stage_outputs[i], dtype=dtype, device=device
+            )
+            dist.recv(grad, src=rank + 1, tag=2000 + i)
+            torch.autograd.backward(stage_outputs[i], grad_tensors=grad)
+            input_grad = stage_inputs[i].grad
+            if input_grad is None:
+                input_grad = torch.zeros_like(stage_inputs[i])
+            input_grad = input_grad.to(
+                device=device, dtype=dtype
+            ).contiguous()
+            dist.send(input_grad.detach(), dst=rank - 1, tag=2000 + i)
+        else:
+            grad = torch.empty_like(
+                stage_outputs[i], dtype=dtype, device=device
+            )
+            dist.recv(grad, src=rank + 1, tag=2000 + i)
+            torch.autograd.backward(stage_outputs[i], grad_tensors=grad)
+[?2004hroot@682368998efa:/app# 
